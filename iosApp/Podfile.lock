@@ -1,0 +1,22 @@
+PODS:
+  - FluentIcons (1.1.193):
+    - FluentIcons/Assets (= 1.1.193)
+    - FluentIcons/Code (= 1.1.193)
+    - FluentIcons/RemovalScript (= 1.1.193)
+  - FluentIcons/Assets (1.1.193)
+  - FluentIcons/Code (1.1.193)
+  - FluentIcons/RemovalScript (1.1.193)
+
+DEPENDENCIES:
+  - FluentIcons (= 1.1.193)
+
+SPEC REPOS:
+  trunk:
+    - FluentIcons
+
+SPEC CHECKSUMS:
+  FluentIcons: b8e3dfb75587034fb9c130de0880c6e729ceb77c
+
+PODFILE CHECKSUM: d1fd4c9ce92f93971d6f75bfa0efa0ae4c10de42
+
+COCOAPODS: 1.12.0

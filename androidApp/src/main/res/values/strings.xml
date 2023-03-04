@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ReWalled</string>
+    <string name="logged_in">Logged in</string>
+    <string name="loading_contents">Loading contents</string>
+    <string name="loading_error">Loading error</string>
+    <string name="loading_error_message">Failed to load contents from the cloud</string>
+</resources>

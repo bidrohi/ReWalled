@@ -1,0 +1,94 @@
+-- wallpaper post
+CREATE TABLE WallpaperEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    description TEXT NOT NULL,
+    source TEXT NOT NULL,
+    thumbnail TEXT,
+    resizedImages TEXT NOT NULL
+);
+
+insertWallpaper:
+    INSERT OR IGNORE INTO WallpaperEntity(id, description, source, thumbnail, resizedImages)
+    VALUES(:id, :description, :source, :thumbnail, :resizedImages);
+
+selectWallpaperById:
+    SELECT * FROM WallpaperEntity
+    WHERE id = :id;
+
+removeAllWallpapers:
+    DELETE FROM WallpaperEntity;
+
+-- feed tracking
+CREATE TABLE FeedEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    before_cursor TEXT,
+    before_cursor_updated_at TEXT,
+    after_cursor TEXT,
+    after_cursor_updated_at TEXT
+);
+
+updateFeedBeforeCursor {
+    UPDATE FeedEntity
+    SET id = :id, before_cursor = :topCursor, before_cursor_updated_at = :topCursorUpdatedAt
+    WHERE id = :id;
+
+    INSERT OR IGNORE INTO FeedEntity(id, before_cursor, before_cursor_updated_at)
+    VALUES(:id, :topCursor, :topCursorUpdatedAt);
+}
+
+updateFeedAfterCursor {
+    UPDATE FeedEntity
+    SET id = :id, after_cursor = :bottomCursor, after_cursor_updated_at = :bottomCursorUpdatedAt
+    WHERE id = :id;
+
+    INSERT OR IGNORE INTO FeedEntity(id, after_cursor, after_cursor_updated_at)
+    VALUES(:id, :bottomCursor, :bottomCursorUpdatedAt);
+}
+
+selectFeedBeforeCursor:
+    SELECT before_cursor FROM FeedEntity
+    WHERE id = :feed_id;
+
+selectFeedAfterCursor:
+    SELECT after_cursor FROM FeedEntity
+    WHERE id = :feed_id;
+
+selectFeedById:
+    SELECT * FROM FeedEntity
+    WHERE id = :id;
+
+removeAllFeed:
+    DELETE FROM FeedEntity;
+
+-- order tracking
+CREATE TABLE FeedOrderEntity (
+    feed_id TEXT NOT NULL,
+    wallpaper_id TEXT NOT NULL,
+    seq INTEGER NOT NULL
+);
+CREATE UNIQUE INDEX uniqueFeedOrderEntity ON FeedOrderEntity(feed_id, wallpaper_id);
+
+insertFeedSeq:
+    INSERT INTO FeedOrderEntity(feed_id, wallpaper_id, seq)
+    VALUES(:timeine_id, :wallpaper_id, :seq);
+
+selectTopMostSeq:
+    SELECT seq FROM FeedOrderEntity
+    WHERE feed_id = :feed_id
+    ORDER BY seq DESC
+    LIMIT 1;
+
+selectBottomMostSeq:
+    SELECT seq FROM FeedOrderEntity
+    WHERE feed_id = :feed_id
+    ORDER BY seq ASC
+    LIMIT 1;
+
+selectWallpaperFeedById:
+    SELECT w.* FROM WallpaperEntity AS w
+    LEFT JOIN FeedOrderEntity AS o ON o.wallpaper_id = w.id
+    WHERE o.feed_id = :feed_id
+    ORDER BY o.seq DESC;
+
+removeAllFeedOrder:
+    DELETE FROM FeedOrderEntity;
