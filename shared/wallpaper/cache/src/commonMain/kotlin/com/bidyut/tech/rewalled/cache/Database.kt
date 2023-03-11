@@ -13,6 +13,7 @@ import kotlinx.datetime.Clock
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.days
 
 class Database(
     databaseDriverFactory: DatabaseDriverFactory,
@@ -30,8 +31,7 @@ class Database(
             dbQuery.updateFeedBeforeCursor(
                 feedId,
                 beforeCursor,
-                Clock.System.now()
-                    .toString()
+                Clock.System.now().plus(1.days).toString()
             )
             val lastSeq = dbQuery.selectTopMostSeq(feedId)
                 .executeAsOneOrNull() ?: 0
@@ -63,8 +63,7 @@ class Database(
             dbQuery.updateFeedAfterCursor(
                 feedId,
                 afterCursor,
-                Clock.System.now()
-                    .toString()
+                Clock.System.now().plus(1.days).toString()
             )
             val lastSeq = dbQuery.selectBottomMostSeq(feedId)
                 .executeAsOneOrNull() ?: 0
@@ -99,7 +98,10 @@ class Database(
     private fun getWallpaperFeedQuery(
         feedId: FeedId,
     ): Query<Wallpaper> =
-        dbQuery.selectWallpaperFeedById(feedId) { id, description, source, thumbnail, resizedImages ->
+        dbQuery.selectWallpaperFeedById(
+            feedId,
+            Clock.System.now().toString(),
+        ) { id, description, source, thumbnail, resizedImages ->
             Wallpaper(
                 id = id,
                 description = description,

@@ -22,26 +22,26 @@ removeAllWallpapers:
 CREATE TABLE FeedEntity (
     id TEXT NOT NULL PRIMARY KEY,
     before_cursor TEXT,
-    before_cursor_updated_at TEXT,
+    before_cursor_validity TEXT,
     after_cursor TEXT,
-    after_cursor_updated_at TEXT
+    after_cursor_validity TEXT
 );
 
 updateFeedBeforeCursor {
     UPDATE FeedEntity
-    SET id = :id, before_cursor = :topCursor, before_cursor_updated_at = :topCursorUpdatedAt
+    SET id = :id, before_cursor = :topCursor, before_cursor_validity = :topCursorUpdatedAt
     WHERE id = :id;
 
-    INSERT OR IGNORE INTO FeedEntity(id, before_cursor, before_cursor_updated_at)
+    INSERT OR IGNORE INTO FeedEntity(id, before_cursor, before_cursor_validity)
     VALUES(:id, :topCursor, :topCursorUpdatedAt);
 }
 
 updateFeedAfterCursor {
     UPDATE FeedEntity
-    SET id = :id, after_cursor = :bottomCursor, after_cursor_updated_at = :bottomCursorUpdatedAt
+    SET id = :id, after_cursor = :bottomCursor, after_cursor_validity = :bottomCursorUpdatedAt
     WHERE id = :id;
 
-    INSERT OR IGNORE INTO FeedEntity(id, after_cursor, after_cursor_updated_at)
+    INSERT OR IGNORE INTO FeedEntity(id, after_cursor, after_cursor_validity)
     VALUES(:id, :bottomCursor, :bottomCursorUpdatedAt);
 }
 
@@ -69,7 +69,7 @@ CREATE TABLE FeedOrderEntity (
 CREATE UNIQUE INDEX uniqueFeedOrderEntity ON FeedOrderEntity(feed_id, wallpaper_id);
 
 insertFeedSeq:
-    INSERT INTO FeedOrderEntity(feed_id, wallpaper_id, seq)
+    INSERT OR IGNORE INTO FeedOrderEntity(feed_id, wallpaper_id, seq)
     VALUES(:timeine_id, :wallpaper_id, :seq);
 
 selectTopMostSeq:
@@ -87,7 +87,9 @@ selectBottomMostSeq:
 selectWallpaperFeedById:
     SELECT w.* FROM WallpaperEntity AS w
     LEFT JOIN FeedOrderEntity AS o ON o.wallpaper_id = w.id
+    LEFT JOIN FeedEntity AS f ON o.feed_id = f.id
     WHERE o.feed_id = :feed_id
+        AND (f.after_cursor_validity > :valid_till OR f.before_cursor_validity > :valid_till)
     ORDER BY o.seq DESC;
 
 removeAllFeedOrder:
