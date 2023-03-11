@@ -6,13 +6,12 @@ import com.bidyut.tech.rewalled.di.AppGraph
 import com.bidyut.tech.rewalled.model.Feed
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.Wallpaper
+import com.bidyut.tech.rewalled.model.WallpaperId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class SubRedditViewModel : ViewModel() {
-    var selectedWallpaper: Wallpaper? = null
-
     private val repository by lazy {
         AppGraph.instance.repository
     }
@@ -27,6 +26,10 @@ class SubRedditViewModel : ViewModel() {
                 onFailure = { UiState.Error }
             )
         }
+
+    fun getWallpaper(
+        id: WallpaperId,
+    ): Flow<Wallpaper> = repository.getWallpaper(id)
 
     fun loadMoreAfter(
         subReddit: String,

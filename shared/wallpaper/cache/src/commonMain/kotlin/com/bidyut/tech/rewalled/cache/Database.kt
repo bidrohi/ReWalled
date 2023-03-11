@@ -3,9 +3,11 @@ package com.bidyut.tech.rewalled.cache
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import com.bidyut.tech.rewalled.model.Feed
 import com.bidyut.tech.rewalled.model.FeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
+import com.bidyut.tech.rewalled.model.WallpaperId
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -101,15 +103,8 @@ class Database(
         dbQuery.selectWallpaperFeedById(
             feedId,
             Clock.System.now().toString(),
-        ) { id, description, source, thumbnail, resizedImages ->
-            Wallpaper(
-                id = id,
-                description = description,
-                source = Json.decodeFromString(source),
-                thumbnail = thumbnail.orEmpty(),
-                resizedImages = Json.decodeFromString(resizedImages),
-            )
-        }
+            ::mapToWallpaper,
+        )
 
     fun getWallpaperFeed(
         feedId: FeedId,
@@ -132,6 +127,33 @@ class Database(
             wallpapers = getWallpaperFeedQuery(feedId).executeAsList(),
             afterCursor = getFeedAfterCursor(feedId)
         )
+
+    private fun getWallpaperQuery(
+        wallpaperId: WallpaperId,
+    ): Query<Wallpaper> = dbQuery.selectWallpaperById(wallpaperId, ::mapToWallpaper)
+
+    fun getWallpaper(
+        wallpaperId: WallpaperId,
+    ): Flow<Wallpaper> = getWallpaperQuery(wallpaperId).asFlow()
+        .mapToOne(Dispatchers.Main)
+
+    suspend fun getWallpaperAsync(
+        wallpaperId: WallpaperId,
+    ): Wallpaper? = getWallpaperQuery(wallpaperId).executeAsOneOrNull()
+
+    private fun mapToWallpaper(
+        id: String,
+        description: String,
+        source: String,
+        thumbnail: String?,
+        resizedImages: String,
+    ) = Wallpaper(
+        id = id,
+        description = description,
+        source = Json.decodeFromString(source),
+        thumbnail = thumbnail.orEmpty(),
+        resizedImages = Json.decodeFromString(resizedImages),
+    )
 
     internal fun clearDatabase() {
         dbQuery.transaction {

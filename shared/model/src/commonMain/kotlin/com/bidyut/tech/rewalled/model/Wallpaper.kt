@@ -1,7 +1,9 @@
 package com.bidyut.tech.rewalled.model
 
+typealias WallpaperId = String
+
 data class Wallpaper(
-    val id: String,
+    val id: WallpaperId,
     val description: String,
     val source: ImageDetail,
     val thumbnail: String,
