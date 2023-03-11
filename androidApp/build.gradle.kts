@@ -12,6 +12,7 @@ val hasKeystore = localProperties.hasProperty("signing.keystore")
 val keystoreFile: String by lazy { localProperties.getProperty("signing.keystore") }
 val keystoreAlias: String by lazy { localProperties.getProperty("signing.alias") }
 val keystorePassword: String by lazy { localProperties.getProperty("signing.password") }
+val hasPlayPublisherKey = localProperties.hasProperty("play.publisherKey")
 val playPublisherKeyFile: String by lazy { localProperties.getProperty("play.publisherKey") }
 
 android {
@@ -68,9 +69,11 @@ android {
     }
 }
 
-play {
-    serviceAccountCredentials.set(file(playPublisherKeyFile))
-    defaultToAppBundles.set(true)
+if (hasPlayPublisherKey) {
+    play {
+        serviceAccountCredentials.set(file(playPublisherKeyFile))
+        defaultToAppBundles.set(true)
+    }
 }
 
 dependencies {
