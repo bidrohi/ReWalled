@@ -2,6 +2,10 @@
 
 package com.bidyut.tech.rewalled.ui.screen
 
+import android.app.DownloadManager
+import android.content.Context
+import android.net.Uri
+import android.os.Environment
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
@@ -10,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -85,8 +90,19 @@ fun WallpaperScreen(
                         }
                     },
                     floatingActionButton = {
+                        val context = LocalContext.current
                         FloatingActionButton(onClick = {
-                            /*TODO*/
+                            wallpaper.value?.let { w ->
+                                val downloadManager =
+                                    context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                                val uri = Uri.parse(w.url)
+                                val request = DownloadManager.Request(uri)
+                                request.setTitle("${w.id} by ${w.author}")
+                                request.setDescription(w.description)
+                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.lastPathSegment)
+                                downloadManager.enqueue(request)
+                            }
                         }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_fluent_arrow_download_24_regular),
