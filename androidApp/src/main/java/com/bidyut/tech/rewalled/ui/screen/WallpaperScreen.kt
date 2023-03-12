@@ -4,6 +4,7 @@ package com.bidyut.tech.rewalled.ui.screen
 
 import android.app.DownloadManager
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import androidx.compose.foundation.layout.padding
@@ -43,6 +44,7 @@ fun WallpaperScreen(
             mutableStateOf(true)
         }
         val uriHandler = LocalUriHandler.current
+        val context = LocalContext.current
         Scaffold(
             bottomBar = {
                 BottomAppBar(
@@ -68,7 +70,16 @@ fun WallpaperScreen(
                         }
                         IconButton(
                             modifier = Modifier.size(48.dp),
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                wallpaper.value?.let { w ->
+                                    val sendIntent: Intent = Intent().apply {
+                                        action = Intent.ACTION_SEND
+                                        putExtra(Intent.EXTRA_TEXT, "${w.description} by ${w.author} at ${w.url}")
+                                        type = "text/plain"
+                                    }
+                                    context.startActivity(Intent.createChooser(sendIntent, "Share image with"))
+                                }
+                            },
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_fluent_share_24_regular),
@@ -90,7 +101,6 @@ fun WallpaperScreen(
                         }
                     },
                     floatingActionButton = {
-                        val context = LocalContext.current
                         FloatingActionButton(onClick = {
                             wallpaper.value?.let { w ->
                                 val downloadManager =
