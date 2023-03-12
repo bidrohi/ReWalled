@@ -109,6 +109,9 @@ class WallpaperRepository(
         Wallpaper(
             id = id,
             description = title,
+            author = author,
+            url = url,
+            postUrl = "https://reddit.com$permalink",
             source = image.source.toImageDetails(),
             thumbnail = thumbnail,
             resizedImages = image.resolutions.map {

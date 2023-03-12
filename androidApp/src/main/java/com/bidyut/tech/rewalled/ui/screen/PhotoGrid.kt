@@ -1,9 +1,10 @@
 package com.bidyut.tech.rewalled.ui.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -54,8 +55,11 @@ fun PhotoGrid(
         configuration.screenWidthDp.dp.roundToPx()
     }
     LazyVerticalGrid(
-        modifier = modifier.padding(4.dp),
+        modifier = modifier,
         columns = GridCells.Adaptive(minSize = 128.dp),
+        contentPadding = PaddingValues(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(
             items = wallpapers,
@@ -65,8 +69,7 @@ fun PhotoGrid(
                 wallpaper = it,
                 requestWidthPx = screenWidthPx,
                 imageRatio = ratio,
-                modifier = Modifier.padding(4.dp)
-                    .clickable { onWallpaperClick(it) }
+                modifier = Modifier.clickable { onWallpaperClick(it) }
             )
         }
         if (wallpapers.isNotEmpty() && hasMore) {

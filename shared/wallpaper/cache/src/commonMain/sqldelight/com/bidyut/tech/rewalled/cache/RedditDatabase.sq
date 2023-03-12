@@ -2,14 +2,17 @@
 CREATE TABLE WallpaperEntity (
     id TEXT NOT NULL PRIMARY KEY,
     description TEXT NOT NULL,
+    author TEXT NOT NULL,
+    url TEXT NOT NULL,
+    postUrl TEXT NOT NULL,
     source TEXT NOT NULL,
     thumbnail TEXT,
     resizedImages TEXT NOT NULL
 );
 
 insertWallpaper:
-    INSERT OR IGNORE INTO WallpaperEntity(id, description, source, thumbnail, resizedImages)
-    VALUES(:id, :description, :source, :thumbnail, :resizedImages);
+    INSERT OR IGNORE INTO WallpaperEntity(id, description, author, url, postUrl, source, thumbnail, resizedImages)
+    VALUES(:id, :description, :author, :url, :postUrl, :source, :thumbnail, :resizedImages);
 
 selectWallpaperById:
     SELECT * FROM WallpaperEntity

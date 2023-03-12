@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -22,6 +21,7 @@ import com.bidyut.tech.rewalled.ui.screen.WallpaperScreen
 class ReWalledActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             val subRedditViewModel: SubRedditViewModel = viewModel()
             val navController = rememberNavController()
@@ -52,12 +52,6 @@ class ReWalledActivity : ComponentActivity() {
                     ),
                 ) {
                     val id = it.arguments?.getString("id").orEmpty()
-
-                    with(WindowCompat.getInsetsController(window, window.decorView)) {
-                        systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_TOUCH
-                        hide(WindowInsetsCompat.Type.systemBars())
-                    }
-
                     WallpaperScreen(
                         wallpaperId = id,
                         modifier = Modifier.fillMaxSize(),

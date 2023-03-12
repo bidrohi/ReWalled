@@ -1,16 +1,24 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.bidyut.tech.rewalled.ui.screen
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
+import com.microsoft.fluent.mobile.icons.R
 
 @Composable
 fun WallpaperScreen(
@@ -18,19 +26,91 @@ fun WallpaperScreen(
     modifier: Modifier = Modifier,
     viewModel: SubRedditViewModel = viewModel(),
 ) {
-    val wallpaper = viewModel.getWallpaper(wallpaperId).collectAsState(initial = null)
-    val configuration = LocalConfiguration.current
-    val screenWidthPx = with(LocalDensity.current) {
-        configuration.screenWidthDp.dp.roundToPx()
-    }
     ReWalledTheme(
         darkTheme = true,
     ) {
-        AsyncImage(
-            modifier = modifier,
-            model = wallpaper.value?.getUriForSize(screenWidthPx),
-            contentDescription = wallpaper.value?.description,
-            contentScale = ContentScale.Crop,
-        )
+        val wallpaper = viewModel.getWallpaper(wallpaperId).collectAsState(initial = null)
+        val configuration = LocalConfiguration.current
+        val screenWidthPx = with(LocalDensity.current) {
+            configuration.screenWidthDp.dp.roundToPx()
+        }
+        var isFullscreen by remember {
+            mutableStateOf(true)
+        }
+        val uriHandler = LocalUriHandler.current
+        Scaffold(
+            bottomBar = {
+                BottomAppBar(
+                    modifier = Modifier.alpha(0.9f),
+                    actions = {
+                        IconButton(
+                            modifier = Modifier.size(48.dp),
+                            onClick = {
+                                isFullscreen = !isFullscreen
+                            },
+                        ) {
+                            if (isFullscreen) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_fluent_full_screen_minimize_24_regular),
+                                    contentDescription = "Fit",
+                                )
+                            } else {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_fluent_full_screen_maximize_24_regular),
+                                    contentDescription = "Fill",
+                                )
+                            }
+                        }
+                        IconButton(
+                            modifier = Modifier.size(48.dp),
+                            onClick = { /*TODO*/ },
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_fluent_share_24_regular),
+                                contentDescription = "Share",
+                            )
+                        }
+                        IconButton(
+                            modifier = Modifier.size(48.dp),
+                            onClick = {
+                                wallpaper.value?.let {
+                                    uriHandler.openUri(it.postUrl)
+                                }
+                            },
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_fluent_open_24_regular),
+                                contentDescription = "Open source",
+                            )
+                        }
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(onClick = {
+                            /*TODO*/
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_fluent_arrow_download_24_regular),
+                                contentDescription = "Download",
+                            )
+                        }
+                    }
+                )
+            }
+        ) { paddingValues ->
+            AsyncImage(
+                modifier = modifier.apply {
+                    if (!isFullscreen) {
+                        padding(paddingValues)
+                    }
+                },
+                model = wallpaper.value?.getUriForSize(screenWidthPx),
+                contentDescription = wallpaper.value?.description,
+                contentScale = if (isFullscreen) {
+                    ContentScale.Crop
+                } else {
+                    ContentScale.Fit
+                },
+            )
+        }
     }
 }

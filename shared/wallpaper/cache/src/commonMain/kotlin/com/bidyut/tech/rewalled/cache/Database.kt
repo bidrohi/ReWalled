@@ -40,13 +40,7 @@ class Database(
             // flip the list since we need to count up
             for ((i, wallpaper) in wallpapers.asReversed()
                 .withIndex()) {
-                dbQuery.insertWallpaper(
-                    wallpaper.id,
-                    wallpaper.description,
-                    Json.encodeToString(wallpaper.source),
-                    wallpaper.thumbnail,
-                    Json.encodeToString(wallpaper.resizedImages),
-                )
+                insertWallpaper(wallpaper)
                 dbQuery.insertFeedSeq(
                     feedId,
                     wallpaper.id,
@@ -71,13 +65,7 @@ class Database(
                 .executeAsOneOrNull() ?: 0
             // flip the list since we need to count up
             for ((i, wallpaper) in wallpapers.withIndex()) {
-                dbQuery.insertWallpaper(
-                    wallpaper.id,
-                    wallpaper.description,
-                    Json.encodeToString(wallpaper.source),
-                    wallpaper.thumbnail,
-                    Json.encodeToString(wallpaper.resizedImages),
-                )
+                insertWallpaper(wallpaper)
                 dbQuery.insertFeedSeq(
                     feedId,
                     wallpaper.id,
@@ -85,6 +73,21 @@ class Database(
                 )
             }
         }
+    }
+
+    internal fun insertWallpaper(
+        wallpaper: Wallpaper,
+    ) {
+        dbQuery.insertWallpaper(
+            wallpaper.id,
+            wallpaper.description,
+            wallpaper.author,
+            wallpaper.url,
+            wallpaper.postUrl,
+            Json.encodeToString(wallpaper.source),
+            wallpaper.thumbnail,
+            Json.encodeToString(wallpaper.resizedImages),
+        )
     }
 
     internal fun getFeedBeforeCursor(
@@ -144,12 +147,18 @@ class Database(
     private fun mapToWallpaper(
         id: String,
         description: String,
+        author: String,
+        url: String,
+        postUrl: String,
         source: String,
         thumbnail: String?,
         resizedImages: String,
     ) = Wallpaper(
         id = id,
         description = description,
+        author = author,
+        url = url,
+        postUrl = postUrl,
         source = Json.decodeFromString(source),
         thumbnail = thumbnail.orEmpty(),
         resizedImages = Json.decodeFromString(resizedImages),

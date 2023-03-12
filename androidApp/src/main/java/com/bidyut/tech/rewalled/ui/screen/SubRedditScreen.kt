@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,9 +39,11 @@ fun SubRedditScreen(
         mutableStateOf(false)
     }
     ReWalledTheme {
+        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold(
             topBar = {
                 TopAppBar(
+                    scrollBehavior = scrollBehavior,
                     title = {
                         Text("/r/$subReddit")
                     },
@@ -76,26 +79,21 @@ fun SubRedditScreen(
             },
 //            bottomBar = { MainNavigationBar() }
         ) { paddingValues ->
-            Surface(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                color = MaterialTheme.colorScheme.background
-            ) {
-                val state = viewModel.getUiState(subReddit, filter)
-                    .collectAsState(SubRedditViewModel.UiState.Loading)
-                    .value
-                SubRedditContents(
-                    modifier = modifier,
-                    state = state,
-                    onWallpaperClick = {
-                        navController.navigate(Route.Wallpaper(it.id).uri)
-                    },
-                    onLoadMore = { afterCursor ->
-                        viewModel.loadMoreAfter(subReddit, filter, afterCursor)
-                    }
-                )
-            }
+            val state = viewModel.getUiState(subReddit, filter)
+                .collectAsState(SubRedditViewModel.UiState.Loading)
+                .value
+            SubRedditContents(
+                modifier = modifier
+                    .padding(paddingValues)
+                    .nestedScroll(scrollBehavior.nestedScrollConnection),
+                state = state,
+                onWallpaperClick = {
+                    navController.navigate(Route.Wallpaper(it.id).uri)
+                },
+                onLoadMore = { afterCursor ->
+                    viewModel.loadMoreAfter(subReddit, filter, afterCursor)
+                }
+            )
         }
     }
 }

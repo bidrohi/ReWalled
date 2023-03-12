@@ -1,0 +1,7 @@
+ALTER TABLE WallpaperEntity ADD COLUMN author TEXT NOT NULL DEFAULT 'a';
+ALTER TABLE WallpaperEntity ADD COLUMN url TEXT NOT NULL DEFAULT 'a';
+ALTER TABLE WallpaperEntity ADD COLUMN postUrl TEXT NOT NULL DEFAULT 'a';
+
+DELETE FROM FeedOrderEntity;
+DELETE FROM FeedEntity;
+DELETE FROM WallpaperEntity;
