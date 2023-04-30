@@ -81,7 +81,6 @@ android {
     buildToolsVersion = Versions.Sdk.BuildTools
     defaultConfig {
         minSdk = Versions.Sdk.Min
-        targetSdk = Versions.Sdk.Target
     }
     compileOptions {
         sourceCompatibility = Versions.Jvm.Compatibility
