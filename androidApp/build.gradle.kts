@@ -2,9 +2,9 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.konan.properties.hasProperty
 
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("com.github.triplet.play")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.playPublisher)
 }
 
 val localProperties = gradleLocalProperties(rootDir)
@@ -38,7 +38,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.Kotlin.CompilerExt
+        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.get()
     }
     packaging {
         resources {
@@ -82,20 +82,21 @@ dependencies {
     implementation(project(":shared:model"))
     implementation(project(":shared:wallpaper:data"))
 
-    val composeBom = platform(Deps.AndroidX.Compose.Bom)
+    val composeBom = platform(libs.compose.bom)
     implementation(composeBom)
     androidTestImplementation(composeBom)
-    implementation(Deps.AndroidX.Compose.Ui)
-    implementation(Deps.AndroidX.Compose.Foundation)
-    implementation(Deps.AndroidX.Compose.UiGraphids)
-    debugImplementation(Deps.AndroidX.Compose.Debug.Tooling)
-    debugImplementation(Deps.AndroidX.Compose.Debug.Preview)
-    implementation(Deps.AndroidX.Compose.Material3)
-    implementation(Deps.AndroidX.Activity)
-    implementation(Deps.AndroidX.Lifecycle)
-    implementation(Deps.AndroidX.Navigation)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.ui.graphics)
+    debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.compose.ui.toolingPreview)
+    implementation(libs.compose.material3)
 
-    implementation(Deps.Coil)
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.navigation)
 
-    implementation(Deps.FluentIcons)
+    implementation(libs.coil)
+
+    implementation(libs.icons.fluent)
 }

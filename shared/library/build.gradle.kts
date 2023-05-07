@@ -1,7 +1,7 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("com.android.library")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.android.library)
 }
 
 kotlin {
@@ -30,23 +30,23 @@ kotlin {
                 implementation(project(":shared:service:reddit"))
                 implementation(project(":shared:wallpaper:cache"))
                 implementation(project(":shared:wallpaper:data"))
-                implementation(Deps.Ktor.Client.Core)
-                implementation(Deps.Ktor.Client.Logging)
-                implementation(Deps.Ktor.Client.Encoding)
-                implementation(Deps.Ktor.Client.ContentNegotiation)
-                implementation(Deps.Ktor.SerializationJson)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.logging)
+                implementation(libs.ktor.client.encoding)
+                implementation(libs.ktor.client.contentNavigation)
+                implementation(libs.ktor.serialization.json)
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-                implementation(Deps.Ktor.Client.Mock)
+                implementation(libs.ktor.client.mock)
             }
         }
         val androidMain by getting {
             dependencies {
                 implementation(project(":shared:core:network"))
-                implementation(Deps.Ktor.Client.Android)
+                implementation(libs.ktor.client.android)
             }
         }
         val androidUnitTest by getting
@@ -60,7 +60,7 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
                 implementation(project(":shared:core:network"))
-                implementation(Deps.Ktor.Client.Darwin)
+                implementation(libs.ktor.client.darwin)
             }
         }
         val iosX64Test by getting

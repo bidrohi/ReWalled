@@ -1,7 +1,7 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
-    id("app.cash.sqldelight")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.sqldelight)
 }
 
 kotlin {
@@ -27,10 +27,10 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(project(":shared:model"))
-                implementation(Deps.Kotlin.Datetime)
-                implementation(Deps.Kotlin.SerializationJson)
-                implementation(Deps.SqlDelight.Runtime)
-                implementation(Deps.SqlDelight.Coroutines)
+                implementation(libs.kotlin.datetime)
+                implementation(libs.kotlin.serialization.json)
+                implementation(libs.sqldelight.runtime)
+                implementation(libs.sqldelight.coroutines)
             }
         }
         val commonTest by getting {
@@ -40,7 +40,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation(Deps.SqlDelight.AndroidDriver)
+                implementation(libs.sqldelight.android)
             }
         }
         val androidUnitTest by getting
@@ -53,7 +53,7 @@ kotlin {
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
-                implementation(Deps.SqlDelight.NativeDriver)
+                implementation(libs.sqldelight.native)
             }
         }
         val iosX64Test by getting

@@ -1,6 +1,6 @@
 plugins {
-    kotlin("multiplatform")
-    id("com.android.library")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.library)
 }
 
 kotlin {
@@ -28,8 +28,8 @@ kotlin {
                 implementation(project(":shared:model"))
                 implementation(project(":shared:service:reddit"))
                 implementation(project(":shared:wallpaper:cache"))
-                implementation(Deps.Kotlin.SerializationJson)
-                implementation(Deps.Kotlin.Coroutines)
+                implementation(libs.kotlin.serialization.json)
+                implementation(libs.kotlin.coroutines)
             }
         }
         val commonTest by getting {

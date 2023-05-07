@@ -1,13 +1,13 @@
 plugins {
     //trick: for the same plugin versions in all sub-modules
-    id("com.android.application").version(Versions.Sdk.GradlePlugin).apply(false)
-    id("com.android.library").version(Versions.Sdk.GradlePlugin).apply(false)
-    kotlin("android").version(Versions.Kotlin.Core).apply(false)
-    kotlin("multiplatform").version(Versions.Kotlin.Core).apply(false)
-    kotlin("plugin.serialization").version(Versions.Kotlin.Core).apply(false)
-    id("com.google.devtools.ksp").version(Versions.Kotlin.Ksp).apply(false)
-    id("app.cash.sqldelight").version(Versions.SqlDelight).apply(false)
-    id("com.github.triplet.play").version(Versions.PlayPublisher).apply(false)
+    alias(libs.plugins.android.application).apply(false)
+    alias(libs.plugins.android.library).apply(false)
+    alias(libs.plugins.kotlin.android).apply(false)
+    alias(libs.plugins.kotlin.multiplatform).apply(false)
+    alias(libs.plugins.kotlin.serialization).apply(false)
+    alias(libs.plugins.ksp).apply(false)
+    alias(libs.plugins.sqldelight).apply(false)
+    alias(libs.plugins.playPublisher).apply(false)
 }
 
 tasks.register("clean", Delete::class) {

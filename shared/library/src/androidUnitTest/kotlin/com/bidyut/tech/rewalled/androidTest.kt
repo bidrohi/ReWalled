@@ -1,6 +1,6 @@
 package com.bidyut.tech.rewalled
 
-import org.junit.Test
+import kotlin.test.Test
 
 class AndroidTest {
 
