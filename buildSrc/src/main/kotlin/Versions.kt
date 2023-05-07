@@ -14,7 +14,7 @@ object Versions {
         const val Target = 33
         const val Compile = 33
         const val BuildTools = "33.0.2"
-        const val GradlePlugin = "7.4.2"
+        const val GradlePlugin = "8.0.1"
     }
 
     object Jvm {
