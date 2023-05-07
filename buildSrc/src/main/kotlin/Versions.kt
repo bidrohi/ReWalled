@@ -23,12 +23,12 @@ object Versions {
     }
 
     object Kotlin {
-        const val CompilerExt = "1.4.3"
-        const val Core = "1.8.10"
+        const val CompilerExt = "1.4.7"
+        const val Core = "1.8.21"
         const val Coroutines = "1.6.4"
         const val SerializationJson = "1.4.1"
         const val Datetime = "0.4.0"
-        const val Ksp = "$Core-1.0.9"
+        const val Ksp = "$Core-1.0.11"
     }
 
     object AndroidX {
