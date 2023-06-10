@@ -11,9 +11,9 @@ plugins {
 }
 
 tasks.register("clean", Delete::class) {
-    delete(rootProject.buildDir)
+    delete(rootProject.layout.buildDirectory)
 }
 
 allprojects {
-    buildDir = File("${rootDir}/build/${projectDir.relativeTo(rootDir)}")
+    layout.buildDirectory = File("${rootDir}/build/${projectDir.relativeTo(rootDir)}")
 }
