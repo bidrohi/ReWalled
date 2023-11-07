@@ -1,5 +1,0 @@
-target 'ReWalled' do
-  use_frameworks!
-  platform :ios, '14.1'
-  pod 'FluentIcons', '1.1.193'
-end

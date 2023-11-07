@@ -35,10 +35,6 @@ android {
     }
     buildFeatures {
         buildConfig = true
-        compose = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.kotlin.compiler.get()
     }
     packaging {
         resources {
@@ -79,24 +75,7 @@ if (hasPlayPublisherKey) {
 
 dependencies {
     implementation(project(":shared:library"))
-    implementation(project(":shared:model"))
-    implementation(project(":shared:wallpaper:data"))
-
-    val composeBom = platform(libs.compose.bom)
-    implementation(composeBom)
-    androidTestImplementation(composeBom)
-    implementation(libs.compose.ui)
-    implementation(libs.compose.foundation)
-    implementation(libs.compose.ui.graphics)
-    debugImplementation(libs.compose.ui.tooling)
-    debugImplementation(libs.compose.ui.toolingPreview)
-    implementation(libs.compose.material3)
 
     implementation(libs.androidx.activity)
-    implementation(libs.androidx.lifecycle)
-    implementation(libs.androidx.navigation)
-
-    implementation(libs.coil)
-
-    implementation(libs.icons.fluent)
+    implementation(libs.precompose.core)
 }

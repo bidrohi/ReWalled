@@ -10,6 +10,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.http.URLBuilder
 import io.ktor.http.appendPathSegments
+import io.ktor.utils.io.errors.IOException
 
 class RedditService(
     private val client: HttpClient,
@@ -22,21 +23,25 @@ class RedditService(
         after: String? = null,
         before: String? = null,
     ): Result<Response> {
-        val response: HttpResponse = client.submitForm(
-            url = URLBuilder(baseUrl)
-                .appendPathSegments("r", subreddit, "$filter.json")
-                .buildString(),
-            formParameters = Parameters.build {
-                append("limit", limit.toString())
-                if (count > 0) append("count", count.toString())
-                after?.let{ append("after", it) }
-                before?.let{ append("before", it) }
-            },
-            encodeInQuery = true,
-        )
-        return when (response.status) {
-            HttpStatusCode.OK -> Result.success(response.body())
-            else -> Result.failure(IllegalStateException(response.body() as String))
+        return try {
+            val response: HttpResponse = client.submitForm(
+                url = URLBuilder(baseUrl)
+                    .appendPathSegments("r", subreddit, "$filter.json")
+                    .buildString(),
+                formParameters = Parameters.build {
+                    append("limit", limit.toString())
+                    if (count > 0) append("count", count.toString())
+                    after?.let { append("after", it) }
+                    before?.let { append("before", it) }
+                },
+                encodeInQuery = true,
+            )
+            when (response.status) {
+                HttpStatusCode.OK -> Result.success(response.body())
+                else -> Result.failure(IllegalStateException(response.body() as String))
+            }
+        } catch (e: IOException) {
+            Result.failure(e)
         }
     }
 
@@ -47,23 +52,27 @@ class RedditService(
         after: String? = null,
         before: String? = null,
     ): Result<Response> {
-        val response: HttpResponse = client.submitForm(
-            url = URLBuilder(baseUrl)
-                .appendPathSegments("search.json")
-                .buildString(),
-            formParameters = Parameters.build {
-                append("type", "link")
-                append("q", query)
-                append("limit", limit.toString())
-                if (count > 0) append("count", count.toString())
-                after?.let{ append("after", it) }
-                before?.let{ append("before", it) }
-            },
-            encodeInQuery = true,
-        )
-        return when (response.status) {
-            HttpStatusCode.OK -> Result.success(response.body())
-            else -> Result.failure(IllegalStateException(response.body() as String))
+        return try {
+            val response: HttpResponse = client.submitForm(
+                url = URLBuilder(baseUrl)
+                    .appendPathSegments("search.json")
+                    .buildString(),
+                formParameters = Parameters.build {
+                    append("type", "link")
+                    append("q", query)
+                    append("limit", limit.toString())
+                    if (count > 0) append("count", count.toString())
+                    after?.let { append("after", it) }
+                    before?.let { append("before", it) }
+                },
+                encodeInQuery = true,
+            )
+            when (response.status) {
+                HttpStatusCode.OK -> Result.success(response.body())
+                else -> Result.failure(IllegalStateException(response.body() as String))
+            }
+        } catch (e: IOException) {
+            Result.failure(e)
         }
     }
 

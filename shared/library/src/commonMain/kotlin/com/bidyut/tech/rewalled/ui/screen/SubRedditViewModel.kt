@@ -1,7 +1,5 @@
 package com.bidyut.tech.rewalled.ui.screen
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.bidyut.tech.rewalled.di.AppGraph
 import com.bidyut.tech.rewalled.model.Feed
 import com.bidyut.tech.rewalled.model.Filter
@@ -10,6 +8,8 @@ import com.bidyut.tech.rewalled.model.WallpaperId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class SubRedditViewModel : ViewModel() {
     private val repository by lazy {

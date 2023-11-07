@@ -1,5 +1,5 @@
 import SwiftUI
-import sharedLibrary
+import ReWalledUI
 
 @main
 struct iOSApp: App {

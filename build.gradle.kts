@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.sqldelight).apply(false)
     alias(libs.plugins.playPublisher).apply(false)
+    alias(libs.plugins.compose).apply(false)
 }
 
 tasks.register("clean", Delete::class) {

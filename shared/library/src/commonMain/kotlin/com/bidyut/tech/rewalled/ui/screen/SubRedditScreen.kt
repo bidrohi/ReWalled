@@ -1,35 +1,54 @@
 package com.bidyut.tech.rewalled.ui.screen
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import com.bidyut.tech.rewalled.R
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubReddit
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
-import com.microsoft.fluent.mobile.icons.R as FluentR
+import compose.icons.FeatherIcons
+import compose.icons.feathericons.AlertOctagon
+import compose.icons.feathericons.Filter
+import compose.icons.feathericons.Grid
+import compose.icons.feathericons.Home
+import compose.icons.feathericons.Loader
+import moe.tlaster.precompose.navigation.Navigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubRedditScreen(
-    navController: NavController,
+    navigator: Navigator,
     modifier: Modifier = Modifier,
-    viewModel: SubRedditViewModel = viewModel(),
+    viewModel: SubRedditViewModel,
 ) {
     var subReddit by remember {
         mutableStateOf("Amoledbackgrounds")
@@ -72,11 +91,11 @@ fun SubRedditScreen(
                         var isFilterMenuExpanded by remember {
                             mutableStateOf(false)
                         }
-                        Button(
+                        TextButton(
                             onClick = { isFilterMenuExpanded = true },
                         ) {
                             Icon(
-                                painter = painterResource(id = FluentR.drawable.ic_fluent_filter_24_regular),
+                                FeatherIcons.Filter,
                                 contentDescription = "Filter",
                             )
                             Text(
@@ -88,7 +107,7 @@ fun SubRedditScreen(
                             expanded = isFilterMenuExpanded,
                             onDismissRequest = { isFilterMenuExpanded = false },
                         ) {
-                            for (value in Filter.values()) {
+                            for (value in Filter.entries) {
                                 DropdownMenuItem(
                                     text = { Text(value.toString()) },
                                     onClick = {
@@ -112,7 +131,7 @@ fun SubRedditScreen(
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 state = state,
                 onWallpaperClick = {
-                    navController.navigate(Route.Wallpaper(it.id).uri)
+                    navigator.navigate(Route.Wallpaper(it.id).uri)
                 },
                 onLoadMore = { afterCursor ->
                     viewModel.loadMoreAfter(subReddit, filter, afterCursor)
@@ -129,7 +148,7 @@ fun MainNavigationBar() {
             selected = true,
             icon = {
                 Image(
-                    painter = painterResource(id = FluentR.drawable.ic_fluent_building_home_24_filled),
+                    FeatherIcons.Home,
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
                 )
@@ -143,7 +162,7 @@ fun MainNavigationBar() {
             selected = false,
             icon = {
                 Image(
-                    painter = painterResource(id = FluentR.drawable.ic_fluent_group_24_filled),
+                    FeatherIcons.Grid,
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryContainer),
                 )
@@ -167,18 +186,18 @@ fun SubRedditContents(
         is SubRedditViewModel.UiState.Loading -> {
             InformationView(
                 modifier = modifier,
-                iconId = FluentR.drawable.ic_fluent_cloud_sync_48_regular,
-                descriptionId = R.string.loading_contents,
-                messageId = R.string.loading_contents,
+                icon = FeatherIcons.Loader,
+                description = "Loading contents",
+                message = "Loading contents",
             )
         }
 
         is SubRedditViewModel.UiState.Error -> {
             InformationView(
                 modifier = modifier,
-                iconId = FluentR.drawable.ic_fluent_cloud_dismiss_48_regular,
-                descriptionId = R.string.loading_error,
-                messageId = R.string.loading_error_message,
+                icon = FeatherIcons.AlertOctagon,
+                description = "Loading error",
+                message = "Failed to load contents from the cloud",
             )
         }
 
@@ -198,9 +217,9 @@ fun SubRedditContents(
 
 @Composable
 fun InformationView(
-    @DrawableRes iconId: Int,
-    @StringRes descriptionId: Int,
-    @StringRes messageId: Int,
+    icon: ImageVector,
+    description: String,
+    message: String,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -209,13 +228,13 @@ fun InformationView(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = painterResource(iconId),
-            contentDescription = stringResource(descriptionId),
+            icon,
+            contentDescription = description,
             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary),
             modifier = Modifier
                 .padding(8.dp)
                 .size(48.dp),
         )
-        Text(text = stringResource(messageId))
+        Text(text = message)
     }
 }

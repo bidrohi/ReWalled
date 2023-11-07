@@ -15,11 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.Wallpaper
+import com.bidyut.tech.rewalled.ui.getSystemRatio
+import com.bidyut.tech.rewalled.ui.getSystemWidthPx
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 
 @Composable
 fun WallpaperCard(
@@ -31,10 +32,10 @@ fun WallpaperCard(
     Card(
         modifier = modifier,
     ) {
-        AsyncImage(
+        KamelImage(
+            resource = asyncPainterResource(wallpaper.getUriForSize(requestWidthPx)),
             modifier = Modifier.fillMaxWidth()
                 .aspectRatio(imageRatio),
-            model = wallpaper.getUriForSize(requestWidthPx),
             contentDescription = wallpaper.description,
             contentScale = ContentScale.Crop,
         )
@@ -49,11 +50,8 @@ fun PhotoGrid(
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val configuration = LocalConfiguration.current
-    val ratio = configuration.screenWidthDp.toFloat() / configuration.screenHeightDp
-    val screenWidthPx = with(LocalDensity.current) {
-        configuration.screenWidthDp.dp.roundToPx()
-    }
+    val ratio = getSystemRatio()
+    val screenWidthPx = getSystemWidthPx()
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Adaptive(minSize = 128.dp),
