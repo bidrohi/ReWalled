@@ -9,13 +9,7 @@ plugins {
 kotlin {
     applyDefaultHierarchyTemplate()
 
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = Versions.Jvm.Target
-            }
-        }
-    }
+    androidTarget()
 
     listOf(
         iosX64(),
@@ -80,13 +74,4 @@ kotlin {
 
 android {
     namespace = "com.bidyut.tech.rewalled.shared"
-    compileSdk = Versions.Sdk.Compile
-    buildToolsVersion = Versions.Sdk.BuildTools
-    defaultConfig {
-        minSdk = Versions.Sdk.Min
-    }
-    compileOptions {
-        sourceCompatibility = Versions.Jvm.Compatibility
-        targetCompatibility = Versions.Jvm.Compatibility
-    }
 }

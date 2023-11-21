@@ -1,5 +1,5 @@
 [versions]
-androidGradle = "8.1.2"
+androidGradle = "8.1.4"
 kotlin = "1.9.20"
 kotlin-coroutines = "1.7.3"
 kotlin-datetime = "0.4.0"
@@ -10,7 +10,7 @@ sqldelight = "2.0.0"
 playPublisher = "3.8.1"
 kamel = "0.8.3"
 icons-feather = "1.1.0"
-androidx-activity = "1.8.0"
+androidx-activity = "1.8.1"
 compose-core = "1.5.10"
 precompose = "1.5.4"
 

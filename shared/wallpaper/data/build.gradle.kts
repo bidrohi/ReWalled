@@ -6,23 +6,10 @@ plugins {
 kotlin {
     applyDefaultHierarchyTemplate()
 
-    androidTarget {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = Versions.Jvm.Target
-            }
-        }
-    }
-
-    listOf(
-        iosX64(),
-        iosArm64(),
-        iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
-            baseName = "sharedWallpaperData"
-        }
-    }
+    androidTarget()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         val commonMain by getting {
@@ -44,13 +31,4 @@ kotlin {
 
 android {
     namespace = "com.bidyut.tech.rewalled.data"
-    compileSdk = Versions.Sdk.Compile
-    buildToolsVersion = Versions.Sdk.BuildTools
-    defaultConfig {
-        minSdk = Versions.Sdk.Min
-    }
-    compileOptions {
-        sourceCompatibility = Versions.Jvm.Compatibility
-        targetCompatibility = Versions.Jvm.Compatibility
-    }
 }

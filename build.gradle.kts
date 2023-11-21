@@ -1,3 +1,7 @@
+import com.android.build.api.dsl.CommonExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+
 plugins {
     //trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.android.application).apply(false)
@@ -17,4 +21,40 @@ tasks.register("clean", Delete::class) {
 
 allprojects {
     layout.buildDirectory = File("${rootDir}/build/${projectDir.relativeTo(rootDir)}")
+}
+
+subprojects {
+    afterEvaluate {
+        (extensions.findByName("kotlinOptions") as? KotlinJvmOptions)?.apply {
+            jvmTarget = JavaVersion.VERSION_17.toString()
+        }
+        (extensions.findByName("kotlin") as? KotlinMultiplatformExtension)?.apply {
+            androidTarget {
+                compilations.all {
+                    kotlinOptions {
+                        jvmTarget = JavaVersion.VERSION_17.toString()
+                    }
+                }
+            }
+        }
+        (extensions.findByName("android") as? CommonExtension<*, *, *, *, *>)?.apply {
+            compileSdk = 34
+            buildToolsVersion = "34.0.0"
+            defaultConfig {
+                minSdk = 21
+            }
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
+            }
+            buildFeatures {
+                buildConfig = true
+            }
+            packaging {
+                resources {
+                    excludes += "/META-INF/{AL2.0,LGPL2.1}"
+                }
+            }
+        }
+    }
 }

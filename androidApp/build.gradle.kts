@@ -1,5 +1,8 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import org.jetbrains.kotlin.konan.properties.hasProperty
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 plugins {
     alias(libs.plugins.android.application)
@@ -15,31 +18,33 @@ val keystorePassword: String by lazy { localProperties.getProperty("signing.pass
 val hasPlayPublisherKey = localProperties.hasProperty("play.publisherKey")
 val playPublisherKeyFile: String by lazy { localProperties.getProperty("play.publisherKey") }
 
+object AppVersion {
+    private val now by lazy {
+        OffsetDateTime.now(ZoneOffset.UTC)
+    }
+
+    val code by lazy {
+        DateTimeFormatter.ofPattern("yyMMddHH")
+            .format(now)
+            .toInt()
+    }
+
+    val name by lazy {
+        DateTimeFormatter.ofPattern("yyyy.MM.dd")
+            .format(now)
+    }
+}
+
 android {
     namespace = "com.bidyut.tech.rewalled"
-    compileSdk = Versions.Sdk.Compile
-    buildToolsVersion = Versions.Sdk.BuildTools
     defaultConfig {
         applicationId = "com.bidyut.tech.rewalled"
-        minSdk = Versions.Sdk.Min
-        targetSdk = Versions.Sdk.Target
+        targetSdk = 34
         versionCode = AppVersion.code
         versionName = AppVersion.name
     }
-    compileOptions {
-        sourceCompatibility = Versions.Jvm.Compatibility
-        targetCompatibility = Versions.Jvm.Compatibility
-    }
-    kotlinOptions {
-        jvmTarget = Versions.Jvm.Target
-    }
     buildFeatures {
         buildConfig = true
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
     }
     signingConfigs {
         if (hasKeystore) {
