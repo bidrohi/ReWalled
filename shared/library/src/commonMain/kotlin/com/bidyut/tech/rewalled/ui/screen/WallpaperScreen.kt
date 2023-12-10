@@ -19,8 +19,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import com.bidyut.tech.rewalled.model.WallpaperId
+import com.bidyut.tech.rewalled.ui.getCurrentContext
 import com.bidyut.tech.rewalled.ui.getSystemWidthPx
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
+import com.bidyut.tech.rewalled.ui.triggerDownloadIntent
+import com.bidyut.tech.rewalled.ui.triggerShareIntent
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.Download
 import compose.icons.feathericons.ExternalLink
@@ -45,6 +48,7 @@ fun WallpaperScreen(
             mutableStateOf(true)
         }
         val uriHandler = LocalUriHandler.current
+        val context = getCurrentContext()
         Scaffold(
             bottomBar = {
                 BottomAppBar(
@@ -71,14 +75,9 @@ fun WallpaperScreen(
                         IconButton(
                             modifier = Modifier.size(48.dp),
                             onClick = {
-//                                wallpaper.value?.let { w ->
-//                                    val sendIntent: Intent = Intent().apply {
-//                                        action = Intent.ACTION_SEND
-//                                        putExtra(Intent.EXTRA_TEXT, "${w.description} by ${w.author} at ${w.url}")
-//                                        type = "text/plain"
-//                                    }
-//                                    context.startActivity(Intent.createChooser(sendIntent, "Share image with"))
-//                                }
+                                wallpaper.value?.let { w ->
+                                    triggerShareIntent(context, w)
+                                }
                             },
                         ) {
                             Icon(
@@ -102,17 +101,9 @@ fun WallpaperScreen(
                     },
                     floatingActionButton = {
                         FloatingActionButton(onClick = {
-//                            wallpaper.value?.let { w ->
-//                                val downloadManager =
-//                                    context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-//                                val uri = Uri.parse(w.url)
-//                                val request = DownloadManager.Request(uri)
-//                                request.setTitle("${w.id} by ${w.author}")
-//                                request.setDescription(w.description)
-//                                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-//                                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.lastPathSegment)
-//                                downloadManager.enqueue(request)
-//                            }
+                            wallpaper.value?.let { w ->
+                                triggerDownloadIntent(context, w)
+                            }
                         }) {
                             Icon(
                                 FeatherIcons.Download,
