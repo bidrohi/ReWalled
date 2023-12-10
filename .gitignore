@@ -10,3 +10,4 @@ build/
 captures/
 Pods/
 *.podspec
+google-services.json

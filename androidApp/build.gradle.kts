@@ -1,4 +1,5 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -8,6 +9,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.playPublisher)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 val localProperties = gradleLocalProperties(rootDir)
@@ -68,6 +71,11 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
+        getByName("debug" ) {
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
+            }
+        }
     }
 }
 
@@ -83,4 +91,8 @@ dependencies {
 
     implementation(libs.androidx.activity)
     implementation(libs.precompose.core)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
 }

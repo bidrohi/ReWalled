@@ -3,11 +3,15 @@ package com.bidyut.tech.rewalled
 import android.app.Application
 import com.bidyut.tech.rewalled.di.AndroidAppGraph
 import com.bidyut.tech.rewalled.di.AppGraph
-import moe.tlaster.precompose.BuildConfig
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
 
 class ReWalledApplication: Application() {
     override fun onCreate() {
         super.onCreate()
+        Firebase.crashlytics.setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
+        Firebase.analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
         AppGraph.assign(
             AndroidAppGraph(
                 applicationContext,

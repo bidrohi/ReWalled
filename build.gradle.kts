@@ -13,6 +13,8 @@ plugins {
     alias(libs.plugins.sqldelight).apply(false)
     alias(libs.plugins.playPublisher).apply(false)
     alias(libs.plugins.compose).apply(false)
+    alias(libs.plugins.google.services).apply(false)
+    alias(libs.plugins.firebase.crashlytics).apply(false)
 }
 
 tasks.register("clean", Delete::class) {

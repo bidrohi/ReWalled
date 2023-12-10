@@ -13,6 +13,9 @@ icons-feather = "1.1.0"
 androidx-activity = "1.8.1"
 compose-core = "1.5.10"
 precompose = "1.5.4"
+google-services = "4.4.0"
+firebase-bom = "32.7.0"
+firebase-crashlytics-plugin = "2.9.9"
 
 [libraries]
 kotlin-coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
@@ -35,6 +38,9 @@ androidx-activity = { group = "androidx.activity", name = "activity-compose", ve
 kamel = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
 precompose-core = { group = "moe.tlaster", name = "precompose", version.ref = "precompose" }
 precompose-viewmodel = { group = "moe.tlaster", name = "precompose-viewmodel", version.ref = "precompose" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
@@ -46,3 +52,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 playPublisher = { id = "com.github.triplet.play", version.ref = "playPublisher" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose-core" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
