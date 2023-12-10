@@ -29,3 +29,6 @@
 -optimizationpasses 5
 -allowaccessmodification
 -dontpreverify
+
+## Ktor
+-dontwarn org.slf4j.impl.StaticLoggerBinder
