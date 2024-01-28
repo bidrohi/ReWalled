@@ -12,122 +12,105 @@ import com.bidyut.tech.rewalled.service.reddit.json.Post
 import com.bidyut.tech.rewalled.service.reddit.json.Source
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import org.mobilenativefoundation.store.store5.Fetcher
+import org.mobilenativefoundation.store.store5.MemoryPolicy
+import org.mobilenativefoundation.store.store5.SourceOfTruth
+import org.mobilenativefoundation.store.store5.Store
+import org.mobilenativefoundation.store.store5.StoreBuilder
+import org.mobilenativefoundation.store.store5.StoreReadRequest
+import org.mobilenativefoundation.store.store5.StoreReadResponse
+import kotlin.time.Duration.Companion.minutes
 
 class WallpaperRepository(
     private val database: Database,
     private val service: RedditService,
-) {
-    fun getWallpaper(
-        id: WallpaperId,
-    ): Flow<Wallpaper> = database.getWallpaper(id)
-
-    private suspend fun fetchWallpapersIfEmpty(
-        subreddit: String,
-        filter: Filter,
-        feed: Feed,
-    ): Result<Feed> =
-        if (feed.wallpapers.isEmpty()) {
-            fetchWallpapers(subreddit, filter)
-        } else {
-            Result.success(feed)
-        }
+) : Store<WallpaperRepository.Request, Feed> by StoreBuilder.from(
+    fetcher = Fetcher.of<Request, Feed> { request ->
+        service.getPosts(request.subreddit, request.filter, after = request.after).fold(
+            onSuccess = { response ->
+                val feedId = makeFeedId(request.subreddit, request.filter)
+                response.data?.children?.let { children ->
+                    Feed(
+                        id = feedId,
+                        wallpapers = children.flatMap {
+                            it.post?.toImageList()
+                                .orEmpty()
+                        },
+                        afterCursor = response.data?.after,
+                    )
+                } ?: Feed(id = feedId)
+            }, onFailure = {
+                throw it
+            }
+        )
+    },
+    sourceOfTruth = SourceOfTruth.of(
+        reader = { request ->
+            database.getWallpaperFeed(makeFeedId(request.subreddit, request.filter))
+                .map {
+                    if (it.afterCursor != null && it.afterCursor == request.after) {
+                        null
+                    } else {
+                        it
+                    }
+                }
+        },
+        writer = { request, feed ->
+            val feedId = makeFeedId(request.subreddit, request.filter)
+            database.insertWallpapersOnFeedAfter(
+                feedId,
+                feed.wallpapers,
+                feed.afterCursor,
+            )
+        },
+    )
+).cachePolicy(
+    MemoryPolicy.builder<Request, Feed>()
+        .setMaxSize(10)
+        .setExpireAfterAccess(30.minutes)
+        .build()
+).build() {
 
     fun getWallpaperFeed(
         subreddit: String,
         filter: Filter,
-    ): Flow<Result<Feed>> =
-        database.getWallpaperFeed(makeFeedId(subreddit, filter))
-            .map {
-                fetchWallpapersIfEmpty(subreddit, filter, it)
-            }
-
-    suspend fun getWallpapersAsync(
-        subreddit: String,
-        filter: Filter,
-    ): Feed =
-        database.getWallpaperFeedAsync(makeFeedId(subreddit, filter))
-            .let { feed ->
-                fetchWallpapersIfEmpty(subreddit, filter, feed)
-                    .getOrThrow()
-            }
-
-    private suspend fun fetchWallpapers(
-        subreddit: String,
-        filter: Filter,
-    ): Result<Feed> =
-        service.getPosts(subreddit, filter)
-            .fold(
-                onSuccess = { response ->
-                    val feedId = makeFeedId(subreddit, filter)
-                    Result.success(
-                        response.data?.children?.let { children ->
-                            val wallpapers = children.flatMap {
-                                it.post?.toImageList()
-                                    .orEmpty()
-                            }
-                            database.insertWallpapersOnFeedAfter(
-                                feedId,
-                                wallpapers,
-                                response.data?.after
-                            )
-                            Feed(
-                                id = feedId,
-                                wallpapers = wallpapers,
-                                afterCursor = response.data?.after,
-                            )
-                        } ?: Feed(id = feedId)
-                    )
-                },
-                onFailure = {
-                    Result.failure(it)
-                }
-            )
-
-    suspend fun fetchMoreWallpapersAfter(
-        subreddit: String,
-        filter: Filter,
-        afterCursor: String,
-    ): Result<Boolean> {
-        return service.getPosts(subreddit, filter, after = afterCursor)
-            .fold(
-                onSuccess = { response ->
-                    val wallpapers = response.data?.children?.flatMap {
-                        it.post?.toImageList()
-                            .orEmpty()
-                    }
-                    wallpapers?.let {
-                        database.insertWallpapersOnFeedAfter(
-                            makeFeedId(subreddit, filter),
-                            it,
-                            response.data?.after,
-                        )
-                    }
-                    Result.success(true)
-                },
-                onFailure = {
-                    Result.failure(it)
-                },
-            )
-    }
-
-    private fun Post.toImageList(): List<Wallpaper> = preview?.images?.map { image ->
-        Wallpaper(
-            id = id,
-            description = title,
-            author = author,
-            url = url,
-            postUrl = "https://reddit.com$permalink",
-            source = image.source.toImageDetails(),
-            thumbnail = thumbnail,
-            resizedImages = image.resolutions.map {
-                it.toImageDetails()
-            },
+        after: String? = null,
+    ): Flow<StoreReadResponse<Feed>> = stream(
+        StoreReadRequest.cached(
+            Request(subreddit, filter, after),
+            refresh = true
         )
-    }.orEmpty()
+    )
 
-    private fun Source.toImageDetails(): ImageDetail = ImageDetail(
-        url = url,
-        width = width,
-        height = height,
+    fun getWallpaper(
+        id: WallpaperId,
+    ): Flow<Wallpaper> = database.getWallpaper(id)
+
+    internal data class Request(
+        val subreddit: String,
+        val filter: Filter,
+        val after: String? = null,
     )
 }
+
+private fun Post.toImageList(): List<Wallpaper> = preview?.images?.map { image ->
+    Wallpaper(
+        id = id,
+        description = title,
+        author = author,
+        url = url,
+        postUrl = "https://reddit.com$permalink",
+        source = image.source.toImageDetails(),
+        thumbnail = thumbnail,
+        resizedImages = image.resolutions.map {
+            it.toImageDetails()
+        },
+    )
+}.orEmpty()
+
+private fun Source.toImageDetails(): ImageDetail = ImageDetail(
+    url = url,
+    width = width,
+    height = height,
+)
+

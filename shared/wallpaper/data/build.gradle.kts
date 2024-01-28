@@ -19,6 +19,7 @@ kotlin {
                 implementation(project(":shared:wallpaper:cache"))
                 implementation(libs.kotlin.serialization.json)
                 implementation(libs.kotlin.coroutines)
+                api(libs.store5)
             }
         }
         val commonTest by getting {

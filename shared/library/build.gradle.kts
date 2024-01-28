@@ -48,6 +48,7 @@ kotlin {
                 implementation(libs.precompose.viewmodel)
 
                 implementation(libs.kamel)
+                implementation(libs.kermit)
             }
         }
         val commonTest by getting {
