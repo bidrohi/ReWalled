@@ -9,10 +9,11 @@ import com.bidyut.tech.rewalled.model.FeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.model.WallpaperId
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.time.Duration.Companion.days
@@ -24,11 +25,11 @@ class Database(
     private val dbQuery = database.redditDatabaseQueries
     private val dispatcher = Dispatchers.Unconfined
 
-    internal fun insertWallpapersOnFeedBefore(
+    internal suspend fun insertWallpapersOnFeedBefore(
         feedId: FeedId,
         wallpapers: List<Wallpaper>,
         beforeCursor: String,
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dbQuery.transaction {
             dbQuery.updateFeedBeforeCursor(
                 feedId,
@@ -50,11 +51,11 @@ class Database(
         }
     }
 
-    fun insertWallpapersOnFeedAfter(
+    suspend fun insertWallpapersOnFeedAfter(
         feedId: FeedId,
         wallpapers: List<Wallpaper>,
         afterCursor: String?,
-    ) {
+    ) = withContext(Dispatchers.IO) {
         dbQuery.transaction {
             dbQuery.updateFeedAfterCursor(
                 feedId,
@@ -75,7 +76,7 @@ class Database(
         }
     }
 
-    internal fun insertWallpaper(
+    private fun insertWallpaper(
         wallpaper: Wallpaper,
     ) {
         dbQuery.insertWallpaper(
@@ -124,12 +125,13 @@ class Database(
 
     suspend fun getWallpaperFeedAsync(
         feedId: FeedId,
-    ): Feed =
+    ): Feed = withContext(Dispatchers.IO) {
         Feed(
             id = feedId,
             wallpapers = getWallpaperFeedQuery(feedId).executeAsList(),
             afterCursor = getFeedAfterCursor(feedId)
         )
+    }
 
     private fun getWallpaperQuery(
         wallpaperId: WallpaperId,
@@ -142,7 +144,9 @@ class Database(
 
     suspend fun getWallpaperAsync(
         wallpaperId: WallpaperId,
-    ): Wallpaper? = getWallpaperQuery(wallpaperId).executeAsOneOrNull()
+    ): Wallpaper? = withContext(Dispatchers.IO) {
+        getWallpaperQuery(wallpaperId).executeAsOneOrNull()
+    }
 
     private fun mapToWallpaper(
         id: String,
