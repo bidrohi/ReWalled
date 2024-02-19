@@ -55,6 +55,7 @@ class Database(
         feedId: FeedId,
         wallpapers: List<Wallpaper>,
         afterCursor: String?,
+        replaceAll: Boolean = false,
     ) = withContext(Dispatchers.IO) {
         dbQuery.transaction {
             dbQuery.updateFeedAfterCursor(
@@ -62,6 +63,9 @@ class Database(
                 afterCursor,
                 Clock.System.now().plus(1.days).toString()
             )
+            if (replaceAll) {
+                dbQuery.removeFeedOrderByFeedId(feedId)
+            }
             val lastSeq = dbQuery.selectBottomMostSeq(feedId)
                 .executeAsOneOrNull() ?: 0
             // flip the list since we need to count up

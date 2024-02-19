@@ -95,5 +95,9 @@ selectWallpaperFeedById:
         AND (f.after_cursor_validity > :valid_till OR f.before_cursor_validity > :valid_till)
     ORDER BY o.seq DESC;
 
+removeFeedOrderByFeedId:
+    DELETE FROM FeedOrderEntity
+    WHERE feed_id = :feed_id;
+
 removeAllFeedOrder:
     DELETE FROM FeedOrderEntity;

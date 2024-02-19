@@ -61,6 +61,7 @@ class WallpaperRepository(
                 feedId,
                 feed.wallpapers,
                 feed.afterCursor,
+                replaceAll = request.after == null,
             )
         },
     )
