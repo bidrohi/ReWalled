@@ -2,10 +2,10 @@ package com.bidyut.tech.rewalled.data
 
 import com.bidyut.tech.rewalled.cache.Database
 import com.bidyut.tech.rewalled.model.Feed
+import com.bidyut.tech.rewalled.model.FeedId
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.ImageDetail
 import com.bidyut.tech.rewalled.model.Wallpaper
-import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.model.makeFeedId
 import com.bidyut.tech.rewalled.service.reddit.RedditService
 import com.bidyut.tech.rewalled.service.reddit.json.Post
@@ -83,9 +83,9 @@ class WallpaperRepository(
         )
     )
 
-    fun getWallpaper(
-        id: WallpaperId,
-    ): Flow<Wallpaper> = database.getWallpaper(id)
+    fun getCachedWallpaperFeed(
+        feedId: FeedId,
+    ): Flow<Feed> = database.getWallpaperFeed(feedId)
 
     internal data class Request(
         val subreddit: String,

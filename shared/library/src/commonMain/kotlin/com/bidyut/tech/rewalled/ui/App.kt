@@ -32,10 +32,12 @@ fun App() {
             )
         }
         scene(
-            route = Route.Wallpaper("{id}").uri,
+            route = Route.Wallpaper("{feedId}", "{id}").uri,
         ) {
+            val feedId = it.path<String>("feedId").orEmpty()
             val id = it.path<String>("id").orEmpty()
             WallpaperScreen(
+                feedId = feedId,
                 wallpaperId = id,
                 modifier = Modifier.fillMaxSize(),
                 viewModel = subRedditViewModel,

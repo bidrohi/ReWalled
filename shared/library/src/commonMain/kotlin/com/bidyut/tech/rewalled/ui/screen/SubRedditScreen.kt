@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubReddit
 import com.bidyut.tech.rewalled.model.Wallpaper
+import com.bidyut.tech.rewalled.model.makeFeedId
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 import compose.icons.FeatherIcons
@@ -131,7 +132,7 @@ fun SubRedditScreen(
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 state = state,
                 onWallpaperClick = {
-                    navigator.navigate(Route.Wallpaper(it.id).uri)
+                    navigator.navigate(Route.Wallpaper(makeFeedId(subReddit, filter), it.id).uri)
                 },
                 onLoadMore = { afterCursor ->
                     viewModel.loadMoreAfter(subReddit, filter, afterCursor)

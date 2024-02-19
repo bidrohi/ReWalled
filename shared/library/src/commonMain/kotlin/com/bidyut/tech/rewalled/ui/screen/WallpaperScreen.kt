@@ -1,8 +1,11 @@
 package com.bidyut.tech.rewalled.ui.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -19,6 +22,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import com.bidyut.tech.rewalled.model.FeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.getCurrentContext
 import com.bidyut.tech.rewalled.ui.getSystemWidthPx
@@ -34,8 +38,10 @@ import compose.icons.feathericons.Share
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WallpaperScreen(
+    feedId: FeedId,
     wallpaperId: WallpaperId,
     modifier: Modifier = Modifier,
     viewModel: SubRedditViewModel,
@@ -43,7 +49,6 @@ fun WallpaperScreen(
     ReWalledTheme(
         isInDarkTheme = true,
     ) {
-        val wallpaper = viewModel.getWallpaper(wallpaperId).collectAsState(initial = null)
         var isFullscreen by remember {
             mutableStateOf(true)
         }
@@ -53,90 +58,106 @@ fun WallpaperScreen(
         val screenWidthPx = getSystemWidthPx()
         val context = getCurrentContext()
         val uriHandler = LocalUriHandler.current
-        Scaffold(
-            bottomBar = {
-                if (isChromeShown) {
-                    BottomAppBar(
-                        modifier = Modifier.alpha(0.9f),
-                        actions = {
-                            IconButton(
-                                modifier = Modifier.size(48.dp),
-                                onClick = {
-                                    isFullscreen = !isFullscreen
-                                },
-                            ) {
-                                if (isFullscreen) {
+        viewModel.getWallpaperFeed(feedId).collectAsState(initial = null).value?.let { feed ->
+            var initialIndex = feed.wallpapers.indexOfFirst {
+                it.id == wallpaperId
+            }
+            if (initialIndex == -1) {
+                initialIndex = 0
+            }
+            val pagerState = rememberPagerState(
+                initialPage = initialIndex,
+                pageCount = { feed.wallpapers.size }
+            )
+            Scaffold(
+                bottomBar = {
+                    if (isChromeShown) {
+                        BottomAppBar(
+                            modifier = Modifier.alpha(0.9f),
+                            actions = {
+                                IconButton(
+                                    modifier = Modifier.size(48.dp),
+                                    onClick = {
+                                        isFullscreen = !isFullscreen
+                                    },
+                                ) {
+                                    if (isFullscreen) {
+                                        Icon(
+                                            FeatherIcons.Minimize,
+                                            contentDescription = "Fit",
+                                        )
+                                    } else {
+                                        Icon(
+                                            FeatherIcons.Maximize,
+                                            contentDescription = "Fill",
+                                        )
+                                    }
+                                }
+                                IconButton(
+                                    modifier = Modifier.size(48.dp),
+                                    onClick = {
+                                        feed.wallpapers.getOrNull(pagerState.currentPage)?.let { w ->
+                                            triggerShareIntent(context, w)
+                                        }
+                                    },
+                                ) {
                                     Icon(
-                                        FeatherIcons.Minimize,
-                                        contentDescription = "Fit",
+                                        FeatherIcons.Share,
+                                        contentDescription = "Share",
                                     )
-                                } else {
+                                }
+                                IconButton(
+                                    modifier = Modifier.size(48.dp),
+                                    onClick = {
+                                        feed.wallpapers.getOrNull(pagerState.currentPage)?.let {
+                                            uriHandler.openUri(it.postUrl)
+                                        }
+                                    },
+                                ) {
                                     Icon(
-                                        FeatherIcons.Maximize,
-                                        contentDescription = "Fill",
+                                        FeatherIcons.ExternalLink,
+                                        contentDescription = "Open source",
+                                    )
+                                }
+                            },
+                            floatingActionButton = {
+                                FloatingActionButton(onClick = {
+                                    feed.wallpapers.getOrNull(pagerState.currentPage)?.let { w ->
+                                        triggerDownloadIntent(context, w)
+                                    }
+                                }) {
+                                    Icon(
+                                        FeatherIcons.Download,
+                                        contentDescription = "Download",
                                     )
                                 }
                             }
-                            IconButton(
-                                modifier = Modifier.size(48.dp),
-                                onClick = {
-                                    wallpaper.value?.let { w ->
-                                        triggerShareIntent(context, w)
-                                    }
-                                },
-                            ) {
-                                Icon(
-                                    FeatherIcons.Share,
-                                    contentDescription = "Share",
-                                )
-                            }
-                            IconButton(
-                                modifier = Modifier.size(48.dp),
-                                onClick = {
-                                    wallpaper.value?.let {
-                                        uriHandler.openUri(it.postUrl)
-                                    }
-                                },
-                            ) {
-                                Icon(
-                                    FeatherIcons.ExternalLink,
-                                    contentDescription = "Open source",
-                                )
+                        )
+                    }
+                }
+            ) { paddingValues ->
+                HorizontalPager(
+                    state = pagerState,
+                    key = { feed.wallpapers[it].id }
+                ) { index ->
+                    val wallpaper = feed.wallpapers[index]
+                    KamelImage(
+                        resource = asyncPainterResource(wallpaper.getUriForSize(screenWidthPx)),
+                        modifier = modifier.clickable {
+                            isChromeShown = !isChromeShown
+                        }.apply {
+                            if (!isFullscreen) {
+                                padding(paddingValues)
                             }
                         },
-                        floatingActionButton = {
-                            FloatingActionButton(onClick = {
-                                wallpaper.value?.let { w ->
-                                    triggerDownloadIntent(context, w)
-                                }
-                            }) {
-                                Icon(
-                                    FeatherIcons.Download,
-                                    contentDescription = "Download",
-                                )
-                            }
-                        }
+                        contentDescription = wallpaper.description,
+                        contentScale = if (isFullscreen) {
+                            ContentScale.Crop
+                        } else {
+                            ContentScale.Fit
+                        },
                     )
                 }
-            }
-        ) { paddingValues ->
-            wallpaper.value?.let {
-                KamelImage(
-                    resource = asyncPainterResource(it.getUriForSize(screenWidthPx)),
-                    modifier = modifier.clickable {
-                        isChromeShown = !isChromeShown
-                    }.apply {
-                        if (!isFullscreen) {
-                            padding(paddingValues)
-                        }
-                    },
-                    contentDescription = it.description,
-                    contentScale = if (isFullscreen) {
-                        ContentScale.Crop
-                    } else {
-                        ContentScale.Fit
-                    },
-                )
             }
         }
     }

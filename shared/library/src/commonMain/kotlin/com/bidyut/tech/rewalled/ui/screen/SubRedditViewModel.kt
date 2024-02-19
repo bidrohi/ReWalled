@@ -5,8 +5,6 @@ import com.bidyut.tech.rewalled.di.AppGraph
 import com.bidyut.tech.rewalled.model.Feed
 import com.bidyut.tech.rewalled.model.FeedId
 import com.bidyut.tech.rewalled.model.Filter
-import com.bidyut.tech.rewalled.model.Wallpaper
-import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.model.makeFeedId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -46,9 +44,9 @@ class SubRedditViewModel : ViewModel() {
         }
     }
 
-    fun getWallpaper(
-        id: WallpaperId,
-    ): Flow<Wallpaper> = repository.getWallpaper(id)
+    fun getWallpaperFeed(
+        feedId: FeedId,
+    ): Flow<Feed> = repository.getCachedWallpaperFeed(feedId)
 
     fun loadMoreAfter(
         subReddit: String,
