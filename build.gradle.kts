@@ -39,7 +39,7 @@ subprojects {
                 }
             }
         }
-        (extensions.findByName("android") as? CommonExtension<*, *, *, *, *>)?.apply {
+        (extensions.findByName("android") as? CommonExtension<*, *, *, *, *, *>)?.apply {
             compileSdk = 34
             buildToolsVersion = "34.0.0"
             defaultConfig {

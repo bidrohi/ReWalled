@@ -13,7 +13,7 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
-val localProperties = gradleLocalProperties(rootDir)
+val localProperties = gradleLocalProperties(rootDir, providers)
 val hasKeystore = localProperties.hasProperty("signing.keystore")
 val keystoreFile: String by lazy { localProperties.getProperty("signing.keystore") }
 val keystoreAlias: String by lazy { localProperties.getProperty("signing.alias") }
