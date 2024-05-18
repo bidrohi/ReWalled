@@ -1,14 +1,11 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.compose)
+    alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.android.library)
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
-
     androidTarget()
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -19,53 +16,50 @@ kotlin {
             linkerOpts.add("-lsqlite3")
         }
     }
-    
+    jvm("desktop")
+
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":shared:model"))
-                implementation(project(":shared:service:reddit"))
-                implementation(project(":shared:wallpaper:cache"))
-                implementation(project(":shared:wallpaper:data"))
+        commonMain.dependencies {
+            implementation(project(":shared:model"))
+            implementation(project(":shared:service:reddit"))
+            implementation(project(":shared:wallpaper:cache"))
+            implementation(project(":shared:wallpaper:data"))
+            implementation(project(":shared:core:network"))
 
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.logging)
-                implementation(libs.ktor.client.encoding)
-                implementation(libs.ktor.client.contentNavigation)
-                implementation(libs.ktor.serialization.json)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.logging)
+            implementation(libs.ktor.client.encoding)
+            implementation(libs.ktor.client.contentNavigation)
+            implementation(libs.ktor.serialization.json)
 
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
-                implementation(compose.components.resources)
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.components.resources)
 
-                implementation(libs.jetbrains.lifecycle)
-                implementation(libs.jetbrains.navigation)
+            implementation(libs.jetbrains.lifecycle)
+            implementation(libs.jetbrains.navigation)
 
-                implementation(libs.icons.feather)
+            implementation(libs.icons.feather)
 
-                implementation(libs.kamel)
-                implementation(libs.kermit)
-            }
+            implementation(libs.kamel)
+            implementation(libs.kermit)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.ktor.client.mock)
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.ktor.client.mock)
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(project(":shared:core:network"))
-                implementation(libs.ktor.client.android)
-                implementation(libs.androidx.activity)
-            }
+        androidMain.dependencies {
+            implementation(libs.ktor.client.android)
+            implementation(libs.androidx.activity)
         }
-        val iosMain by getting {
-            dependencies {
-                implementation(project(":shared:core:network"))
-                implementation(libs.ktor.client.darwin)
-            }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
+        val desktopMain by getting
+        desktopMain.dependencies {
+            implementation(libs.ktor.client.cio)
+            implementation(compose.desktop.currentOs)
         }
     }
 }

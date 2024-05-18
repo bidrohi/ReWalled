@@ -11,3 +11,5 @@ captures/
 Pods/
 *.podspec
 google-services.json
+/app/reddit.db
+/.kotlin

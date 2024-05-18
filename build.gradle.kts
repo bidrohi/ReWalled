@@ -12,13 +12,9 @@ plugins {
     alias(libs.plugins.ksp).apply(false)
     alias(libs.plugins.sqldelight).apply(false)
     alias(libs.plugins.playPublisher).apply(false)
-    alias(libs.plugins.compose).apply(false)
+    alias(libs.plugins.jetbrains.compose).apply(false)
     alias(libs.plugins.google.services).apply(false)
     alias(libs.plugins.firebase.crashlytics).apply(false)
-}
-
-tasks.register("clean", Delete::class) {
-    delete(rootProject.layout.buildDirectory)
 }
 
 allprojects {
@@ -26,15 +22,16 @@ allprojects {
 }
 
 subprojects {
+    val jvmVersion = JavaVersion.VERSION_11
     afterEvaluate {
         (extensions.findByName("kotlinOptions") as? KotlinJvmOptions)?.apply {
-            jvmTarget = JavaVersion.VERSION_17.toString()
+            jvmTarget = jvmVersion.toString()
         }
         (extensions.findByName("kotlin") as? KotlinMultiplatformExtension)?.apply {
             androidTarget {
                 compilations.all {
                     kotlinOptions {
-                        jvmTarget = JavaVersion.VERSION_17.toString()
+                        jvmTarget = jvmVersion.toString()
                     }
                 }
             }
@@ -46,8 +43,8 @@ subprojects {
                 minSdk = 21
             }
             compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_17
-                targetCompatibility = JavaVersion.VERSION_17
+                sourceCompatibility = jvmVersion
+                targetCompatibility = jvmVersion
             }
             buildFeatures {
                 buildConfig = true

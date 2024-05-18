@@ -5,27 +5,22 @@ plugins {
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
-
     androidTarget()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    jvm()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":shared:model"))
-                implementation(libs.kotlin.serialization.json)
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.serialization.json)
-            }
+        commonMain.dependencies {
+            implementation(project(":shared:model"))
+            implementation(libs.kotlin.serialization.json)
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.serialization.json)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.ktor.client.mock)
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+            implementation(libs.ktor.client.mock)
         }
     }
 }

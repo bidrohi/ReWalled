@@ -5,37 +5,31 @@ plugins {
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
-
     androidTarget()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    jvm()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":shared:model"))
-                implementation(libs.kotlin.datetime)
-                implementation(libs.kotlin.serialization.json)
-                implementation(libs.sqldelight.runtime)
-                implementation(libs.sqldelight.coroutines)
-            }
+        commonMain.dependencies {
+            implementation(project(":shared:model"))
+            implementation(libs.kotlin.datetime)
+            implementation(libs.kotlin.serialization.json)
+            implementation(libs.sqldelight.runtime)
+            implementation(libs.sqldelight.coroutines)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.sqldelight.android)
-            }
+        androidMain.dependencies {
+            implementation(libs.sqldelight.android)
         }
-        val iosMain by getting {
-            dependencies {
-                implementation(libs.sqldelight.native)
-            }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native)
+        }
+        jvmMain.dependencies {
+            implementation(libs.sqldelight.sqlite)
         }
     }
 }

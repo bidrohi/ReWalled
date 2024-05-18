@@ -1,5 +1,5 @@
 [versions]
-androidGradle = "8.4.0"
+androidGradle = "8.4.1"
 kotlin = "1.9.23"
 kotlin-coroutines = "1.8.1"
 kotlin-datetime = "0.6.0"
@@ -7,13 +7,13 @@ kotlin-serialization-json = "1.6.3"
 ksp = "1.9.23-1.0.19"
 ktor = "2.3.11"
 sqldelight = "2.0.2"
-jetbrains-lifecycle = "2.8.0-beta02"
-jetbrains-navigation = "2.7.0-alpha03"
+jetbrains-compose = "1.6.10"
+jetbrains-lifecycle = "2.8.0"
+jetbrains-navigation = "2.7.0-alpha07"
 playPublisher = "3.9.1"
 kamel = "0.9.4"
 icons-feather = "1.1.0"
 androidx-activity = "1.9.0"
-compose-core = "1.6.2"
 google-services = "4.4.1"
 firebase-bom = "33.0.0"
 firebase-crashlytics-plugin = "3.0.1"
@@ -29,6 +29,7 @@ ktor-client-mock = { group = "io.ktor", name = "ktor-client-mock", version.ref =
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 ktor-client-encoding = { group = "io.ktor", name = "ktor-client-encoding", version.ref = "ktor" }
 ktor-client-contentNavigation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 ktor-serialization-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
@@ -36,6 +37,7 @@ sqldelight-runtime = { group = "app.cash.sqldelight", name = "runtime", version.
 sqldelight-coroutines = { group = "app.cash.sqldelight", name = "coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-android = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
 sqldelight-native = { group = "app.cash.sqldelight", name = "native-driver", version.ref = "sqldelight" }
+sqldelight-sqlite = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
 icons-feather = { group = "br.com.devsrsouza.compose.icons", name = "feather", version.ref = "icons-feather" }
 androidx-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 kamel = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
@@ -53,9 +55,9 @@ android-library = { id = "com.android.library", version.ref = "androidGradle" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 playPublisher = { id = "com.github.triplet.play", version.ref = "playPublisher" }
-compose = { id = "org.jetbrains.compose", version.ref = "compose-core" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }

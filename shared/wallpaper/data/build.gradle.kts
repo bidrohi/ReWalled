@@ -4,28 +4,23 @@ plugins {
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
-
     androidTarget()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    jvm()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":shared:model"))
-                implementation(project(":shared:service:reddit"))
-                implementation(project(":shared:wallpaper:cache"))
-                implementation(libs.kotlin.serialization.json)
-                implementation(libs.kotlin.coroutines)
-                api(libs.store5)
-            }
+        commonMain.dependencies {
+            implementation(project(":shared:model"))
+            implementation(project(":shared:service:reddit"))
+            implementation(project(":shared:wallpaper:cache"))
+            implementation(libs.kotlin.serialization.json)
+            implementation(libs.kotlin.coroutines)
+            api(libs.store5)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }

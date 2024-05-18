@@ -4,23 +4,18 @@ plugins {
 }
 
 kotlin {
-    applyDefaultHierarchyTemplate()
-
     androidTarget()
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+    jvm()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(libs.kotlin.serialization.json)
-            }
+        commonMain.dependencies {
+            implementation(libs.kotlin.serialization.json)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }
