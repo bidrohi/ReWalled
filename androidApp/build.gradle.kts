@@ -90,7 +90,6 @@ dependencies {
     implementation(project(":shared:library"))
 
     implementation(libs.androidx.activity)
-    implementation(libs.precompose.core)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

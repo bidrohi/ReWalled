@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubReddit
 import com.bidyut.tech.rewalled.model.Wallpaper
@@ -42,12 +43,11 @@ import compose.icons.feathericons.Filter
 import compose.icons.feathericons.Grid
 import compose.icons.feathericons.Home
 import compose.icons.feathericons.Loader
-import moe.tlaster.precompose.navigation.Navigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubRedditScreen(
-    navigator: Navigator,
+    navigator: NavController,
     modifier: Modifier = Modifier,
     viewModel: SubRedditViewModel,
 ) {

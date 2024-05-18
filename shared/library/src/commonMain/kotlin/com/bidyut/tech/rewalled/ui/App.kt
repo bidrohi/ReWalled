@@ -3,26 +3,27 @@ package com.bidyut.tech.rewalled.ui
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.bidyut.tech.rewalled.ui.screen.SubRedditScreen
 import com.bidyut.tech.rewalled.ui.screen.SubRedditViewModel
 import com.bidyut.tech.rewalled.ui.screen.WallpaperScreen
-import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.path
-import moe.tlaster.precompose.navigation.rememberNavigator
-import moe.tlaster.precompose.viewmodel.viewModel
 
 @Composable
 fun App() {
-    val subRedditViewModel = viewModel(SubRedditViewModel::class) {
+    val subRedditViewModel: SubRedditViewModel = viewModel {
         SubRedditViewModel()
     }
-    val navigator = rememberNavigator()
+    val navigator: NavHostController = rememberNavController()
     NavHost(
-        navigator = navigator,
-        initialRoute = Route.Grid.uri,
+        navController = navigator,
+        startDestination = Route.Grid.uri,
         modifier = Modifier.fillMaxSize(),
     ) {
-        scene(
+        composable(
             route = Route.Grid.uri,
         ) {
             SubRedditScreen(
@@ -31,11 +32,11 @@ fun App() {
                 viewModel = subRedditViewModel,
             )
         }
-        scene(
+        composable(
             route = Route.Wallpaper("{feedId}", "{id}").uri,
         ) {
-            val feedId = it.path<String>("feedId").orEmpty()
-            val id = it.path<String>("id").orEmpty()
+            val feedId = it.arguments?.getString("feedId").orEmpty()
+            val id = it.arguments?.getString("id").orEmpty()
             WallpaperScreen(
                 feedId = feedId,
                 wallpaperId = id,

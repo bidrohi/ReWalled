@@ -1,5 +1,5 @@
 package com.bidyut.tech.rewalled.ui
 
-import moe.tlaster.precompose.PreComposeApplication
+import androidx.compose.ui.window.ComposeUIViewController
 
-fun AppViewController() = PreComposeApplication { App() }
+fun AppViewController() = ComposeUIViewController { App() }

@@ -7,12 +7,13 @@ kotlin-serialization-json = "1.6.3"
 ksp = "1.9.23-1.0.19"
 ktor = "2.3.11"
 sqldelight = "2.0.2"
+jetbrains-lifecycle = "2.8.0-beta02"
+jetbrains-navigation = "2.7.0-alpha03"
 playPublisher = "3.9.1"
 kamel = "0.9.4"
 icons-feather = "1.1.0"
 androidx-activity = "1.9.0"
 compose-core = "1.6.2"
-precompose = "1.5.11"
 google-services = "4.4.1"
 firebase-bom = "33.0.0"
 firebase-crashlytics-plugin = "3.0.1"
@@ -38,8 +39,8 @@ sqldelight-native = { group = "app.cash.sqldelight", name = "native-driver", ver
 icons-feather = { group = "br.com.devsrsouza.compose.icons", name = "feather", version.ref = "icons-feather" }
 androidx-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 kamel = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
-precompose-core = { group = "moe.tlaster", name = "precompose", version.ref = "precompose" }
-precompose-viewmodel = { group = "moe.tlaster", name = "precompose-viewmodel", version.ref = "precompose" }
+jetbrains-lifecycle = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
+jetbrains-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "jetbrains-navigation" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }

@@ -39,10 +39,10 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.components.resources)
 
-                implementation(libs.icons.feather)
+                implementation(libs.jetbrains.lifecycle)
+                implementation(libs.jetbrains.navigation)
 
-                implementation(libs.precompose.core)
-                implementation(libs.precompose.viewmodel)
+                implementation(libs.icons.feather)
 
                 implementation(libs.kamel)
                 implementation(libs.kermit)

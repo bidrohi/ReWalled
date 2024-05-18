@@ -1,5 +1,7 @@
 package com.bidyut.tech.rewalled.ui.screen
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.bidyut.tech.rewalled.di.AppGraph
 import com.bidyut.tech.rewalled.model.Feed
@@ -12,8 +14,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import moe.tlaster.precompose.viewmodel.ViewModel
-import moe.tlaster.precompose.viewmodel.viewModelScope
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 class SubRedditViewModel : ViewModel() {
