@@ -7,6 +7,7 @@ import com.bidyut.tech.rewalled.data.WallpaperRepository
 import com.bidyut.tech.rewalled.service.reddit.RedditService
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.darwin.Darwin
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.compression.ContentEncoding
@@ -29,6 +30,7 @@ class IosAppGraph : AppGraph {
                     deflate(1.0F)
                     gzip(0.9F)
                 }
+                install(HttpTimeout)
                 install(HttpCache)
                 install(UserAgent) {
                     agent = "ReWalled"

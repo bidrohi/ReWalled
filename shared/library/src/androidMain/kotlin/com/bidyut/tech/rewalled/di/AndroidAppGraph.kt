@@ -9,6 +9,7 @@ import com.bidyut.tech.rewalled.data.WallpaperRepository
 import com.bidyut.tech.rewalled.service.reddit.RedditService
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.compression.ContentEncoding
@@ -19,12 +20,24 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 
 class AndroidAppGraph(
-    val appCtx: Context,
+    private val appCtx: Context,
     private val enableDebug: Boolean = false,
 ) : AppGraph {
     private val redditService by lazy {
         RedditService(
             HttpClient(Android) {
+                install(ContentNegotiation) {
+                    json(NetworkFactory.buildJson())
+                }
+                install(ContentEncoding) {
+                    deflate(1.0F)
+                    gzip(0.9F)
+                }
+                install(HttpTimeout)
+                install(HttpCache)
+                install(UserAgent) {
+                    agent = "ReWalled"
+                }
                 if (enableDebug) {
                     install(Logging) {
                         logger = object : Logger {
@@ -34,17 +47,6 @@ class AndroidAppGraph(
                         }
                         level = INFO
                     }
-                }
-                install(ContentNegotiation) {
-                    json(NetworkFactory.buildJson())
-                }
-                install(ContentEncoding) {
-                    deflate(1.0F)
-                    gzip(0.9F)
-                }
-                install(HttpCache)
-                install(UserAgent) {
-                    agent = "ReWalled"
                 }
             }
         )
