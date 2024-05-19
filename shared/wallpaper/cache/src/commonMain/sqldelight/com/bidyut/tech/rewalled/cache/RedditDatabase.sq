@@ -1,5 +1,5 @@
 -- wallpaper post
-CREATE TABLE WallpaperEntity (
+CREATE TABLE IF NOT EXISTS WallpaperEntity (
     id TEXT NOT NULL PRIMARY KEY,
     description TEXT NOT NULL,
     author TEXT NOT NULL,
@@ -22,7 +22,7 @@ removeAllWallpapers:
     DELETE FROM WallpaperEntity;
 
 -- feed tracking
-CREATE TABLE FeedEntity (
+CREATE TABLE IF NOT EXISTS FeedEntity (
     id TEXT NOT NULL PRIMARY KEY,
     before_cursor TEXT,
     before_cursor_validity TEXT,
@@ -64,12 +64,12 @@ removeAllFeed:
     DELETE FROM FeedEntity;
 
 -- order tracking
-CREATE TABLE FeedOrderEntity (
+CREATE TABLE IF NOT EXISTS FeedOrderEntity (
     feed_id TEXT NOT NULL,
     wallpaper_id TEXT NOT NULL,
     seq INTEGER NOT NULL
 );
-CREATE UNIQUE INDEX uniqueFeedOrderEntity ON FeedOrderEntity(feed_id, wallpaper_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uniqueFeedOrderEntity ON FeedOrderEntity(feed_id, wallpaper_id);
 
 insertFeedSeq:
     INSERT OR IGNORE INTO FeedOrderEntity(feed_id, wallpaper_id, seq)
