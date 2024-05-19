@@ -48,8 +48,8 @@ import compose.icons.feathericons.Loader
 @Composable
 fun SubRedditScreen(
     navigator: NavController,
-    modifier: Modifier = Modifier,
     viewModel: SubRedditViewModel,
+    modifier: Modifier = Modifier,
 ) {
     var subReddit by remember {
         mutableStateOf("Amoledbackgrounds")

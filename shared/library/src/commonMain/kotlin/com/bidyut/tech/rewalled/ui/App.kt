@@ -28,8 +28,8 @@ fun App() {
         ) {
             SubRedditScreen(
                 navigator = navigator,
-                modifier = Modifier.fillMaxSize(),
                 viewModel = subRedditViewModel,
+                modifier = Modifier.fillMaxSize(),
             )
         }
         composable(
@@ -40,8 +40,9 @@ fun App() {
             WallpaperScreen(
                 feedId = feedId,
                 wallpaperId = id,
-                modifier = Modifier.fillMaxSize(),
+                navigator = navigator,
                 viewModel = subRedditViewModel,
+                modifier = Modifier.fillMaxSize(),
             )
         }
     }

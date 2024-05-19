@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.model.FeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.getCurrentContext
@@ -30,6 +31,7 @@ import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 import com.bidyut.tech.rewalled.ui.triggerDownloadIntent
 import com.bidyut.tech.rewalled.ui.triggerShareIntent
 import compose.icons.FeatherIcons
+import compose.icons.feathericons.ArrowLeft
 import compose.icons.feathericons.Download
 import compose.icons.feathericons.ExternalLink
 import compose.icons.feathericons.Maximize
@@ -43,8 +45,9 @@ import io.kamel.image.asyncPainterResource
 fun WallpaperScreen(
     feedId: FeedId,
     wallpaperId: WallpaperId,
-    modifier: Modifier = Modifier,
+    navigator: NavController,
     viewModel: SubRedditViewModel,
+    modifier: Modifier = Modifier,
 ) {
     ReWalledTheme(
         isInDarkTheme = true,
@@ -75,6 +78,17 @@ fun WallpaperScreen(
                         BottomAppBar(
                             modifier = Modifier.alpha(0.9f),
                             actions = {
+                                IconButton(
+                                    modifier = Modifier.size(48.dp),
+                                    onClick = {
+                                        navigator.popBackStack()
+                                    },
+                                ) {
+                                    Icon(
+                                        FeatherIcons.ArrowLeft,
+                                        contentDescription = "Back",
+                                    )
+                                }
                                 IconButton(
                                     modifier = Modifier.size(48.dp),
                                     onClick = {
