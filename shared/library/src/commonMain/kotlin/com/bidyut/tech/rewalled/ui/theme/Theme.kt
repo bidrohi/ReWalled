@@ -8,8 +8,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 
 internal val DarkColorScheme = darkColorScheme(
-    primary = DarkGreen,
-    onPrimary = AntiFlashWhite,
+    primary = AntiFlashWhite,
+    onPrimary = DarkGreen,
     secondary = Orange,
     onSecondary = AntiFlashWhite,
     tertiary = FederalBlue,
