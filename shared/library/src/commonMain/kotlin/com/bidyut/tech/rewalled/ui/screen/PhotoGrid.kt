@@ -46,6 +46,7 @@ fun WallpaperCard(
 fun PhotoGrid(
     wallpapers: List<Wallpaper>,
     onWallpaperClick: (Wallpaper) -> Unit,
+    contentPadding: PaddingValues,
     hasMore: Boolean,
     onLoadMore: () -> Unit,
     modifier: Modifier = Modifier,
@@ -54,8 +55,8 @@ fun PhotoGrid(
     val screenWidthPx = getSystemWidthPx()
     LazyVerticalGrid(
         modifier = modifier,
+        contentPadding = contentPadding,
         columns = GridCells.Adaptive(minSize = 128.dp),
-        contentPadding = PaddingValues(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
