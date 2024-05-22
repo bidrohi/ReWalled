@@ -121,5 +121,6 @@ if (hasPlayPublisherKey) {
     play {
         serviceAccountCredentials.set(file(playPublisherKeyFile))
         defaultToAppBundles.set(true)
+        track.set("internal")
     }
 }
