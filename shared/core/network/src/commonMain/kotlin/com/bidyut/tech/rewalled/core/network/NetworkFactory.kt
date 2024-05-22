@@ -5,5 +5,6 @@ import kotlinx.serialization.json.Json
 object NetworkFactory {
     fun buildJson() = Json {
         ignoreUnknownKeys = true
+        isLenient = true
     }
 }
