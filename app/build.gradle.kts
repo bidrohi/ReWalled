@@ -8,8 +8,9 @@ import java.time.format.DateTimeFormatter
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.compose)
+    alias(libs.plugins.android.application)
     alias(libs.plugins.playPublisher)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -113,17 +114,6 @@ compose.desktop {
             packageName = "com.bidyut.tech.rewalled"
             packageVersion = "1.0.0"
         }
-    }
-}
-
-compose.experimental {
-    web.application {}
-}
-
-// FIXME: Workaround for a KCompiler issue; remove when we upgrade to Kotlin 2.0
-kotlin.targets.withType<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget> {
-    binaries.all {
-        freeCompilerArgs += "-Xdisable-phases=RemoveRedundantCallsToStaticInitializersPhase"
     }
 }
 

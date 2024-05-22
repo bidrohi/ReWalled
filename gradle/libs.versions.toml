@@ -1,10 +1,10 @@
 [versions]
 androidGradle = "8.4.1"
-kotlin = "1.9.23"
+kotlin = "2.0.0"
 kotlin-coroutines = "1.8.1"
 kotlin-datetime = "0.6.0"
 kotlin-serialization-json = "1.6.3"
-ksp = "1.9.23-1.0.19"
+ksp = "2.0.0-1.0.21"
 ktor = "2.3.11"
 sqldelight = "2.0.2"
 jetbrains-compose = "1.6.10"
@@ -53,6 +53,7 @@ store5 = { group = "org.mobilenativefoundation.store", name = "store5", version.
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
 android-library = { id = "com.android.library", version.ref = "androidGradle" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "jetbrains-compose" }
