@@ -50,9 +50,9 @@ actual fun triggerDownloadIntent(
         .getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
     val uri = Uri.parse(w.url)
     val request = DownloadManager.Request(uri)
-    request.setTitle("${w.id} by ${w.author}")
-    request.setDescription(w.description)
-    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+    request.setTitle(w.description)
+    request.setDescription("${w.id} by ${w.author}")
+    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.lastPathSegment)
     downloadManager.enqueue(request)
 }
