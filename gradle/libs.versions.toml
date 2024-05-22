@@ -16,7 +16,8 @@ icons-feather = "1.1.0"
 androidx-activity = "1.9.0"
 google-services = "4.4.1"
 firebase-bom = "33.0.0"
-firebase-crashlytics-plugin = "3.0.1"
+firebase-plugin-crashlytics = "3.0.1"
+firebase-plugin-performance = "1.4.2"
 kermit="2.0.3"
 store5="5.0.0-beta02"
 
@@ -46,6 +47,7 @@ jetbrains-navigation = { group = "org.jetbrains.androidx.navigation", name = "na
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
+firebase-performance = { group = "com.google.firebase", name = "firebase-perf" }
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 store5 = { group = "org.mobilenativefoundation.store", name = "store5", version.ref = "store5" }
 
@@ -61,4 +63,5 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 playPublisher = { id = "com.github.triplet.play", version.ref = "playPublisher" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-plugin-crashlytics" }
+firebase-performance = { id = "com.google.firebase.firebase-perf", version.ref = "firebase-plugin-performance" }
