@@ -267,9 +267,9 @@ fun SubRedditContents(
                 wallpapers = state.feed.wallpapers,
                 onWallpaperClick = onWallpaperClick,
                 contentPadding = contentPadding,
-                hasMore = state.feed.afterCursor != null,
+                afterCursor = state.feed.afterCursor,
                 onLoadMore = {
-                    onLoadMore(state.feed.afterCursor!!)
+                    onLoadMore(it)
                 },
             )
         }

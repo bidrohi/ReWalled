@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -47,8 +45,8 @@ fun PhotoGrid(
     wallpapers: List<Wallpaper>,
     onWallpaperClick: (Wallpaper) -> Unit,
     contentPadding: PaddingValues,
-    hasMore: Boolean,
-    onLoadMore: () -> Unit,
+    afterCursor: String?,
+    onLoadMore: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val ratio = getSystemRatio()
@@ -71,14 +69,10 @@ fun PhotoGrid(
                 modifier = Modifier.clickable { onWallpaperClick(it) }
             )
         }
-        if (wallpapers.isNotEmpty() && hasMore) {
-            item(
-                span = { GridItemSpan(maxLineSpan) },
-            ) {
-                Button(
-                    onClick = { onLoadMore() },
-                ) {
-                    Text("Load more")
+        if (wallpapers.isNotEmpty() && afterCursor?.isNotEmpty() == true) {
+            item {
+                LaunchedEffect(afterCursor) {
+                    onLoadMore(afterCursor)
                 }
             }
         }

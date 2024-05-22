@@ -53,6 +53,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.ktor.client.android)
             implementation(libs.androidx.activity)
+            implementation(libs.kotlin.coroutines.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -61,6 +62,7 @@ kotlin {
         desktopMain.dependencies {
             implementation(libs.ktor.client.cio)
             implementation(compose.desktop.currentOs)
+            implementation(libs.kotlin.coroutines.swing)
         }
     }
 }

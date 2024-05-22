@@ -16,7 +16,7 @@ kotlin {
             implementation(project(":shared:service:reddit"))
             implementation(project(":shared:wallpaper:cache"))
             implementation(libs.kotlin.serialization.json)
-            implementation(libs.kotlin.coroutines)
+            implementation(libs.kotlin.coroutines.core)
             api(libs.store5)
         }
         commonTest.dependencies {
