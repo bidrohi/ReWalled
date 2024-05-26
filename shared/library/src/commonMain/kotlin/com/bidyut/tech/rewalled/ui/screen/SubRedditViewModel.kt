@@ -34,7 +34,7 @@ class SubRedditViewModel : ViewModel() {
         makeFeedId(subReddit, filter)
     ) {
         repository.getWallpaperFeed(subReddit, filter).map { result ->
-            log.d("-> read from ${result.origin}: $result")
+            log.d("-> read from ${result.origin}: ${result::class}")
             when (result) {
                 is StoreReadResponse.Loading -> UiState.Loading
                 is StoreReadResponse.Data -> UiState.ShowContent(result.value)

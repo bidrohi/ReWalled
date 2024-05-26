@@ -1,5 +1,6 @@
 package com.bidyut.tech.rewalled.di
 
+import co.touchlab.kermit.Logger
 import com.bidyut.tech.rewalled.cache.Database
 import com.bidyut.tech.rewalled.cache.DatabaseDriverFactory
 import com.bidyut.tech.rewalled.core.network.NetworkFactory
@@ -12,14 +13,19 @@ import io.ktor.client.plugins.UserAgent
 import io.ktor.client.plugins.cache.HttpCache
 import io.ktor.client.plugins.compression.ContentEncoding
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel.INFO
-import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 class DesktopAppGraph(
     private val enableDebug: Boolean = false,
 ) : AppGraph {
+
+    private val log by lazy {
+        Logger.withTag("DesktopAppGraph")
+    }
+
     private val redditService by lazy {
         RedditService(
             HttpClient(CIO) {
@@ -37,12 +43,12 @@ class DesktopAppGraph(
                 }
                 if (enableDebug) {
                     install(Logging) {
-                        logger = object : Logger {
+                        logger = object : KtorLogger {
                             override fun log(message: String) {
-                                println("HTTP Client: $message")
+                                log.d("HTTP Client: $message")
                             }
                         }
-                        level = INFO
+                        level = LogLevel.INFO
                     }
                 }
             }

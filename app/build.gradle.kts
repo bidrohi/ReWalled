@@ -50,6 +50,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":shared:library"))
+            implementation(libs.kermit)
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity)

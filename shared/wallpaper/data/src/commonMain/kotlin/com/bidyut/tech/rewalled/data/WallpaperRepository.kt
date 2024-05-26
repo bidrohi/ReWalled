@@ -33,7 +33,8 @@ class WallpaperRepository(
                     Feed(
                         id = feedId,
                         wallpapers = children.flatMap {
-                            it.post?.toImageList()
+                            it.post?.takeIf { !it.over18 }
+                                ?.toImageList()
                                 .orEmpty()
                         },
                         afterCursor = response.data?.after,

@@ -15,4 +15,5 @@ data class Post(
     @SerialName("url") val url: String,
     @SerialName("thumbnail") val thumbnail: String,
     @SerialName("preview") val preview: Preview? = null,
+    @SerialName("over_18") val over18: Boolean = false,
 )
