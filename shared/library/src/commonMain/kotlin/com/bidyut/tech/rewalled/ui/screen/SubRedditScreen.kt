@@ -51,7 +51,6 @@ import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubReddit
 import com.bidyut.tech.rewalled.model.Wallpaper
-import com.bidyut.tech.rewalled.model.makeFeedId
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 import compose.icons.FeatherIcons
@@ -65,12 +64,6 @@ fun SubRedditScreen(
     viewModel: SubRedditViewModel,
     modifier: Modifier = Modifier,
 ) {
-    var subReddit by remember {
-        mutableStateOf("Amoledbackgrounds")
-    }
-    var filter by remember {
-        mutableStateOf(Filter.Rising)
-    }
     ReWalledTheme {
         val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
         Scaffold { paddingValues ->
@@ -84,7 +77,7 @@ fun SubRedditScreen(
                     start = paddingValues.calculateStartPadding(direction) + 8.dp,
                     end = paddingValues.calculateEndPadding(direction) + 8.dp,
                 )
-                val state = viewModel.getUiState(subReddit, filter)
+                val state = viewModel.getUiState()
                     .collectAsState(SubRedditViewModel.UiState.Loading)
                     .value
                 SubRedditContents(
@@ -92,22 +85,19 @@ fun SubRedditScreen(
                     state = state,
                     onWallpaperClick = {
                         navigator.navigate(
-                            Route.Wallpaper(
-                                makeFeedId(subReddit, filter),
-                                it.id
-                            ).uri
+                            Route.Wallpaper(viewModel.feedId, it.id).uri
                         )
                     },
                     contentPadding = contentPadding,
                     onLoadMore = { afterCursor ->
-                        viewModel.loadMoreAfter(subReddit, filter, afterCursor)
+                        viewModel.loadMoreAfter(afterCursor)
                     }
                 )
 
                 var isSubRedditMenuExpanded by remember {
                     mutableStateOf(false)
                 }
-                var mutableSubreddit by remember { mutableStateOf(subReddit) }
+                var mutableSubreddit by remember { mutableStateOf(viewModel.subReddit.value) }
                 val keyboardController = LocalSoftwareKeyboardController.current
                 val focusManager = LocalFocusManager.current
                 OutlinedTextField(
@@ -119,7 +109,7 @@ fun SubRedditScreen(
                     onValueChange = { mutableSubreddit = it },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
-                        subReddit = mutableSubreddit
+                        viewModel.subReddit.value = mutableSubreddit
                         keyboardController?.hide()
                         focusManager.clearFocus()
                     }),
@@ -151,7 +141,7 @@ fun SubRedditScreen(
                             modifier = Modifier.padding(horizontal = 8.dp),
                             onClick = { isFilterMenuExpanded = true },
                         ) {
-                            Text(filter.toString())
+                            Text(viewModel.filter.value.toString())
                         }
                         DropdownMenu(
                             modifier = Modifier.padding(horizontal = 16.dp),
@@ -159,7 +149,7 @@ fun SubRedditScreen(
                             onDismissRequest = { isFilterMenuExpanded = false },
                         ) {
                             for (value in Filter.entries) {
-                                val isSelected = filter == value
+                                val isSelected = viewModel.filter.value == value
                                 DropdownMenuItem(
                                     text = {
                                         Text(
@@ -177,7 +167,7 @@ fun SubRedditScreen(
                                         )
                                     },
                                     onClick = {
-                                        filter = value
+                                        viewModel.filter.value = value
                                         isFilterMenuExpanded = false
                                     },
                                 )
@@ -192,7 +182,7 @@ fun SubRedditScreen(
                     onDismissRequest = { isSubRedditMenuExpanded = false },
                 ) {
                     for (value in SubReddit.defaults) {
-                        val isSelected = subReddit == value
+                        val isSelected = viewModel.subReddit.value == value
                         DropdownMenuItem(
                             text = {
                                 Text(
@@ -222,7 +212,7 @@ fun SubRedditScreen(
                             },
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                subReddit = value
+                                viewModel.subReddit.value = value
                                 mutableSubreddit = value
                                 isSubRedditMenuExpanded = false
                             },

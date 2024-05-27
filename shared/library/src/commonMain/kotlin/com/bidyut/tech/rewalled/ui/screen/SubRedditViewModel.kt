@@ -1,5 +1,6 @@
 package com.bidyut.tech.rewalled.ui.screen
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
@@ -27,13 +28,15 @@ class SubRedditViewModel : ViewModel() {
 
     private val uiStateByFeedId = mutableMapOf<FeedId, Flow<UiState>>()
 
-    fun getUiState(
-        subReddit: String,
-        filter: Filter,
-    ): Flow<UiState> = uiStateByFeedId.getOrPut(
-        makeFeedId(subReddit, filter)
+    val subReddit = mutableStateOf("Amoledbackgrounds")
+    val filter = mutableStateOf(Filter.Rising)
+    val feedId: FeedId
+        get() = makeFeedId(subReddit.value, filter.value)
+
+    fun getUiState(): Flow<UiState> = uiStateByFeedId.getOrPut(
+        makeFeedId(subReddit.value, filter.value)
     ) {
-        repository.getWallpaperFeed(subReddit, filter).map { result ->
+        repository.getWallpaperFeed(subReddit.value, filter.value).map { result ->
             log.d("-> read from ${result.origin}: ${result::class}")
             when (result) {
                 is StoreReadResponse.Loading -> UiState.Loading
@@ -49,12 +52,10 @@ class SubRedditViewModel : ViewModel() {
     ): Flow<Feed> = repository.getCachedWallpaperFeed(feedId)
 
     fun loadMoreAfter(
-        subReddit: String,
-        filter: Filter,
         moreCursor: String,
     ) {
         viewModelScope.launch {
-            repository.getWallpaperFeed(subReddit, filter, moreCursor)
+            repository.getWallpaperFeed(subReddit.value, filter.value, moreCursor)
                 .filter { result ->
                     log.d("-> adding more from ${result.origin}: $result")
                     result is StoreReadResponse.Data
