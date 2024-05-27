@@ -7,6 +7,7 @@ kotlin-serialization-json = "1.6.3"
 ksp = "2.0.0-1.0.21"
 ktor = "2.3.11"
 sqldelight = "2.0.2"
+jdk-desugar = "2.0.4"
 jetbrains-compose = "1.6.10"
 jetbrains-lifecycle = "2.8.0"
 jetbrains-navigation = "2.7.0-alpha07"
@@ -44,6 +45,7 @@ sqldelight-sqlite = { group = "app.cash.sqldelight", name = "sqlite-driver", ver
 icons-feather = { group = "br.com.devsrsouza.compose.icons", name = "feather", version.ref = "icons-feather" }
 androidx-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 kamel = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
+jdk-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "jdk-desugar" }
 jetbrains-lifecycle = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
 jetbrains-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "jetbrains-navigation" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }

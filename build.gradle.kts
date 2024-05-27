@@ -47,6 +47,7 @@ subprojects {
             compileOptions {
                 sourceCompatibility = jvmVersion
                 targetCompatibility = jvmVersion
+                isCoreLibraryDesugaringEnabled = true
             }
             buildFeatures {
                 buildConfig = true
@@ -55,6 +56,9 @@ subprojects {
                 resources {
                     excludes += "/META-INF/{AL2.0,LGPL2.1}"
                 }
+            }
+            dependencies {
+                "coreLibraryDesugaring"(libs.jdk.desugar)
             }
         }
     }

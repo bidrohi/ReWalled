@@ -4,6 +4,7 @@ import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Environment
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
@@ -52,7 +53,11 @@ actual fun triggerDownloadIntent(
     val request = DownloadManager.Request(uri)
     request.setTitle(w.description)
     request.setDescription("${w.id} by ${w.author}")
-    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.lastPathSegment)
+    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        request.setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, uri.lastPathSegment)
+    } else {
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.lastPathSegment)
+    }
     downloadManager.enqueue(request)
 }
