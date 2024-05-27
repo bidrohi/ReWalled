@@ -54,6 +54,7 @@ kotlin {
         }
         androidMain.dependencies {
             implementation(libs.androidx.activity)
+            implementation(libs.androidx.splashscreen)
 
             implementation(project.dependencies.platform(libs.firebase.bom))
             implementation(libs.firebase.analytics)

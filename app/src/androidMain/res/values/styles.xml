@@ -5,4 +5,10 @@
         <item name="android:colorAccent">@color/accentColor</item>
         <item name="android:windowBackground">@color/surfaceColor</item>
     </style>
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/surfaceColor</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_round</item>
+        <item name="windowSplashScreenAnimationDuration">200</item>
+        <item name="postSplashScreenTheme">@style/AppTheme</item>
+    </style>
 </resources>

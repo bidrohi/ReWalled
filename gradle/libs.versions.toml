@@ -15,6 +15,7 @@ playPublisher = "3.9.1"
 kamel = "0.9.4"
 icons-feather = "1.1.0"
 androidx-activity = "1.9.0"
+androidx-splashscreen = "1.1.0-rc01"
 google-services = "4.4.1"
 firebase-bom = "33.0.0"
 firebase-plugin-crashlytics = "3.0.1"
@@ -44,6 +45,7 @@ sqldelight-native = { group = "app.cash.sqldelight", name = "native-driver", ver
 sqldelight-sqlite = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
 icons-feather = { group = "br.com.devsrsouza.compose.icons", name = "feather", version.ref = "icons-feather" }
 androidx-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
+androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splashscreen" }
 kamel = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
 jdk-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "jdk-desugar" }
 jetbrains-lifecycle = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
