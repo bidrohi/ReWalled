@@ -106,7 +106,9 @@ fun SubRedditScreen(
                         .padding(16.dp)
                         .align(Alignment.BottomCenter),
                     value = mutableSubreddit,
-                    onValueChange = { mutableSubreddit = it },
+                    onValueChange = {
+                        mutableSubreddit = it.replace(" ", "")
+                    },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         viewModel.subReddit.value = mutableSubreddit
