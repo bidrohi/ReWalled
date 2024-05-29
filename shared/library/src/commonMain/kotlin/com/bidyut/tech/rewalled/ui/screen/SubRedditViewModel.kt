@@ -28,7 +28,7 @@ class SubRedditViewModel : ViewModel() {
 
     private val uiStateByFeedId = mutableMapOf<FeedId, Flow<UiState>>()
 
-    val subReddit = mutableStateOf("Amoledbackgrounds")
+    val subReddit = mutableStateOf("EarthPorn")
     val filter = mutableStateOf(Filter.Rising)
     val feedId: FeedId
         get() = makeFeedId(subReddit.value, filter.value)
