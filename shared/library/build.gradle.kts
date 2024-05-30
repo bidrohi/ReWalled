@@ -8,13 +8,16 @@ plugins {
 kotlin {
     androidTarget()
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
             baseName = "ReWalledUI"
+            isStatic = true
+            freeCompilerArgs += listOf("-Xoverride-konan-properties=minVersion.ios=14.0")
             linkerOpts.add("-lsqlite3")
+
+            export(libs.nsexception)
         }
     }
     jvm("desktop")
@@ -57,6 +60,7 @@ kotlin {
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            api(libs.nsexception)
         }
         val desktopMain by getting
         desktopMain.dependencies {

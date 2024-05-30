@@ -2,6 +2,7 @@ package com.bidyut.tech.rewalled.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val TeaGreen = Color(0xFFCDF4CE)
 val ForestGreen = Color(0xFF548C2F)
 val CalPolyGreen = Color(0xFF125415)
 val DarkGreen = Color(0xFF072108)

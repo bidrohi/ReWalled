@@ -13,3 +13,4 @@ Pods/
 google-services.json
 /app/reddit.db
 /.kotlin
+GoogleService-Info.plist

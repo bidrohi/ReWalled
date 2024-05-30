@@ -20,8 +20,9 @@ google-services = "4.4.1"
 firebase-bom = "33.0.0"
 firebase-plugin-crashlytics = "3.0.1"
 firebase-plugin-performance = "1.4.2"
-kermit="2.0.3"
-store5="5.0.0-beta02"
+kermit = "2.0.3"
+store5 = "5.0.0-beta02"
+nsexception = "1.0.0-BETA-4"
 
 [libraries]
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
@@ -56,6 +57,7 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-performance = { group = "com.google.firebase", name = "firebase-perf" }
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
 store5 = { group = "org.mobilenativefoundation.store", name = "store5", version.ref = "store5" }
+nsexception = { group = "com.rickclephas.kmp", name = "nsexception-kt-core", version.ref = "nsexception" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradle" }
