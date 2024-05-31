@@ -1,23 +1,14 @@
 package com.bidyut.tech.rewalled.ui
 
 import androidx.compose.runtime.Composable
-import com.bidyut.tech.rewalled.model.Wallpaper
+
+expect class PlatformContext
 
 @Composable
-expect fun getCurrentContext(): Any
+expect fun getCurrentContext(): PlatformContext
 
 @Composable
 expect fun getSystemWidthPx(): Int
 
 @Composable
 expect fun getSystemRatio(): Float
-
-expect fun triggerShareIntent(
-    context: Any,
-    w: Wallpaper,
-)
-
-expect fun triggerDownloadIntent(
-    context: Any,
-    w: Wallpaper,
-)

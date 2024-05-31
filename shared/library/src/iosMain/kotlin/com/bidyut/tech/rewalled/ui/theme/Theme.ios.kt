@@ -11,7 +11,7 @@ internal actual fun isDynamicColorSupported(): Boolean {
 internal actual fun handleDynamicColorScheme(
     isInDarkTheme: Boolean,
 ): ColorScheme {
-    return DarkColorScheme
+    return if (isInDarkTheme) DarkColorScheme else LightColorScheme
 }
 
 @Composable

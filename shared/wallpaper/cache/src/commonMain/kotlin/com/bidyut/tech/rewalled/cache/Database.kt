@@ -85,7 +85,7 @@ class Database(
     ) {
         dbQuery.insertWallpaper(
             wallpaper.id,
-            wallpaper.description,
+            wallpaper.summary,
             wallpaper.author,
             wallpaper.url,
             wallpaper.postUrl,
@@ -163,7 +163,7 @@ class Database(
         resizedImages: String,
     ) = Wallpaper(
         id = id,
-        description = description,
+        summary = description,
         author = author,
         url = url,
         postUrl = postUrl,

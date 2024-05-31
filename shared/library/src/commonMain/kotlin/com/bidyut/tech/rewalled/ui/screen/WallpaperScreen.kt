@@ -28,8 +28,6 @@ import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.getCurrentContext
 import com.bidyut.tech.rewalled.ui.getSystemWidthPx
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
-import com.bidyut.tech.rewalled.ui.triggerDownloadIntent
-import com.bidyut.tech.rewalled.ui.triggerShareIntent
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
 import compose.icons.feathericons.Download
@@ -111,7 +109,7 @@ fun WallpaperScreen(
                                     modifier = Modifier.size(48.dp),
                                     onClick = {
                                         feed.wallpapers.getOrNull(pagerState.currentPage)?.let { w ->
-                                            triggerShareIntent(context, w)
+                                            viewModel.coordinator.triggerShareIntent(context, w)
                                         }
                                     },
                                 ) {
@@ -137,7 +135,7 @@ fun WallpaperScreen(
                             floatingActionButton = {
                                 FloatingActionButton(onClick = {
                                     feed.wallpapers.getOrNull(pagerState.currentPage)?.let { w ->
-                                        triggerDownloadIntent(context, w)
+                                        viewModel.coordinator.triggerDownloadIntent(context, w)
                                     }
                                 }) {
                                     Icon(
@@ -164,7 +162,7 @@ fun WallpaperScreen(
                                 padding(paddingValues)
                             }
                         },
-                        contentDescription = wallpaper.description,
+                        contentDescription = wallpaper.summary,
                         contentScale = if (isFullscreen) {
                             ContentScale.Crop
                         } else {

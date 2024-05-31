@@ -3,6 +3,7 @@ package com.bidyut.tech.rewalled.di
 import co.touchlab.kermit.Logger
 import com.bidyut.tech.rewalled.core.network.NetworkFactory
 import com.bidyut.tech.rewalled.data.WallpaperRepository
+import com.bidyut.tech.rewalled.ui.PlatformCoordinator
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
@@ -15,6 +16,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 abstract class AppGraph {
+    abstract val coordinator: PlatformCoordinator
     abstract val repository: WallpaperRepository
 
     internal val log by lazy {

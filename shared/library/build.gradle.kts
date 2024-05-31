@@ -18,13 +18,14 @@ kotlin {
             linkerOpts.add("-lsqlite3")
 
             export(libs.nsexception)
+            export(project(":shared:model"))
         }
     }
     jvm("desktop")
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":shared:model"))
+            api(project(":shared:model"))
             implementation(project(":shared:service:reddit"))
             implementation(project(":shared:wallpaper:cache"))
             implementation(project(":shared:wallpaper:data"))

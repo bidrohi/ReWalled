@@ -98,7 +98,7 @@ class WallpaperRepository(
 private fun Post.toImageList(): List<Wallpaper> = preview?.images?.map { image ->
     Wallpaper(
         id = id,
-        description = title,
+        summary = title,
         author = author,
         url = url,
         postUrl = "https://reddit.com$permalink",

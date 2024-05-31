@@ -3,7 +3,6 @@ package com.bidyut.tech.rewalled.ui.screen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import com.bidyut.tech.rewalled.di.AppGraph
 import com.bidyut.tech.rewalled.model.Feed
 import com.bidyut.tech.rewalled.model.FeedId
@@ -23,7 +22,11 @@ class SubRedditViewModel : ViewModel() {
     }
 
     private val log by lazy {
-        Logger.withTag("SubRedditViewModel")
+        AppGraph.instance.log
+    }
+
+    internal val coordinator by lazy {
+        AppGraph.instance.coordinator
     }
 
     private val uiStateByFeedId = mutableMapOf<FeedId, Flow<UiState>>()

@@ -10,6 +10,7 @@
 		058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557BA273AAA24004C7B11 /* Assets.xcassets */; };
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		6715578F2C09683800C34EA2 /* iOSCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6715578E2C09683800C34EA2 /* iOSCoordinator.swift */; };
 		672BBB492C080BCB0070FFEE /* NSExceptionKtCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 672BBB482C080BCB0070FFEE /* NSExceptionKtCrashlytics */; };
 		672BBB4C2C080E7E0070FFEE /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 672BBB4B2C080E7E0070FFEE /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		672BBB4E2C080E7E0070FFEE /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 672BBB4D2C080E7E0070FFEE /* FirebaseCrashlytics */; };
@@ -35,6 +36,7 @@
 		058557BA273AAA24004C7B11 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
+		6715578E2C09683800C34EA2 /* iOSCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iOSCoordinator.swift; sourceTree = "<group>"; };
 		672BBB522C0813400070FFEE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* ReWalled.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReWalled.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -86,6 +88,7 @@
 			isa = PBXGroup;
 			children = (
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
+				6715578E2C09683800C34EA2 /* iOSCoordinator.swift */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -232,6 +235,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6715578F2C09683800C34EA2 /* iOSCoordinator.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				7555FF83242A565900829871 /* ContentView.swift in Sources */,
 			);

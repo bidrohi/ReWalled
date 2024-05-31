@@ -4,7 +4,7 @@ typealias WallpaperId = String
 
 data class Wallpaper(
     val id: WallpaperId,
-    val description: String,
+    val summary: String,
     val author: String,
     val url: String,
     val postUrl: String,

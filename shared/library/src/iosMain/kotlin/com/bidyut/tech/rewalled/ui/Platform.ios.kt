@@ -1,13 +1,18 @@
 package com.bidyut.tech.rewalled.ui
 
 import androidx.compose.runtime.Composable
-import com.bidyut.tech.rewalled.model.Wallpaper
+import androidx.compose.ui.interop.LocalUIViewController
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIScreen
+import platform.UIKit.UIViewController
+
+actual class PlatformContext(
+    val viewController: UIViewController
+)
 
 @Composable
-actual fun getCurrentContext(): Any = Unit
+actual fun getCurrentContext(): PlatformContext = PlatformContext(LocalUIViewController.current)
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
@@ -29,18 +34,4 @@ actual fun getSystemRatio(): Float {
         size.height
     }
     return screenWidth.toFloat() / screenHeight.toFloat()
-}
-
-actual fun triggerShareIntent(
-    context: Any,
-    w: Wallpaper,
-) {
-    TODO("Not implemented yet")
-}
-
-actual fun triggerDownloadIntent(
-    context: Any,
-    w: Wallpaper,
-) {
-    TODO("Not implemented yet")
 }

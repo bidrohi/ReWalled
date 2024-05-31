@@ -34,7 +34,7 @@ fun WallpaperCard(
             resource = asyncPainterResource(wallpaper.getUriForSize(requestWidthPx)),
             modifier = Modifier.fillMaxWidth()
                 .aspectRatio(imageRatio),
-            contentDescription = wallpaper.description,
+            contentDescription = wallpaper.summary,
             contentScale = ContentScale.Crop,
         )
     }

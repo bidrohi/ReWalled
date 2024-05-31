@@ -16,7 +16,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
         Performance.sharedInstance().isInstrumentationEnabled = true
 
-        AppGraphCompanion.shared.assign(graph: IosAppGraph(enableDebug: true))
+        AppGraph.Companion.shared.assign(graph: IosAppGraph(iOSCoordinator(), enableDebug: true))
 
         return true
     }
