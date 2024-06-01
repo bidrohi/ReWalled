@@ -3,31 +3,32 @@ package com.bidyut.tech.rewalled.model
 class SubReddit {
     companion object {
         val defaults = listOf(
-            "Amoledbackgrounds",
-            "AnimeWallpaper",
             "BeachPorn",
             "BotanicalPorn",
             "CityPorn",
             "EarthPorn",
             "LakePorn",
-            "MinimalWallpaper",
-            "MobileWallpaper",
-            "S10Wallpapers",
             "SkyPorn",
             "SpacePorn",
-            "Verticalwallpapers",
             "VillagePorn",
-            "WQHD_Wallpaper",
             "WaterPorn",
             "WeatherPorn",
+
+            "AmoledBackgrounds",
+            "AnimeWallpaper",
             "iPhoneWallpapers",
             "iWallpaper",
-            "mobilewallpapers",
-            "multiwall",
-            "phonewallpaper",
-            "phonewallpapers",
-            "wallpaper",
-            "wallpapers",
+            "MinimalWallpaper",
+            "MobileWallpapers",
+            "MobileWallpaper",
+            "PhoneWallpapers",
+            "S10Wallpapers",
+            "VerticalWallpapers",
+            "WQHD_Wallpaper",
+
+            "MultiWall",
+            "Wallpaper",
+            "Wallpapers",
         )
     }
 }
