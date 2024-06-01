@@ -20,13 +20,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.model.FeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.getCurrentContext
-import com.bidyut.tech.rewalled.ui.getSystemWidthPx
+import com.bidyut.tech.rewalled.ui.getSystemWidth
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 import compose.icons.FeatherIcons
 import compose.icons.feathericons.ArrowLeft
@@ -56,7 +57,9 @@ fun WallpaperScreen(
         var isChromeShown by remember {
             mutableStateOf(true)
         }
-        val screenWidthPx = getSystemWidthPx()
+        val screenWidthPx = with(LocalDensity.current) {
+            getSystemWidth().roundToPx()
+        }
         val context = getCurrentContext()
         val uriHandler = LocalUriHandler.current
         viewModel.getWallpaperFeed(feedId).collectAsState(initial = null).value?.let { feed ->

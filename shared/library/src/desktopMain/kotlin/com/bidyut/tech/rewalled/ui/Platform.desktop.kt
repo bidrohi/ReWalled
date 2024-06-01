@@ -1,8 +1,8 @@
 package com.bidyut.tech.rewalled.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.window.rememberWindowState
-import kotlin.math.roundToInt
 
 actual class PlatformContext
 
@@ -10,9 +10,9 @@ actual class PlatformContext
 actual fun getCurrentContext(): PlatformContext = PlatformContext()
 
 @Composable
-actual fun getSystemWidthPx(): Int {
+actual fun getSystemWidth(): Dp {
     val windowState = rememberWindowState()
-    return windowState.size.width.value.roundToInt()
+    return windowState.size.width
 }
 
 @Composable

@@ -2,6 +2,8 @@ package com.bidyut.tech.rewalled.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.interop.LocalUIViewController
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIScreen
@@ -16,12 +18,10 @@ actual fun getCurrentContext(): PlatformContext = PlatformContext(LocalUIViewCon
 
 @OptIn(ExperimentalForeignApi::class)
 @Composable
-actual fun getSystemWidthPx(): Int {
-    val screenWidth = UIScreen.mainScreen.bounds.useContents {
-        size.width
+actual fun getSystemWidth(): Dp {
+    return UIScreen.mainScreen.bounds.useContents {
+        size.width.dp
     }
-    val scale = UIScreen.mainScreen.scale
-    return (screenWidth * scale).toInt()
 }
 
 @OptIn(ExperimentalForeignApi::class)

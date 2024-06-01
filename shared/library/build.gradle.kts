@@ -31,6 +31,8 @@ kotlin {
             implementation(project(":shared:wallpaper:data"))
             implementation(project(":shared:core:network"))
 
+            implementation(libs.kotlin.coroutines.core)
+
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.client.encoding)

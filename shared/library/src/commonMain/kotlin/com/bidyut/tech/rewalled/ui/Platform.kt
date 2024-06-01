@@ -1,6 +1,7 @@
 package com.bidyut.tech.rewalled.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 
 expect class PlatformContext
 
@@ -8,7 +9,7 @@ expect class PlatformContext
 expect fun getCurrentContext(): PlatformContext
 
 @Composable
-expect fun getSystemWidthPx(): Int
+expect fun getSystemWidth(): Dp
 
 @Composable
 expect fun getSystemRatio(): Float
