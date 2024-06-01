@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -84,6 +85,22 @@ fun WallpaperScreen(
                 pageCount = { feed.wallpapers.size }
             )
             Scaffold(
+                modifier = modifier,
+                floatingActionButtonPosition = FabPosition.EndOverlay,
+                floatingActionButton = {
+                    if (isChromeShown) {
+                        FloatingActionButton(onClick = {
+                            feed.wallpapers.getOrNull(pagerState.currentPage)?.let { w ->
+                                viewModel.coordinator.triggerDownloadIntent(context, w)
+                            }
+                        }) {
+                            Icon(
+                                FeatherIcons.Download,
+                                contentDescription = "Download",
+                            )
+                        }
+                    }
+                },
                 bottomBar = {
                     AnimatedContent(
                         targetState = isChromeShown,
@@ -95,86 +112,66 @@ fun WallpaperScreen(
                     ) { showBottomBar ->
                         if (showBottomBar) {
                             BottomAppBar(
-                                modifier = Modifier.alpha(0.9f),
-                                actions = {
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        onClick = {
-                                            navigator.popBackStack()
-                                        },
-                                    ) {
+                                modifier = Modifier.alpha(0.8f),
+                            actions = {
+                                IconButton(
+                                    modifier = Modifier.size(48.dp),
+                                    onClick = {
+                                        navigator.popBackStack()
+                                    },
+                                ) {
+                                    Icon(
+                                        FeatherIcons.ArrowLeft,
+                                        contentDescription = "Back",
+                                    )
+                                }
+                                IconButton(
+                                    modifier = Modifier.size(48.dp),
+                                    onClick = {
+                                        isFullscreen = !isFullscreen
+                                    },
+                                ) {
+                                    if (isFullscreen) {
                                         Icon(
-                                            FeatherIcons.ArrowLeft,
-                                            contentDescription = "Back",
+                                            FeatherIcons.Minimize,
+                                            contentDescription = "Fit",
                                         )
-                                    }
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        onClick = {
-                                            isFullscreen = !isFullscreen
-                                        },
-                                    ) {
-                                        if (isFullscreen) {
-                                            Icon(
-                                                FeatherIcons.Minimize,
-                                                contentDescription = "Fit",
-                                            )
-                                        } else {
-                                            Icon(
-                                                FeatherIcons.Maximize,
-                                                contentDescription = "Fill",
-                                            )
-                                        }
-                                    }
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        onClick = {
-                                            feed.wallpapers.getOrNull(pagerState.currentPage)
-                                                ?.let { w ->
-                                                    viewModel.coordinator.triggerShareIntent(
-                                                        context,
-                                                        w
-                                                    )
-                                                }
-                                        },
-                                    ) {
+                                    } else {
                                         Icon(
-                                            FeatherIcons.Share,
-                                            contentDescription = "Share",
-                                        )
-                                    }
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        onClick = {
-                                            feed.wallpapers.getOrNull(pagerState.currentPage)?.let {
-                                                uriHandler.openUri(it.postUrl)
-                                            }
-                                        },
-                                    ) {
-                                        Icon(
-                                            FeatherIcons.ExternalLink,
-                                            contentDescription = "Open source",
-                                        )
-                                    }
-                                },
-                                floatingActionButton = {
-                                    FloatingActionButton(onClick = {
-                                        feed.wallpapers.getOrNull(pagerState.currentPage)
-                                            ?.let { w ->
-                                                viewModel.coordinator.triggerDownloadIntent(
-                                                    context,
-                                                    w
-                                                )
-                                            }
-                                    }) {
-                                        Icon(
-                                            FeatherIcons.Download,
-                                            contentDescription = "Download",
+                                            FeatherIcons.Maximize,
+                                            contentDescription = "Fill",
                                         )
                                     }
                                 }
-                            )
-                        }
+                                IconButton(
+                                    modifier = Modifier.size(48.dp),
+                                    onClick = {
+                                        feed.wallpapers.getOrNull(pagerState.currentPage)
+                                            ?.let { w ->
+                                                viewModel.coordinator.triggerShareIntent(context, w)
+                                            }
+                                    },
+                                ) {
+                                    Icon(
+                                        FeatherIcons.Share,
+                                        contentDescription = "Share",
+                                    )
+                                }
+                                IconButton(
+                                    modifier = Modifier.size(48.dp),
+                                    onClick = {
+                                        feed.wallpapers.getOrNull(pagerState.currentPage)?.let {
+                                            uriHandler.openUri(it.postUrl)
+                                        }
+                                    },
+                                ) {
+                                    Icon(
+                                        FeatherIcons.ExternalLink,
+                                        contentDescription = "Open source",
+                                    )
+                                }
+                            },
+                        )}
                     }
                 }
             ) { paddingValues ->
@@ -191,7 +188,7 @@ fun WallpaperScreen(
                     ) { isCropped ->
                         KamelImage(
                             resource = { asyncPainterResource(wallpaper.getUriForSize(screenWidthPx)) },
-                            modifier = modifier.clickable {
+                            modifier = Modifier.clickable {
                                 isChromeShown = !isChromeShown
                             }.apply {
                                 if (!isCropped) {

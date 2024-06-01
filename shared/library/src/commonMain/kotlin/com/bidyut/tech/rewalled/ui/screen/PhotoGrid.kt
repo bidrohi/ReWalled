@@ -28,6 +28,7 @@ fun WallpaperCard(
     requestWidth: Dp,
     imageRatio: Float,
     modifier: Modifier = Modifier,
+    cornerRadius: Dp = 16.dp,
 ) {
     val requestWidthPx = with(LocalDensity.current) {
         requestWidth.roundToPx()
@@ -35,7 +36,7 @@ fun WallpaperCard(
     KamelImage(
         resource = { asyncPainterResource(wallpaper.getUriForSize(requestWidthPx)) },
         modifier = modifier.aspectRatio(imageRatio)
-            .clip(RoundedCornerShape(16.dp)),
+            .clip(RoundedCornerShape(cornerRadius)),
         contentDescription = wallpaper.summary,
         contentScale = ContentScale.Crop,
     )
