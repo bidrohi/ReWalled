@@ -18,7 +18,7 @@ import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 class SubRedditViewModel : ViewModel() {
     private val repository by lazy {
-        AppGraph.instance.repository
+        AppGraph.instance.wallpaperRepository
     }
 
     private val log by lazy {

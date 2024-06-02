@@ -40,7 +40,7 @@ class DesktopAppGraph(
         )
     }
 
-    override val repository by lazy {
+    override val wallpaperRepository by lazy {
         WallpaperRepository(
             Database(DatabaseDriverFactory()),
             redditService,

@@ -29,7 +29,7 @@ class IosAppGraph(
         )
     }
 
-    override val repository: WallpaperRepository by lazy {
+    override val wallpaperRepository: WallpaperRepository by lazy {
         WallpaperRepository(
             Database(DatabaseDriverFactory()),
             redditService,
