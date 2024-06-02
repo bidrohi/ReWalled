@@ -1,22 +1,28 @@
 package com.bidyut.tech.rewalled.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.window.rememberWindowState
 
 actual class PlatformContext
 
 @Composable
 actual fun getCurrentContext(): PlatformContext = PlatformContext()
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 actual fun getSystemWidth(): Dp {
-    val windowState = rememberWindowState()
-    return windowState.size.width
+    val windowInfo = LocalWindowInfo.current
+    return with(LocalDensity.current) {
+        return windowInfo.containerSize.width.toDp()
+    }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 actual fun getSystemRatio(): Float {
-    val windowState = rememberWindowState()
-    return windowState.size.width.value / windowState.size.height.value
+    val windowInfo = LocalWindowInfo.current
+    return windowInfo.containerSize.width.toFloat() / windowInfo.containerSize.height.toFloat()
 }
