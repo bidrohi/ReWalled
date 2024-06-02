@@ -13,4 +13,10 @@ enum class Filter(
     ;
 
     override fun toString(): String = value
+
+    companion object {
+        fun fromString(
+            value: String
+        ): Filter = entries.firstOrNull { it.value == value } ?: Rising
+    }
 }

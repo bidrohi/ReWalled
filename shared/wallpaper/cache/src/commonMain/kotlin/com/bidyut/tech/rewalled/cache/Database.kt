@@ -4,8 +4,8 @@ import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOne
-import com.bidyut.tech.rewalled.model.Feed
-import com.bidyut.tech.rewalled.model.FeedId
+import com.bidyut.tech.rewalled.model.SubredditFeed
+import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.model.WallpaperId
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,7 @@ class Database(
     private val dispatcher = Dispatchers.Unconfined
 
     internal suspend fun insertWallpapersOnFeedBefore(
-        feedId: FeedId,
+        feedId: SubredditFeedId,
         wallpapers: List<Wallpaper>,
         beforeCursor: String,
     ) = withContext(Dispatchers.IO) {
@@ -52,7 +52,7 @@ class Database(
     }
 
     suspend fun insertWallpapersOnFeedAfter(
-        feedId: FeedId,
+        feedId: SubredditFeedId,
         wallpapers: List<Wallpaper>,
         afterCursor: String?,
         replaceAll: Boolean = false,
@@ -96,17 +96,17 @@ class Database(
     }
 
     internal fun getFeedBeforeCursor(
-        feedId: FeedId,
+        feedId: SubredditFeedId,
     ) = dbQuery.selectFeedBeforeCursor(feedId)
         .executeAsOneOrNull()?.before_cursor
 
     internal fun getFeedAfterCursor(
-        feedId: FeedId,
+        feedId: SubredditFeedId,
     ) = dbQuery.selectFeedAfterCursor(feedId)
         .executeAsOneOrNull()?.after_cursor
 
     private fun getWallpaperFeedQuery(
-        feedId: FeedId,
+        feedId: SubredditFeedId,
     ): Query<Wallpaper> =
         dbQuery.selectWallpaperFeedById(
             feedId,
@@ -115,12 +115,12 @@ class Database(
         )
 
     fun getWallpaperFeed(
-        feedId: FeedId,
-    ): Flow<Feed> =
+        feedId: SubredditFeedId,
+    ): Flow<SubredditFeed> =
         getWallpaperFeedQuery(feedId).asFlow()
             .mapToList(dispatcher)
             .map {
-                Feed(
+                SubredditFeed(
                     id = feedId,
                     wallpapers = it,
                     afterCursor = getFeedAfterCursor(feedId)
@@ -128,9 +128,9 @@ class Database(
             }
 
     suspend fun getWallpaperFeedAsync(
-        feedId: FeedId,
-    ): Feed = withContext(Dispatchers.IO) {
-        Feed(
+        feedId: SubredditFeedId,
+    ): SubredditFeed = withContext(Dispatchers.IO) {
+        SubredditFeed(
             id = feedId,
             wallpapers = getWallpaperFeedQuery(feedId).executeAsList(),
             afterCursor = getFeedAfterCursor(feedId)

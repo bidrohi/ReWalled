@@ -4,10 +4,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bidyut.tech.rewalled.di.AppGraph
-import com.bidyut.tech.rewalled.model.Feed
-import com.bidyut.tech.rewalled.model.FeedId
 import com.bidyut.tech.rewalled.model.Filter
-import com.bidyut.tech.rewalled.model.makeFeedId
+import com.bidyut.tech.rewalled.model.SubredditFeed
+import com.bidyut.tech.rewalled.model.SubredditFeedId
+import com.bidyut.tech.rewalled.model.makeSubredditFeedId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -29,15 +29,15 @@ class SubRedditViewModel : ViewModel() {
         AppGraph.instance.coordinator
     }
 
-    private val uiStateByFeedId = mutableMapOf<FeedId, Flow<UiState>>()
+    private val uiStateByFeedId = mutableMapOf<SubredditFeedId, Flow<UiState>>()
 
     val subReddit = mutableStateOf("EarthPorn")
     val filter = mutableStateOf(Filter.Rising)
-    val feedId: FeedId
-        get() = makeFeedId(subReddit.value, filter.value)
+    val feedId: SubredditFeedId
+        get() = makeSubredditFeedId(subReddit.value, filter.value)
 
     fun getUiState(): Flow<UiState> = uiStateByFeedId.getOrPut(
-        makeFeedId(subReddit.value, filter.value)
+        makeSubredditFeedId(subReddit.value, filter.value)
     ) {
         repository.getWallpaperFeed(subReddit.value, filter.value).map { result ->
             log.d("-> read from ${result.origin}: ${result::class}")
@@ -51,8 +51,8 @@ class SubRedditViewModel : ViewModel() {
     }
 
     fun getWallpaperFeed(
-        feedId: FeedId,
-    ): Flow<Feed> = repository.getCachedWallpaperFeed(feedId)
+        feedId: SubredditFeedId,
+    ): Flow<SubredditFeed> = repository.getCachedWallpaperFeed(feedId)
 
     fun loadMoreAfter(
         moreCursor: String,
@@ -72,7 +72,7 @@ class SubRedditViewModel : ViewModel() {
         data object Loading : UiState
         data object Error : UiState
         data class ShowContent(
-            val feed: Feed,
+            val feed: SubredditFeed,
         ) : UiState
     }
 }

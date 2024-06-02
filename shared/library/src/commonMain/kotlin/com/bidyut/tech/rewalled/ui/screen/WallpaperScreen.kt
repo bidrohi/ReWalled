@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.bidyut.tech.rewalled.model.FeedId
+import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.getCurrentContext
 import com.bidyut.tech.rewalled.ui.getSystemWidth
@@ -42,7 +42,7 @@ import io.kamel.image.asyncPainterResource
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WallpaperScreen(
-    feedId: FeedId,
+    feedId: SubredditFeedId,
     wallpaperId: WallpaperId,
     navigator: NavController,
     viewModel: SubRedditViewModel,
