@@ -9,9 +9,7 @@ import android.os.Environment
 import androidx.core.content.ContextCompat
 import com.bidyut.tech.rewalled.cache.Database
 import com.bidyut.tech.rewalled.cache.DatabaseDriverFactory
-import com.bidyut.tech.rewalled.data.WallpaperRepository
 import com.bidyut.tech.rewalled.model.Wallpaper
-import com.bidyut.tech.rewalled.service.reddit.RedditService
 import com.bidyut.tech.rewalled.ui.PlatformContext
 import com.bidyut.tech.rewalled.ui.PlatformCoordinator
 import io.ktor.client.HttpClient
@@ -21,6 +19,16 @@ class AndroidAppGraph(
     private val appCtx: Context,
     enableDebug: Boolean = false,
 ) : AppGraph() {
+
+    override val database by lazy {
+        Database(DatabaseDriverFactory(appCtx))
+    }
+
+    override val httpClient by lazy {
+        HttpClient(Android) {
+            baseConfiguration(enableDebug)
+        }
+    }
 
     override val coordinator by lazy {
         object : PlatformCoordinator {
@@ -58,20 +66,5 @@ class AndroidAppGraph(
                 downloadManager.enqueue(request)
             }
         }
-    }
-
-    private val redditService by lazy {
-        RedditService(
-            HttpClient(Android) {
-                baseConfiguration(enableDebug)
-            }
-        )
-    }
-
-    override val wallpaperRepository by lazy {
-        WallpaperRepository(
-            Database(DatabaseDriverFactory(appCtx)),
-            redditService,
-        )
     }
 }

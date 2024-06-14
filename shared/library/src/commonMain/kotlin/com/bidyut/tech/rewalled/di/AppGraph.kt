@@ -1,9 +1,12 @@
 package com.bidyut.tech.rewalled.di
 
 import co.touchlab.kermit.Logger
+import com.bidyut.tech.rewalled.cache.Database
 import com.bidyut.tech.rewalled.core.network.NetworkFactory
 import com.bidyut.tech.rewalled.data.WallpaperRepository
+import com.bidyut.tech.rewalled.service.reddit.RedditService
 import com.bidyut.tech.rewalled.ui.PlatformCoordinator
+import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.UserAgent
@@ -16,15 +19,16 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
 abstract class AppGraph {
+    protected abstract val database: Database
+    protected abstract val httpClient: HttpClient
     abstract val coordinator: PlatformCoordinator
-    abstract val wallpaperRepository: WallpaperRepository
 
     internal val log by lazy {
         Logger.withTag("ReWalled")
     }
 
     protected fun HttpClientConfig<*>.baseConfiguration(
-        enableDebug: Boolean = false,
+        enableDebug: Boolean,
     ) {
         install(ContentNegotiation) {
             json(NetworkFactory.buildJson())
@@ -48,6 +52,14 @@ abstract class AppGraph {
                 level = LogLevel.INFO
             }
         }
+    }
+
+    private val redditService by lazy {
+        RedditService(httpClient)
+    }
+
+    val wallpaperRepository by lazy {
+        WallpaperRepository(database, redditService)
     }
 
     companion object {
