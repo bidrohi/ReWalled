@@ -6,7 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import co.touchlab.kermit.Logger
-import com.bidyut.tech.rewalled.data.WallpaperRepository
+import com.bidyut.tech.bhandar.ReadResult
+import com.bidyut.tech.rewalled.data.SubredditFeedRepository
 import com.bidyut.tech.rewalled.di.AppGraph
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeed
@@ -19,11 +20,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import org.mobilenativefoundation.store.store5.StoreReadResponse
 
 class SubRedditViewModel(
     private val log: Logger,
-    private val repository: WallpaperRepository,
+    private val repository: SubredditFeedRepository,
     val coordinator: PlatformCoordinator,
 ) : ViewModel() {
 
@@ -38,12 +38,11 @@ class SubRedditViewModel(
         makeSubredditFeedId(subReddit.value, filter.value)
     ) {
         repository.getWallpaperFeed(subReddit.value, filter.value).map { result ->
-            log.d("-> read from ${result.origin}: ${result::class}")
+            log.d("-> read: ${result::class}")
             when (result) {
-                is StoreReadResponse.Loading -> UiState.Loading
-                is StoreReadResponse.Data -> UiState.ShowContent(result.value)
-                is StoreReadResponse.Error -> UiState.Error
-                is StoreReadResponse.NoNewData -> TODO()
+                is ReadResult.Loading -> UiState.Loading
+                is ReadResult.Data -> UiState.ShowContent(result.data)
+                is ReadResult.Error -> UiState.Error
             }
         }
     }
@@ -58,8 +57,8 @@ class SubRedditViewModel(
         viewModelScope.launch {
             repository.getWallpaperFeed(subReddit.value, filter.value, moreCursor)
                 .filter { result ->
-                    log.d("-> adding more from ${result.origin}: $result")
-                    result is StoreReadResponse.Data
+                    log.d("-> adding more: $result")
+                    result is ReadResult.Data
                 }
                 .take(1)
                 .collect()
@@ -70,7 +69,7 @@ class SubRedditViewModel(
         data object Loading : UiState
         data object Error : UiState
         data class ShowContent(
-            val feed: SubredditFeed,
+            val feed: SubredditFeed?,
         ) : UiState
     }
 
@@ -80,7 +79,7 @@ class SubRedditViewModel(
                 val appGraph = AppGraph.instance
                 SubRedditViewModel(
                     appGraph.log,
-                    appGraph.wallpaperRepository,
+                    appGraph.subredditFeedRepository,
                     appGraph.coordinator,
                 )
             }

@@ -16,7 +16,7 @@ kotlin {
             implementation(project(":shared:wallpaper:cache"))
             implementation(libs.kotlin.serialization.json)
             implementation(libs.kotlin.coroutines.core)
-            api(libs.store5)
+            api(libs.bhandar)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

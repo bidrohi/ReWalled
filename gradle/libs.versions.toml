@@ -20,8 +20,8 @@ google-services = "4.4.2"
 firebase-bom = "33.1.0"
 firebase-plugin-crashlytics = "3.0.1"
 firebase-plugin-performance = "1.4.2"
-kermit = "2.0.3"
-store5 = "5.0.0-beta02"
+kermit = "2.0.4"
+bhandar = "0.1.0"
 nsexception = "1.0.0-BETA-4"
 
 [libraries]
@@ -56,7 +56,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-performance = { group = "com.google.firebase", name = "firebase-perf" }
 kermit = { group = "co.touchlab", name = "kermit", version.ref = "kermit" }
-store5 = { group = "org.mobilenativefoundation.store", name = "store5", version.ref = "store5" }
+bhandar = { group = "com.bidyut.tech.bhandar", name = "bhandar", version.ref = "bhandar" }
 nsexception = { group = "com.rickclephas.kmp", name = "nsexception-kt-core", version.ref = "nsexception" }
 
 [plugins]

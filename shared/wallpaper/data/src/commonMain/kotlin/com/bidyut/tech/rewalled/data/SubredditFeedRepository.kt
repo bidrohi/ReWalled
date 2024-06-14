@@ -1,5 +1,9 @@
 package com.bidyut.tech.rewalled.data
 
+import com.bidyut.tech.bhandar.Bhandar
+import com.bidyut.tech.bhandar.DataFetcher
+import com.bidyut.tech.bhandar.ReadResult
+import com.bidyut.tech.bhandar.Storage
 import com.bidyut.tech.rewalled.cache.Database
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.ImageDetail
@@ -12,41 +16,34 @@ import com.bidyut.tech.rewalled.service.reddit.json.Post
 import com.bidyut.tech.rewalled.service.reddit.json.Source
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import org.mobilenativefoundation.store.store5.Fetcher
-import org.mobilenativefoundation.store.store5.MemoryPolicy
-import org.mobilenativefoundation.store.store5.SourceOfTruth
-import org.mobilenativefoundation.store.store5.Store
-import org.mobilenativefoundation.store.store5.StoreBuilder
-import org.mobilenativefoundation.store.store5.StoreReadRequest
-import org.mobilenativefoundation.store.store5.StoreReadResponse
-import kotlin.time.Duration.Companion.minutes
 
-class WallpaperRepository(
+class SubredditFeedRepository(
     private val database: Database,
     private val service: RedditService,
-) : Store<WallpaperRepository.Request, SubredditFeed> by StoreBuilder.from(
-    fetcher = Fetcher.of<Request, SubredditFeed> { request ->
-        service.getPosts(request.subreddit, request.filter, after = request.after).fold(
-            onSuccess = { response ->
-                val feedId = makeSubredditFeedId(request.subreddit, request.filter)
-                response.data?.children?.let { children ->
-                    SubredditFeed(
-                        id = feedId,
-                        wallpapers = children.flatMap {
-                            it.post?.takeIf { !it.over18 }
-                                ?.toImageList()
-                                .orEmpty()
-                        },
-                        afterCursor = response.data?.after,
-                    )
-                } ?: SubredditFeed(id = feedId)
-            }, onFailure = {
-                throw it
-            }
-        )
+) : Bhandar<SubredditFeedRepository.Request, SubredditFeed>(
+    fetcher = DataFetcher.of { request ->
+        service.getPosts(
+            request.subreddit,
+            request.filter,
+            after = request.after,
+        ).map { response ->
+            val feedId = makeSubredditFeedId(request.subreddit, request.filter)
+            response.data?.children?.let { children ->
+                SubredditFeed(
+                    id = feedId,
+                    wallpapers = children.flatMap { item ->
+                        item.post?.takeIf { !it.over18 }
+                            ?.toImageList()
+                            .orEmpty()
+                    },
+                    afterCursor = response.data?.after,
+                )
+            } ?: SubredditFeed(id = feedId)
+        }
     },
-    sourceOfTruth = SourceOfTruth.of(
-        reader = { request ->
+    storage = Storage.Companion.of(
+        isValid = { it?.wallpapers?.isNotEmpty() == true },
+        read = { request ->
             database.getWallpaperFeed(makeSubredditFeedId(request.subreddit, request.filter))
                 .map {
                     if (it.afterCursor != null && it.afterCursor == request.after) {
@@ -56,39 +53,31 @@ class WallpaperRepository(
                     }
                 }
         },
-        writer = { request, feed ->
+        write = { request, data ->
             val feedId = makeSubredditFeedId(request.subreddit, request.filter)
             database.insertWallpapersOnFeedAfter(
                 feedId,
-                feed.wallpapers,
-                feed.afterCursor,
+                data.wallpapers,
+                data.afterCursor,
                 replaceAll = request.after == null,
             )
-        },
-    )
-).cachePolicy(
-    MemoryPolicy.builder<Request, SubredditFeed>()
-        .setMaxSize(10)
-        .setExpireAfterAccess(30.minutes)
-        .build()
-).build() {
-
+        }
+    ),
+) {
     fun getWallpaperFeed(
         subreddit: String,
         filter: Filter,
         after: String? = null,
-    ): Flow<StoreReadResponse<SubredditFeed>> = stream(
-        StoreReadRequest.cached(
-            Request(subreddit, filter, after),
-            refresh = true
-        )
+    ): Flow<ReadResult<SubredditFeed>> = cached(
+        Request(subreddit, filter, after),
+        refresh = false,
     )
 
     fun getCachedWallpaperFeed(
         feedId: SubredditFeedId,
     ): Flow<SubredditFeed> = database.getWallpaperFeed(feedId)
 
-    internal data class Request(
+    data class Request(
         val subreddit: String,
         val filter: Filter,
         val after: String? = null,
@@ -115,4 +104,3 @@ private fun Source.toImageDetails(): ImageDetail = ImageDetail(
     width = width,
     height = height,
 )
-

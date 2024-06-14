@@ -77,9 +77,8 @@ fun SubRedditScreen(
                     start = paddingValues.calculateStartPadding(direction) + 8.dp,
                     end = paddingValues.calculateEndPadding(direction) + 8.dp,
                 )
-                val state = viewModel.getUiState()
+                val state by viewModel.getUiState()
                     .collectAsState(SubRedditViewModel.UiState.Loading)
-                    .value
                 SubRedditContents(
                     modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                     state = state,
@@ -256,10 +255,10 @@ fun SubRedditContents(
         is SubRedditViewModel.UiState.ShowContent -> {
             PhotoGrid(
                 modifier = modifier,
-                wallpapers = state.feed.wallpapers,
+                wallpapers = state.feed?.wallpapers.orEmpty(),
                 onWallpaperClick = onWallpaperClick,
                 contentPadding = contentPadding,
-                afterCursor = state.feed.afterCursor,
+                afterCursor = state.feed?.afterCursor,
                 onLoadMore = {
                     onLoadMore(it)
                 },

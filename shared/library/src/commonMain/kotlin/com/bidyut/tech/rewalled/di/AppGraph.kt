@@ -3,7 +3,7 @@ package com.bidyut.tech.rewalled.di
 import co.touchlab.kermit.Logger
 import com.bidyut.tech.rewalled.cache.Database
 import com.bidyut.tech.rewalled.core.network.NetworkFactory
-import com.bidyut.tech.rewalled.data.WallpaperRepository
+import com.bidyut.tech.rewalled.data.SubredditFeedRepository
 import com.bidyut.tech.rewalled.service.reddit.RedditService
 import com.bidyut.tech.rewalled.ui.PlatformCoordinator
 import io.ktor.client.HttpClient
@@ -58,8 +58,8 @@ abstract class AppGraph {
         RedditService(httpClient)
     }
 
-    val wallpaperRepository by lazy {
-        WallpaperRepository(database, redditService)
+    val subredditFeedRepository by lazy {
+        SubredditFeedRepository(database, redditService)
     }
 
     companion object {

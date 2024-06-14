@@ -12,5 +12,6 @@ Pods/
 *.podspec
 google-services.json
 /app/reddit.db
+/app/reddit.db-journal
 /.kotlin
 GoogleService-Info.plist
