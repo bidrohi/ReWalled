@@ -20,7 +20,7 @@ import com.bidyut.tech.rewalled.ui.screen.WallpaperScreen
 
 @Composable
 fun App() {
-    val subRedditViewModel = viewModel { SubRedditViewModel() }
+    val subRedditViewModel: SubRedditViewModel = viewModel(factory = SubRedditViewModel.factory())
     val navigator: NavHostController = rememberNavController()
     NavHost(
         navController = navigator,

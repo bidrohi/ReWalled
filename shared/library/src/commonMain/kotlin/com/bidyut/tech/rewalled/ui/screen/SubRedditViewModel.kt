@@ -3,11 +3,16 @@ package com.bidyut.tech.rewalled.ui.screen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import co.touchlab.kermit.Logger
+import com.bidyut.tech.rewalled.data.WallpaperRepository
 import com.bidyut.tech.rewalled.di.AppGraph
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeed
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.makeSubredditFeedId
+import com.bidyut.tech.rewalled.ui.PlatformCoordinator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
@@ -16,18 +21,11 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import org.mobilenativefoundation.store.store5.StoreReadResponse
 
-class SubRedditViewModel : ViewModel() {
-    private val repository by lazy {
-        AppGraph.instance.wallpaperRepository
-    }
-
-    private val log by lazy {
-        AppGraph.instance.log
-    }
-
-    internal val coordinator by lazy {
-        AppGraph.instance.coordinator
-    }
+class SubRedditViewModel(
+    private val log: Logger,
+    private val repository: WallpaperRepository,
+    val coordinator: PlatformCoordinator,
+) : ViewModel() {
 
     private val uiStateByFeedId = mutableMapOf<SubredditFeedId, Flow<UiState>>()
 
@@ -74,5 +72,18 @@ class SubRedditViewModel : ViewModel() {
         data class ShowContent(
             val feed: SubredditFeed,
         ) : UiState
+    }
+
+    companion object {
+        fun factory() = viewModelFactory {
+            initializer {
+                val appGraph = AppGraph.instance
+                SubRedditViewModel(
+                    appGraph.log,
+                    appGraph.wallpaperRepository,
+                    appGraph.coordinator,
+                )
+            }
+        }
     }
 }
