@@ -13,7 +13,6 @@ jetbrains-lifecycle = "2.8.4"
 jetbrains-navigation = "2.8.0-alpha11"
 playPublisher = "3.12.1"
 kamel = "1.0.2"
-icons-feather = "1.1.0"
 androidx-activity = "1.9.3"
 androidx-splashscreen = "1.1.0-rc01"
 google-services = "4.4.2"
@@ -43,7 +42,6 @@ sqldelight-coroutines = { group = "app.cash.sqldelight", name = "coroutines-exte
 sqldelight-android = { group = "app.cash.sqldelight", name = "android-driver", version.ref = "sqldelight" }
 sqldelight-native = { group = "app.cash.sqldelight", name = "native-driver", version.ref = "sqldelight" }
 sqldelight-sqlite = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
-icons-feather = { group = "br.com.devsrsouza.compose.icons", name = "feather", version.ref = "icons-feather" }
 androidx-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splashscreen" }
 kamel-image = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }

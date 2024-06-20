@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,8 +27,6 @@ import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.theme.ReWalled
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.ArrowLeft
 
 @Composable
 fun SettingsScreen(
@@ -47,7 +47,7 @@ fun SettingsScreen(
                             },
                         ) {
                             Icon(
-                                FeatherIcons.ArrowLeft,
+                                Icons.AutoMirrored.TwoTone.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }

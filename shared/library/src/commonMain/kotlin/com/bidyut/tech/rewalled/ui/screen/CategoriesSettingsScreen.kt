@@ -8,6 +8,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.twotone.Add
+import androidx.compose.material.icons.twotone.AddCircle
+import androidx.compose.material.icons.twotone.RemoveCircle
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,11 +42,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.ArrowLeft
-import compose.icons.feathericons.MinusCircle
-import compose.icons.feathericons.Plus
-import compose.icons.feathericons.PlusCircle
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -76,7 +76,7 @@ fun CategoriesSettingsScreen(
                     },
                 ) {
                     Icon(
-                        imageVector = FeatherIcons.PlusCircle,
+                        imageVector = Icons.TwoTone.AddCircle,
                         contentDescription = "Add category",
                     )
                 }
@@ -92,7 +92,7 @@ fun CategoriesSettingsScreen(
                             },
                         ) {
                             Icon(
-                                FeatherIcons.ArrowLeft,
+                                Icons.AutoMirrored.Default.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }
@@ -120,7 +120,7 @@ fun CategoriesSettingsScreen(
                                 }
                             ) {
                                 Icon(
-                                    imageVector = FeatherIcons.MinusCircle,
+                                    imageVector = Icons.TwoTone.RemoveCircle,
                                     tint = MaterialTheme.colorScheme.error,
                                     contentDescription = "Remove category",
                                 )
@@ -128,7 +128,7 @@ fun CategoriesSettingsScreen(
                         },
 //                        trailingContent = {
 //                            Icon(
-//                                imageVector = FeatherIcons.Divide,
+//                                imageVector = Icons.TwoTone.Reorder,
 //                                tint = MaterialTheme.colorScheme.outlineVariant,
 //                                contentDescription = "Move category",
 //                                modifier = Modifier.padding(horizontal = 16.dp),
@@ -181,7 +181,7 @@ private fun AddCategoryBottomSheet(
             },
             trailingIcon = {
                 Icon(
-                    imageVector = FeatherIcons.Plus,
+                    imageVector = Icons.TwoTone.Add,
                     contentDescription = "Add",
                 )
             },

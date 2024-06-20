@@ -14,6 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowBack
+import androidx.compose.material.icons.automirrored.twotone.OpenInNew
+import androidx.compose.material.icons.twotone.FileDownload
+import androidx.compose.material.icons.twotone.Fullscreen
+import androidx.compose.material.icons.twotone.FullscreenExit
+import androidx.compose.material.icons.twotone.IosShare
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
@@ -40,13 +47,6 @@ import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.getCurrentContext
 import com.bidyut.tech.rewalled.ui.getSystemWidth
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.ArrowLeft
-import compose.icons.feathericons.Download
-import compose.icons.feathericons.ExternalLink
-import compose.icons.feathericons.Maximize
-import compose.icons.feathericons.Minimize
-import compose.icons.feathericons.Share
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
@@ -95,7 +95,7 @@ fun WallpaperScreen(
                             }
                         }) {
                             Icon(
-                                FeatherIcons.Download,
+                                Icons.TwoTone.FileDownload,
                                 contentDescription = "Download",
                             )
                         }
@@ -121,7 +121,7 @@ fun WallpaperScreen(
                                     },
                                 ) {
                                     Icon(
-                                        FeatherIcons.ArrowLeft,
+                                        Icons.AutoMirrored.TwoTone.ArrowBack,
                                         contentDescription = "Back",
                                     )
                                 }
@@ -133,12 +133,12 @@ fun WallpaperScreen(
                                 ) {
                                     if (isFullscreen) {
                                         Icon(
-                                            FeatherIcons.Minimize,
+                                            Icons.TwoTone.FullscreenExit,
                                             contentDescription = "Fit",
                                         )
                                     } else {
                                         Icon(
-                                            FeatherIcons.Maximize,
+                                            Icons.TwoTone.Fullscreen,
                                             contentDescription = "Fill",
                                         )
                                     }
@@ -153,7 +153,7 @@ fun WallpaperScreen(
                                     },
                                 ) {
                                     Icon(
-                                        FeatherIcons.Share,
+                                        Icons.TwoTone.IosShare,
                                         contentDescription = "Share",
                                     )
                                 }
@@ -166,7 +166,7 @@ fun WallpaperScreen(
                                     },
                                 ) {
                                     Icon(
-                                        FeatherIcons.ExternalLink,
+                                        Icons.AutoMirrored.TwoTone.OpenInNew,
                                         contentDescription = "Open source",
                                     )
                                 }

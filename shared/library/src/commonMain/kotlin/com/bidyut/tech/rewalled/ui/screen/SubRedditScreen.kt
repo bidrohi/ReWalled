@@ -11,6 +11,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowBack
+import androidx.compose.material.icons.twotone.ErrorOutline
+import androidx.compose.material.icons.twotone.HourglassEmpty
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -48,10 +52,6 @@ import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
-import compose.icons.FeatherIcons
-import compose.icons.feathericons.AlertOctagon
-import compose.icons.feathericons.ArrowLeft
-import compose.icons.feathericons.Loader
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +75,7 @@ fun SubRedditScreen(
                             },
                         ) {
                             Icon(
-                                FeatherIcons.ArrowLeft,
+                                Icons.AutoMirrored.TwoTone.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }
@@ -174,7 +174,7 @@ fun SubRedditContents(
         is SubRedditViewModel.UiState.Loading -> {
             InformationView(
                 modifier = modifier.padding(contentPadding),
-                icon = FeatherIcons.Loader,
+                icon = Icons.TwoTone.HourglassEmpty,
                 description = "Loading contents",
                 message = "Loading contents",
             )
@@ -183,7 +183,7 @@ fun SubRedditContents(
         is SubRedditViewModel.UiState.Error -> {
             InformationView(
                 modifier = modifier.padding(contentPadding),
-                icon = FeatherIcons.AlertOctagon,
+                icon = Icons.TwoTone.ErrorOutline,
                 description = "Loading error",
                 message = "Failed to load contents from the cloud",
             )
