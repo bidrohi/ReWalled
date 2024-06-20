@@ -72,7 +72,7 @@ android {
     namespace = "com.bidyut.tech.rewalled"
     defaultConfig {
         applicationId = "com.bidyut.tech.rewalled"
-        targetSdk = 34
+        targetSdk = 35
         versionCode = AppVersion.code
         versionName = AppVersion.name
     }
