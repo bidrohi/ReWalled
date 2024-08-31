@@ -1,10 +1,10 @@
 [versions]
 androidGradle = "8.6.0"
-kotlin = "2.0.0"
+kotlin = "2.0.20"
 kotlin-coroutines = "1.8.1"
-kotlin-datetime = "0.6.0"
-kotlin-serialization-json = "1.6.3"
-ksp = "2.0.0-1.0.24"
+kotlin-datetime = "0.6.1"
+kotlin-serialization-json = "1.7.2"
+ksp = "2.0.20-1.0.24"
 ktor = "2.3.11"
 sqldelight = "2.0.2"
 jdk-desugar = "2.0.4"
@@ -22,7 +22,7 @@ firebase-plugin-crashlytics = "3.0.1"
 firebase-plugin-performance = "1.4.2"
 kermit = "2.0.4"
 bhandar = "0.1.0"
-nsexception = "1.0.0-BETA-4"
+nsexception = "1.0.0-BETA-7"
 
 [libraries]
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
