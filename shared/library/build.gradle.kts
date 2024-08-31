@@ -48,6 +48,8 @@ kotlin {
 
             implementation(libs.jetbrains.lifecycle)
             implementation(libs.jetbrains.navigation)
+            implementation(libs.jetbrains.material3.adaptive.core)
+            implementation(libs.jetbrains.material3.adaptive.layout)
 
             implementation(libs.kamel.image)
             implementation(libs.kamel.decoder.bitmap)

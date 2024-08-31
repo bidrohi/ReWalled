@@ -8,7 +8,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -50,7 +49,6 @@ import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun WallpaperScreen(
     feedId: SubredditFeedId,

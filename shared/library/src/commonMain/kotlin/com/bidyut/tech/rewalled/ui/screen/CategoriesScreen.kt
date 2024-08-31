@@ -36,7 +36,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.model.Filter
+import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
+import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.model.makeSubredditFeedId
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.getSystemRatio
@@ -69,34 +71,56 @@ fun CategoriesScreen(
             },
         ) { paddingValues ->
             val layoutDirection = LocalLayoutDirection.current
-            LazyColumn(
+            val contentPadding = PaddingValues(
+                top = paddingValues.calculateTopPadding(),
+                bottom = paddingValues.calculateBottomPadding() + 96.dp,
+                start = paddingValues.calculateStartPadding(layoutDirection),
+                end = paddingValues.calculateEndPadding(layoutDirection),
+            )
+            CategoriesPane(
+                viewModel = viewModel,
+                contentPadding = contentPadding,
+                onCategoryClick = { feedId ->
+                    navigator.navigate(Route.Grid(feedId).uri)
+                },
+                onWallpaperClick = { feedId, wallpaperId ->
+                    navigator.navigate(Route.Wallpaper(feedId, wallpaperId).uri)
+                },
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding() + 96.dp,
-                    start = paddingValues.calculateStartPadding(layoutDirection),
-                    end = paddingValues.calculateEndPadding(layoutDirection),
-                ),
-            ) {
-                items(
-                    items = viewModel.subReddits,
-                    key = { it },
-                ) { subReddit ->
-                    val feedId = makeSubredditFeedId(subReddit, Filter.Rising)
-                    val state = viewModel.getUiState(subReddit)
-                    CategoryRow(
-                        subReddit = subReddit,
-                        state = state.value,
-                        onWallpaperClick = { wallpaper ->
-                            navigator.navigate(Route.Wallpaper(feedId, wallpaper.id).uri)
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                            .clickable {
-                                navigator.navigate(Route.Grid(feedId).uri)
-                            },
-                    )
-                }
-            }
+            )
+        }
+    }
+}
+
+@Composable
+fun CategoriesPane(
+    viewModel: CategoriesViewModel,
+    contentPadding: PaddingValues,
+    onCategoryClick: (SubredditFeedId) -> Unit,
+    onWallpaperClick: (SubredditFeedId, WallpaperId) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = contentPadding,
+    ) {
+        items(
+            items = viewModel.subReddits,
+            key = { it },
+        ) { subReddit ->
+            val feedId = makeSubredditFeedId(subReddit, Filter.Rising)
+            val state = viewModel.getUiState(subReddit)
+            CategoryRow(
+                subReddit = subReddit,
+                state = state.value,
+                onWallpaperClick = { wallpaper ->
+                    onWallpaperClick(feedId, wallpaper.id)
+                },
+                modifier = Modifier.fillMaxWidth()
+                    .clickable {
+                        onCategoryClick(feedId)
+                    },
+            )
         }
     }
 }
@@ -150,6 +174,7 @@ fun CategoryRow(
                     Text(
                         text = subReddit,
                         style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
                             .padding(

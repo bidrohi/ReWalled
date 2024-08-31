@@ -3,10 +3,12 @@ package com.bidyut.tech.rewalled.ui.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,11 +27,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
+import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
+import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,117 +57,211 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.window.core.layout.WindowWidthSizeClass
 import com.bidyut.tech.rewalled.model.Filter
+import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SubRedditScreen(
     navigator: NavController,
-    viewModel: SubRedditViewModel,
+    categoriesViewModel: CategoriesViewModel,
+    subRedditViewModel: SubRedditViewModel,
     modifier: Modifier = Modifier,
 ) {
     ReWalledTheme {
-        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-        Scaffold(
-            modifier = modifier,
-            bottomBar = {
-                BottomAppBar(
-                    modifier = Modifier.alpha(0.8f),
-                    actions = {
-                        IconButton(
-                            modifier = Modifier.size(48.dp),
-                            onClick = {
+        val windowInfo = currentWindowAdaptiveInfo()
+        if (windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
+            var selectedFeedId by rememberSaveable {
+                mutableStateOf<SubredditFeedId?>(subRedditViewModel.feedId)
+            }
+            ListDetailPaneScaffold(
+                listPane = {
+                    CategoriesPane(
+                        viewModel = categoriesViewModel,
+                        contentPadding = PaddingValues(bottom = 96.dp),
+                        onCategoryClick = { feedId ->
+                            selectedFeedId = feedId
+                        },
+                        onWallpaperClick = { feedId, wallpaperId ->
+                            navigator.navigate(Route.Wallpaper(feedId, wallpaperId).uri)
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                },
+                detailPane = {
+                    selectedFeedId?.let { feedId ->
+                        SubRedditPane(
+                            modifier = modifier,
+                            subReddit = subRedditViewModel.subReddit.value,
+                            filter = subRedditViewModel.filter.value,
+                            uiState = subRedditViewModel.getUiState()
+                                .collectAsState(SubRedditViewModel.UiState.Loading)
+                                .value,
+                            onFilterChange = {
+                                subRedditViewModel.filter.value = it
+                            },
+                            onLoadMore = { afterCursor ->
+                                subRedditViewModel.loadMoreAfter(afterCursor)
+                            },
+                            onWallpaperClick = {
+                                navigator.navigate(
+                                    Route.Wallpaper(subRedditViewModel.feedId, it.id).uri
+                                )
+                            },
+                            onBackClick = {
                                 navigator.popBackStack()
                             },
+                        )
+                    } ?: Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = modifier.fillMaxSize(),
+                    ) {
+                        Text("No feed selected")
+                    }
+                },
+                directive = PaneScaffoldDirective.Default,
+                value = ThreePaneScaffoldValue(
+                    primary = if (selectedFeedId != null) {
+                        PaneAdaptedValue.Expanded
+                    } else {
+                        PaneAdaptedValue.Hidden
+                    },
+                    secondary = PaneAdaptedValue.Expanded,
+                    tertiary = PaneAdaptedValue.Hidden,
+                ),
+                modifier = modifier,
+            )
+        } else {
+            SubRedditPane(
+                modifier = modifier,
+                subReddit = subRedditViewModel.subReddit.value,
+                filter = subRedditViewModel.filter.value,
+                uiState = subRedditViewModel.getUiState()
+                    .collectAsState(SubRedditViewModel.UiState.Loading)
+                    .value,
+                onFilterChange = {
+                    subRedditViewModel.filter.value = it
+                },
+                onLoadMore = { afterCursor ->
+                    subRedditViewModel.loadMoreAfter(afterCursor)
+                },
+                onWallpaperClick = {
+                    navigator.navigate(
+                        Route.Wallpaper(subRedditViewModel.feedId, it.id).uri
+                    )
+                },
+                onBackClick = {
+                    navigator.popBackStack()
+                },
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SubRedditPane(
+    subReddit: String,
+    filter: Filter,
+    uiState: SubRedditViewModel.UiState,
+    onFilterChange: (Filter) -> Unit,
+    onLoadMore: (String) -> Unit,
+    onWallpaperClick: (Wallpaper) -> Unit,
+    modifier: Modifier = Modifier,
+    onBackClick: (() -> Unit)? = null,
+) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    Scaffold(
+        modifier = modifier,
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier.alpha(0.8f),
+                actions = {
+                    if (onBackClick != null) {
+                        IconButton(
+                            modifier = Modifier.size(48.dp),
+                            onClick = onBackClick,
                         ) {
                             Icon(
                                 Icons.AutoMirrored.TwoTone.ArrowBack,
                                 contentDescription = "Back",
                             )
                         }
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(
-                                    style = SpanStyle(
-                                        fontWeight = FontWeight.Light,
-                                        color = MaterialTheme.colorScheme.secondary
-                                    )
-                                ) {
-                                    append("/r/")
-                                }
-                                append(viewModel.subReddit.value)
-                            }
-                        )
-                        var isFilterMenuExpanded by remember {
-                            mutableStateOf(false)
-                        }
-                        Text(
-                            text = "[ ${viewModel.filter.value} ]",
-                            modifier = Modifier.clip(RoundedCornerShape(8.dp))
-                                .clickable { isFilterMenuExpanded = true }
-                                .padding(8.dp),
-                        )
-                        DropdownMenu(
-                            modifier = Modifier.padding(horizontal = 16.dp),
-                            expanded = isFilterMenuExpanded,
-                            onDismissRequest = { isFilterMenuExpanded = false },
-                        ) {
-                            for (value in Filter.entries) {
-                                val isSelected = viewModel.filter.value == value
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = if (isSelected) {
-                                                value.toString().uppercase()
-                                            } else {
-                                                value.toString()
-                                            },
-                                            modifier = Modifier.fillMaxWidth(),
-                                            textAlign = TextAlign.End,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            fontWeight = if (isSelected) FontWeight.ExtraBold else null,
-                                            color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified,
-                                        )
-                                    },
-                                    onClick = {
-                                        viewModel.filter.value = value
-                                        isFilterMenuExpanded = false
-                                    },
+                    }
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    fontWeight = FontWeight.Light,
+                                    color = MaterialTheme.colorScheme.secondary
                                 )
+                            ) {
+                                append("/r/")
                             }
+                            append(subReddit)
                         }
-                    },
-                )
-            }
-        ) { paddingValues ->
-            val direction = LocalLayoutDirection.current
-            val contentPadding = PaddingValues(
-                top = paddingValues.calculateTopPadding() + 8.dp,
-                bottom = paddingValues.calculateBottomPadding() + 8.dp,
-                start = paddingValues.calculateStartPadding(direction) + 8.dp,
-                end = paddingValues.calculateEndPadding(direction) + 8.dp,
-            )
-            val state = viewModel.getUiState()
-                .collectAsState(SubRedditViewModel.UiState.Loading)
-                .value
-            SubRedditContents(
-                modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                state = state,
-                onWallpaperClick = {
-                    navigator.navigate(
-                        Route.Wallpaper(viewModel.feedId, it.id).uri
                     )
+                    var isFilterMenuExpanded by remember {
+                        mutableStateOf(false)
+                    }
+                    Text(
+                        text = "[ $filter ]",
+                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
+                            .clickable { isFilterMenuExpanded = true }
+                            .padding(8.dp),
+                    )
+                    DropdownMenu(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        expanded = isFilterMenuExpanded,
+                        onDismissRequest = { isFilterMenuExpanded = false },
+                    ) {
+                        for (value in Filter.entries) {
+                            val isSelected = filter == value
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = if (isSelected) {
+                                            value.toString().uppercase()
+                                        } else {
+                                            value.toString()
+                                        },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.End,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        fontWeight = if (isSelected) FontWeight.ExtraBold else null,
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified,
+                                    )
+                                },
+                                onClick = {
+                                    onFilterChange(value)
+                                    isFilterMenuExpanded = false
+                                },
+                            )
+                        }
+                    }
                 },
-                contentPadding = contentPadding,
-                onLoadMore = { afterCursor ->
-                    viewModel.loadMoreAfter(afterCursor)
-                }
             )
         }
+    ) { paddingValues ->
+        val direction = LocalLayoutDirection.current
+        val contentPadding = PaddingValues(
+            top = paddingValues.calculateTopPadding() + 8.dp,
+            bottom = paddingValues.calculateBottomPadding() + 8.dp,
+            start = paddingValues.calculateStartPadding(direction) + 8.dp,
+            end = paddingValues.calculateEndPadding(direction) + 8.dp,
+        )
+        SubRedditContents(
+            modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            state = uiState,
+            contentPadding = contentPadding,
+            onWallpaperClick = onWallpaperClick,
+            onLoadMore = onLoadMore,
+        )
     }
 }
 

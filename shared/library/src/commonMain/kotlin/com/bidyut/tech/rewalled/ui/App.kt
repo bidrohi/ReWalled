@@ -81,7 +81,8 @@ fun App() {
                 }
                 SubRedditScreen(
                     navigator = navigator,
-                    viewModel = subRedditViewModel,
+                    categoriesViewModel = categoriesViewModel,
+                subRedditViewModel = subRedditViewModel,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
