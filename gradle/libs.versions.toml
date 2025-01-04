@@ -22,7 +22,7 @@ firebase-plugin-crashlytics = "3.0.2"
 firebase-plugin-performance = "1.4.2"
 kermit = "2.0.5"
 bhandar = "0.2.0"
-nsexception = "1.0.0-BETA-7"
+nsexception = "1.0.0-BETA-9"
 
 [libraries]
 kotlin-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }

@@ -105,7 +105,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rickclephas/NSExceptionKt",
       "state" : {
-        "revision" : "3e9f66ad60ffa09ee37503e82c1c9f61aeab8aa1"
+        "revision" : "60cddb735644d0b954ef19b1e42d9ea76a40a43e"
       }
     },
     {
