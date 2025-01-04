@@ -8,7 +8,7 @@ import com.bidyut.tech.rewalled.ui.PlatformCoordinator
 import io.kamel.core.config.KamelConfig
 import io.kamel.image.config.resourcesFetcher
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
+import io.ktor.client.engine.okhttp.OkHttp
 
 class DesktopAppGraph(
     enableDebug: Boolean = false,
@@ -19,7 +19,7 @@ class DesktopAppGraph(
     }
 
     override val httpClient by lazy {
-        HttpClient(CIO) {
+        HttpClient(OkHttp) {
             baseConfiguration(enableDebug)
         }
     }

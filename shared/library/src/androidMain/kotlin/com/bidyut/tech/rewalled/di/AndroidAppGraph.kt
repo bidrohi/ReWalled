@@ -15,7 +15,7 @@ import com.bidyut.tech.rewalled.ui.PlatformCoordinator
 import io.kamel.core.config.KamelConfig
 import io.kamel.image.config.resourcesFetcher
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
+import io.ktor.client.engine.okhttp.OkHttp
 
 class AndroidAppGraph(
     private val appCtx: Context,
@@ -27,7 +27,7 @@ class AndroidAppGraph(
     }
 
     override val httpClient by lazy {
-        HttpClient(Android) {
+        HttpClient(OkHttp) {
             baseConfiguration(enableDebug)
         }
     }

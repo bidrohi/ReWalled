@@ -59,7 +59,7 @@ kotlin {
             implementation(libs.ktor.client.mock)
         }
         androidMain.dependencies {
-            implementation(libs.ktor.client.android)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.activity)
             implementation(libs.kotlin.coroutines.android)
 
@@ -71,7 +71,7 @@ kotlin {
         }
         val desktopMain by getting
         desktopMain.dependencies {
-            implementation(libs.ktor.client.cio)
+            implementation(libs.ktor.client.okhttp)
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlin.coroutines.swing)
 
