@@ -49,7 +49,9 @@ kotlin {
 
             implementation(libs.icons.feather)
 
-            implementation(libs.kamel)
+            implementation(libs.kamel.image)
+            implementation(libs.kamel.decoder.bitmap)
+
             implementation(libs.kermit)
         }
         commonTest.dependencies {
@@ -60,6 +62,8 @@ kotlin {
             implementation(libs.ktor.client.android)
             implementation(libs.androidx.activity)
             implementation(libs.kotlin.coroutines.android)
+
+            implementation(libs.kamel.fetcher.android)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -70,6 +74,8 @@ kotlin {
             implementation(libs.ktor.client.cio)
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlin.coroutines.swing)
+
+            implementation(libs.kamel.fetcher.jvm)
         }
     }
 }

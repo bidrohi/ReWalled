@@ -5,6 +5,8 @@ import com.bidyut.tech.rewalled.cache.DatabaseDriverFactory
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.ui.PlatformContext
 import com.bidyut.tech.rewalled.ui.PlatformCoordinator
+import io.kamel.core.config.KamelConfig
+import io.kamel.image.config.resourcesFetcher
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 
@@ -19,6 +21,13 @@ class DesktopAppGraph(
     override val httpClient by lazy {
         HttpClient(CIO) {
             baseConfiguration(enableDebug)
+        }
+    }
+
+    override val kamelConfig by lazy {
+        KamelConfig {
+            baseConfiguration(enableDebug)
+            resourcesFetcher()
         }
     }
 

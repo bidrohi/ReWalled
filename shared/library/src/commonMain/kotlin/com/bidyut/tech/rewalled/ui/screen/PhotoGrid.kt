@@ -33,7 +33,7 @@ fun WallpaperCard(
         requestWidth.roundToPx()
     }
     KamelImage(
-        resource = asyncPainterResource(wallpaper.getUriForSize(requestWidthPx)),
+        resource = { asyncPainterResource(wallpaper.getUriForSize(requestWidthPx)) },
         modifier = modifier.aspectRatio(imageRatio)
             .clip(RoundedCornerShape(16.dp)),
         contentDescription = wallpaper.summary,

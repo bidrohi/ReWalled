@@ -190,7 +190,7 @@ fun WallpaperScreen(
                         }
                     ) { isCropped ->
                         KamelImage(
-                            resource = asyncPainterResource(wallpaper.getUriForSize(screenWidthPx)),
+                            resource = { asyncPainterResource(wallpaper.getUriForSize(screenWidthPx)) },
                             modifier = modifier.clickable {
                                 isChromeShown = !isChromeShown
                             }.apply {
