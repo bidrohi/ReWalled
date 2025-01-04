@@ -1,10 +1,10 @@
 [versions]
 androidGradle = "8.7.3"
-kotlin = "2.0.21"
+kotlin = "2.1.0"
 kotlin-coroutines = "1.10.1"
 kotlin-datetime = "0.6.1"
 kotlin-serialization-json = "1.7.3"
-ksp = "2.0.21-1.0.28"
+ksp = "2.1.0-1.0.29"
 ktor = "3.0.3"
 sqldelight = "2.0.2"
 jdk-desugar = "2.1.4"
