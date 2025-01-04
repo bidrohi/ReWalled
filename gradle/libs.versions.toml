@@ -1,5 +1,5 @@
 [versions]
-androidGradle = "8.6.0"
+androidGradle = "8.7.3"
 kotlin = "2.0.20"
 kotlin-coroutines = "1.8.1"
 kotlin-datetime = "0.6.1"
