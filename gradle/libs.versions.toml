@@ -20,7 +20,7 @@ google-services = "4.4.2"
 firebase-bom = "33.7.0"
 firebase-plugin-crashlytics = "3.0.2"
 firebase-plugin-performance = "1.4.2"
-kermit = "2.0.4"
+kermit = "2.0.5"
 bhandar = "0.1.0"
 nsexception = "1.0.0-BETA-7"
 
