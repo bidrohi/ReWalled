@@ -60,7 +60,7 @@ fun CategoriesScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        navigator.navigate(Route.Settings.uri)
+                        navigator.navigate(Route.Settings)
                     },
                 ) {
                     Icon(
@@ -81,10 +81,10 @@ fun CategoriesScreen(
                 viewModel = viewModel,
                 contentPadding = contentPadding,
                 onCategoryClick = { feedId ->
-                    navigator.navigate(Route.Grid(feedId).uri)
+                    navigator.navigate(Route.Grid(feedId))
                 },
                 onWallpaperClick = { feedId, wallpaperId ->
-                    navigator.navigate(Route.Wallpaper(feedId, wallpaperId).uri)
+                    navigator.navigate(Route.Wallpaper(feedId, wallpaperId))
                 },
                 modifier = Modifier.fillMaxSize(),
             )

@@ -96,7 +96,7 @@ fun SettingsScreen(
                         text = "Configure categories",
                         modifier = Modifier.fillMaxWidth()
                             .clickable {
-                                navigator.navigate(Route.SettingsCategories.uri)
+                                navigator.navigate(Route.SettingsCategories)
                             }
                             .padding(16.dp),
                         style = MaterialTheme.typography.bodyMedium,

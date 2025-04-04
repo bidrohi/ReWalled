@@ -6,17 +6,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.bidyut.tech.rewalled.di.AppGraph
-import com.bidyut.tech.rewalled.model.Filter
-import com.bidyut.tech.rewalled.model.SubredditFeedId
-import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.model.dissolve
-import com.bidyut.tech.rewalled.model.makeSubredditFeedId
 import com.bidyut.tech.rewalled.ui.screen.CategoriesScreen
 import com.bidyut.tech.rewalled.ui.screen.CategoriesSettingsScreen
 import com.bidyut.tech.rewalled.ui.screen.CategoriesViewModel
@@ -36,70 +31,46 @@ fun App() {
         val navigator: NavHostController = rememberNavController()
         NavHost(
             navController = navigator,
-            startDestination = Route.Categories.uri,
+            startDestination = Route.Categories,
             modifier = Modifier.fillMaxSize(),
         ) {
-            composable(
-                route = Route.Categories.uri,
-            ) {
+            composable<Route.Categories> {
                 CategoriesScreen(
                     navigator = navigator,
                     viewModel = categoriesViewModel,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
-            composable(
-                route = Route.Settings.uri,
-            ) {
+            composable<Route.Settings> {
                 SettingsScreen(
                     navigator = navigator,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
-            composable(
-                route = Route.SettingsCategories.uri,
-            ) {
+            composable<Route.SettingsCategories> {
                 CategoriesSettingsScreen(
                     navigator = navigator,
                     viewModel = categoriesViewModel,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
-            composable(
-                route = Route.Grid("{feedId}").uri,
-                arguments = listOf(
-                    navArgument("feedId") {
-                        type = NavType.StringType
-                        defaultValue = makeSubredditFeedId("EarthPorn", Filter.Rising)
-                    },
-                ),
-            ) {
-                it.arguments?.getString("feedId")?.let { feedId ->
-                    val (subreddit, filter) = feedId.dissolve()
-                    subRedditViewModel.subReddit.value = subreddit
-                    subRedditViewModel.filter.value = filter
-                }
+            composable<Route.Grid> {
+                val route = it.toRoute<Route.Grid>()
+                val feedId = route.feedId
+                val (subreddit, filter) = feedId.dissolve()
+                subRedditViewModel.subReddit.value = subreddit
+                subRedditViewModel.filter.value = filter
                 SubRedditScreen(
                     navigator = navigator,
                     categoriesViewModel = categoriesViewModel,
-                subRedditViewModel = subRedditViewModel,
+                    subRedditViewModel = subRedditViewModel,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
-            composable(
-                route = Route.Wallpaper("{feedId}", "{id}").uri,
-                arguments = listOf(
-                    navArgument("feedId") {
-                        type = NavType.StringType
-                        defaultValue = makeSubredditFeedId("EarthPorn", Filter.Rising)
-                    },
-                    navArgument("id") {
-                        type = NavType.StringType
-                    },
-                ),
-            ) {
-                val feedId: SubredditFeedId = it.arguments?.getString("feedId").orEmpty()
-                val id: WallpaperId = it.arguments?.getString("id").orEmpty()
+            composable<Route.Wallpaper> {
+                val route = it.toRoute<Route.Wallpaper>()
+                val feedId = route.feedId
+                val id = route.id.orEmpty()
                 WallpaperScreen(
                     feedId = feedId,
                     wallpaperId = id,

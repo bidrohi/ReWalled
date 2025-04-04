@@ -87,7 +87,7 @@ fun SubRedditScreen(
                             selectedFeedId = feedId
                         },
                         onWallpaperClick = { feedId, wallpaperId ->
-                            navigator.navigate(Route.Wallpaper(feedId, wallpaperId).uri)
+                            navigator.navigate(Route.Wallpaper(feedId, wallpaperId))
                         },
                         modifier = Modifier.fillMaxSize(),
                     )
@@ -109,7 +109,7 @@ fun SubRedditScreen(
                             },
                             onWallpaperClick = {
                                 navigator.navigate(
-                                    Route.Wallpaper(subRedditViewModel.feedId, it.id).uri
+                                    Route.Wallpaper(subRedditViewModel.feedId, it.id)
                                 )
                             },
                             onBackClick = {
@@ -151,7 +151,7 @@ fun SubRedditScreen(
                 },
                 onWallpaperClick = {
                     navigator.navigate(
-                        Route.Wallpaper(subRedditViewModel.feedId, it.id).uri
+                        Route.Wallpaper(subRedditViewModel.feedId, it.id)
                     )
                 },
                 onBackClick = {

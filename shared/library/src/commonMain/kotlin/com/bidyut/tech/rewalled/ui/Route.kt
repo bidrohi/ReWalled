@@ -1,22 +1,30 @@
 package com.bidyut.tech.rewalled.ui
 
+import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeedId
+import com.bidyut.tech.rewalled.model.WallpaperId
+import com.bidyut.tech.rewalled.model.makeSubredditFeedId
+import kotlinx.serialization.Serializable
 
-sealed class Route(
-    val uri: String,
-) {
-    data object Categories : Route("categories")
+@Serializable
+sealed interface Route {
+    @Serializable
+    data object Categories : Route
 
-    data object Settings : Route("settings")
+    @Serializable
+    data object Settings : Route
 
-    data object SettingsCategories : Route("settings/categories")
+    @Serializable
+    data object SettingsCategories : Route
 
+    @Serializable
     data class Grid(
-        private val feedId: SubredditFeedId,
-    ) : Route("grid/$feedId")
+        val feedId: SubredditFeedId = makeSubredditFeedId("EarthPorn", Filter.Rising),
+    ) : Route
 
+    @Serializable
     data class Wallpaper(
-        private val feedId: SubredditFeedId,
-        private val id: String,
-    ) : Route("wall/$feedId/$id")
+        val feedId: SubredditFeedId = makeSubredditFeedId("EarthPorn", Filter.Rising),
+        val id: WallpaperId? = null,
+    ) : Route
 }
