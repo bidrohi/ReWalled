@@ -13,7 +13,7 @@ jetbrains-lifecycle = "2.9.0-alpha07"
 jetbrains-navigation = "2.9.0-alpha17"
 jetbrains-material3-adaptive = "1.1.0-rc01"
 playPublisher = "3.12.1"
-kamel = "1.0.3"
+coil = "3.1.0"
 androidx-activity = "1.10.1"
 androidx-splashscreen = "1.2.0-beta02"
 google-services = "4.4.2"
@@ -45,11 +45,9 @@ sqldelight-native = { group = "app.cash.sqldelight", name = "native-driver", ver
 sqldelight-sqlite = { group = "app.cash.sqldelight", name = "sqlite-driver", version.ref = "sqldelight" }
 androidx-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activity" }
 androidx-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "androidx-splashscreen" }
-kamel-image = { group = "media.kamel", name = "kamel-image", version.ref = "kamel" }
-kamel-decoder-bitmap = { group = "media.kamel", name = "kamel-decoder-image-bitmap", version.ref = "kamel" }
-kamel-decoder-vector = { group = "media.kamel", name = "kamel-decoder-image-vector", version.ref = "kamel" }
-kamel-fetcher-android = { group = "media.kamel", name = "kamel-fetcher-resources-android", version.ref = "kamel" }
-kamel-fetcher-jvm = { group = "media.kamel", name = "kamel-fetcher-resources-jvm", version.ref = "kamel" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+coil-ktor = { group = "io.coil-kt.coil3", name = "coil-network-ktor3", version.ref = "coil" }
 jdk-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "jdk-desugar" }
 jetbrains-lifecycle = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
 jetbrains-navigation = { group = "org.jetbrains.androidx.navigation", name = "navigation-compose", version.ref = "jetbrains-navigation" }

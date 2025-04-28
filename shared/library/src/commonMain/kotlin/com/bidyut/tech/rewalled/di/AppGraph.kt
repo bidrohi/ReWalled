@@ -6,12 +6,6 @@ import com.bidyut.tech.rewalled.core.network.NetworkFactory
 import com.bidyut.tech.rewalled.data.SubredditFeedRepository
 import com.bidyut.tech.rewalled.service.reddit.RedditService
 import com.bidyut.tech.rewalled.ui.PlatformCoordinator
-import io.kamel.core.config.Core
-import io.kamel.core.config.KamelConfig
-import io.kamel.core.config.KamelConfigBuilder
-import io.kamel.core.config.httpUrlFetcher
-import io.kamel.core.config.takeFrom
-import io.kamel.image.config.imageBitmapDecoder
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
 import io.ktor.client.plugins.HttpTimeout
@@ -24,10 +18,11 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.client.plugins.logging.Logger as KtorLogger
 
-abstract class AppGraph {
+abstract class AppGraph(
+    val enableDebug: Boolean = false
+) {
     protected abstract val database: Database
     protected abstract val httpClient: HttpClient
-    abstract val kamelConfig: KamelConfig
     abstract val coordinator: PlatformCoordinator
 
     internal val log by lazy {
@@ -59,22 +54,6 @@ abstract class AppGraph {
             install(Logging) {
                 logger = ktorLogger
                 level = LogLevel.INFO
-            }
-        }
-    }
-
-    protected fun KamelConfigBuilder.baseConfiguration(
-        enableDebug: Boolean,
-    ) {
-        takeFrom(KamelConfig.Core)
-        imageBitmapDecoder()
-        httpUrlFetcher {
-            httpCache(100 * 1024 * 1024)
-            if (enableDebug) {
-                Logging {
-                    logger = ktorLogger
-                    level = LogLevel.INFO
-                }
             }
         }
     }

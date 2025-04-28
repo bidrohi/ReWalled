@@ -8,6 +8,7 @@ local.properties
 xcuserdata
 build/
 captures/
+images/
 Pods/
 *.podspec
 google-services.json

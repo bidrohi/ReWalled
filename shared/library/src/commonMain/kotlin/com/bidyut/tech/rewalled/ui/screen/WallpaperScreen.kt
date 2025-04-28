@@ -9,6 +9,7 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -41,13 +42,12 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.getCurrentContext
 import com.bidyut.tech.rewalled.ui.getSystemWidth
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 
 @Composable
 fun WallpaperScreen(
@@ -111,65 +111,69 @@ fun WallpaperScreen(
                         if (showBottomBar) {
                             BottomAppBar(
                                 modifier = Modifier.alpha(0.8f),
-                            actions = {
-                                IconButton(
-                                    modifier = Modifier.size(48.dp),
-                                    onClick = {
-                                        navigator.popBackStack()
-                                    },
-                                ) {
-                                    Icon(
-                                        Icons.AutoMirrored.TwoTone.ArrowBack,
-                                        contentDescription = "Back",
-                                    )
-                                }
-                                IconButton(
-                                    modifier = Modifier.size(48.dp),
-                                    onClick = {
-                                        isFullscreen = !isFullscreen
-                                    },
-                                ) {
-                                    if (isFullscreen) {
+                                actions = {
+                                    IconButton(
+                                        modifier = Modifier.size(48.dp),
+                                        onClick = {
+                                            navigator.popBackStack()
+                                        },
+                                    ) {
                                         Icon(
-                                            Icons.TwoTone.FullscreenExit,
-                                            contentDescription = "Fit",
-                                        )
-                                    } else {
-                                        Icon(
-                                            Icons.TwoTone.Fullscreen,
-                                            contentDescription = "Fill",
+                                            Icons.AutoMirrored.TwoTone.ArrowBack,
+                                            contentDescription = "Back",
                                         )
                                     }
-                                }
-                                IconButton(
-                                    modifier = Modifier.size(48.dp),
-                                    onClick = {
-                                        feed.wallpapers.getOrNull(pagerState.currentPage)
-                                            ?.let { w ->
-                                                viewModel.coordinator.triggerShareIntent(context, w)
-                                            }
-                                    },
-                                ) {
-                                    Icon(
-                                        Icons.TwoTone.IosShare,
-                                        contentDescription = "Share",
-                                    )
-                                }
-                                IconButton(
-                                    modifier = Modifier.size(48.dp),
-                                    onClick = {
-                                        feed.wallpapers.getOrNull(pagerState.currentPage)?.let {
-                                            uriHandler.openUri(it.postUrl)
+                                    IconButton(
+                                        modifier = Modifier.size(48.dp),
+                                        onClick = {
+                                            isFullscreen = !isFullscreen
+                                        },
+                                    ) {
+                                        if (isFullscreen) {
+                                            Icon(
+                                                Icons.TwoTone.FullscreenExit,
+                                                contentDescription = "Fit",
+                                            )
+                                        } else {
+                                            Icon(
+                                                Icons.TwoTone.Fullscreen,
+                                                contentDescription = "Fill",
+                                            )
                                         }
-                                    },
-                                ) {
-                                    Icon(
-                                        Icons.AutoMirrored.TwoTone.OpenInNew,
-                                        contentDescription = "Open source",
-                                    )
-                                }
-                            },
-                        )}
+                                    }
+                                    IconButton(
+                                        modifier = Modifier.size(48.dp),
+                                        onClick = {
+                                            feed.wallpapers.getOrNull(pagerState.currentPage)
+                                                ?.let { w ->
+                                                    viewModel.coordinator.triggerShareIntent(
+                                                        context,
+                                                        w
+                                                    )
+                                                }
+                                        },
+                                    ) {
+                                        Icon(
+                                            Icons.TwoTone.IosShare,
+                                            contentDescription = "Share",
+                                        )
+                                    }
+                                    IconButton(
+                                        modifier = Modifier.size(48.dp),
+                                        onClick = {
+                                            feed.wallpapers.getOrNull(pagerState.currentPage)?.let {
+                                                uriHandler.openUri(it.postUrl)
+                                            }
+                                        },
+                                    ) {
+                                        Icon(
+                                            Icons.AutoMirrored.TwoTone.OpenInNew,
+                                            contentDescription = "Open source",
+                                        )
+                                    }
+                                },
+                            )
+                        }
                     }
                 }
             ) { paddingValues ->
@@ -184,15 +188,16 @@ fun WallpaperScreen(
                             scaleIn() + fadeIn() togetherWith scaleOut() + fadeOut()
                         }
                     ) { isCropped ->
-                        KamelImage(
-                            resource = { asyncPainterResource(wallpaper.getUriForSize(screenWidthPx)) },
-                            modifier = Modifier.clickable {
-                                isChromeShown = !isChromeShown
-                            }.apply {
-                                if (!isCropped) {
-                                    padding(paddingValues)
-                                }
-                            },
+                        AsyncImage(
+                            model = wallpaper.getUriForSize(screenWidthPx),
+                            modifier = Modifier.fillMaxSize()
+                                .clickable {
+                                    isChromeShown = !isChromeShown
+                                }.apply {
+                                    if (!isCropped) {
+                                        padding(paddingValues)
+                                    }
+                                },
                             contentDescription = wallpaper.summary,
                             contentScale = if (isCropped) {
                                 ContentScale.Crop

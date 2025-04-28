@@ -52,8 +52,8 @@ kotlin {
             implementation(libs.jetbrains.material3.adaptive.core)
             implementation(libs.jetbrains.material3.adaptive.layout)
 
-            implementation(libs.kamel.image)
-            implementation(libs.kamel.decoder.bitmap)
+            implementation(libs.coil.compose)
+
             implementation(libs.kermit)
         }
         commonTest.dependencies {
@@ -65,10 +65,11 @@ kotlin {
             implementation(libs.androidx.activity)
             implementation(libs.kotlin.coroutines.android)
 
-            implementation(libs.kamel.fetcher.android)
+            implementation(libs.coil.okhttp)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+            implementation(libs.coil.ktor)
             api(libs.nsexception)
         }
         val desktopMain by getting
@@ -77,7 +78,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlin.coroutines.swing)
 
-            implementation(libs.kamel.fetcher.jvm)
+            implementation(libs.coil.okhttp)
         }
     }
 }

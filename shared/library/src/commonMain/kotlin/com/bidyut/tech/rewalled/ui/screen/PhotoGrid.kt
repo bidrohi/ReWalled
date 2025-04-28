@@ -16,11 +16,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.ui.getSystemRatio
 import com.bidyut.tech.rewalled.ui.getSystemWidth
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 
 @Composable
 fun WallpaperCard(
@@ -33,8 +32,8 @@ fun WallpaperCard(
     val requestWidthPx = with(LocalDensity.current) {
         requestWidth.roundToPx()
     }
-    KamelImage(
-        resource = { asyncPainterResource(wallpaper.getUriForSize(requestWidthPx)) },
+    AsyncImage(
+        model = wallpaper.getUriForSize(requestWidthPx),
         modifier = modifier.aspectRatio(imageRatio)
             .clip(RoundedCornerShape(cornerRadius)),
         contentDescription = wallpaper.summary,

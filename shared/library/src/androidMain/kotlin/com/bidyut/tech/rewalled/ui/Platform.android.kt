@@ -15,6 +15,9 @@ actual class PlatformContext(
 actual fun getCurrentContext(): PlatformContext = PlatformContext(LocalContext.current)
 
 @Composable
+actual fun getCachePath(): String = LocalContext.current.cacheDir.resolve("images").absolutePath
+
+@Composable
 actual fun getSystemWidth(): Dp {
     val configuration = LocalConfiguration.current
     return configuration.screenWidthDp.dp

@@ -9,6 +9,9 @@ expect class PlatformContext
 expect fun getCurrentContext(): PlatformContext
 
 @Composable
+expect fun getCachePath(): String
+
+@Composable
 expect fun getSystemWidth(): Dp
 
 @Composable

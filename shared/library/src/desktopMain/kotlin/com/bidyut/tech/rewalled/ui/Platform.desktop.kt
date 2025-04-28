@@ -11,6 +11,9 @@ actual class PlatformContext
 @Composable
 actual fun getCurrentContext(): PlatformContext = PlatformContext()
 
+@Composable
+actual fun getCachePath(): String = "images"
+
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 actual fun getSystemWidth(): Dp {
