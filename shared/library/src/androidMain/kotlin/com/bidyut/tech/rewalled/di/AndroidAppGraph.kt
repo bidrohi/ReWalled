@@ -3,10 +3,10 @@ package com.bidyut.tech.rewalled.di
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.bidyut.tech.rewalled.cache.Database
 import com.bidyut.tech.rewalled.cache.DatabaseDriverFactory
 import com.bidyut.tech.rewalled.model.Wallpaper
@@ -62,7 +62,7 @@ class AndroidAppGraph(
                 w: Wallpaper,
             ) {
                 val downloadManager = context.context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-                val uri = Uri.parse(w.url)
+                val uri = w.url.toUri()
                 val request = DownloadManager.Request(uri)
                 request.setTitle(w.summary)
                 request.setDescription("${w.id} by ${w.author}")

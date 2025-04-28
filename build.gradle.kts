@@ -52,8 +52,8 @@ subprojects {
             }
         }
         (extensions.findByName("android") as? CommonExtension<*, *, *, *, *, *>)?.apply {
-            compileSdk = 35
-            buildToolsVersion = "35.0.1"
+            compileSdk = 36
+            buildToolsVersion = "36.0.0"
             defaultConfig {
                 minSdk = 21
             }
