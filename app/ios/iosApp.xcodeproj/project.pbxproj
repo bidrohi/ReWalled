@@ -465,7 +465,7 @@
 			repositoryURL = "https://github.com/rickclephas/NSExceptionKt";
 			requirement = {
 				kind = revision;
-				revision = 60cddb735644d0b954ef19b1e42d9ea76a40a43e;
+				revision = 71f87a35ba127e3a415867881601ec03e841b182;
 			};
 		};
 		672BBB4A2C080E7E0070FFEE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
