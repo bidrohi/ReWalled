@@ -16,3 +16,4 @@ google-services.json
 /app/reddit.db-journal
 /.kotlin
 GoogleService-Info.plist
+.crush

@@ -13,10 +13,10 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
+import kotlin.time.ExperimentalTime
 
 class Database(
     databaseDriverFactory: DatabaseDriverFactory,
@@ -25,6 +25,7 @@ class Database(
     private val dbQuery = database.redditDatabaseQueries
     private val dispatcher = Dispatchers.Unconfined
 
+    @OptIn(ExperimentalTime::class)
     internal suspend fun insertWallpapersOnFeedBefore(
         feedId: SubredditFeedId,
         wallpapers: List<Wallpaper>,
@@ -51,6 +52,7 @@ class Database(
         }
     }
 
+    @OptIn(ExperimentalTime::class)
     suspend fun insertWallpapersOnFeedAfter(
         feedId: SubredditFeedId,
         wallpapers: List<Wallpaper>,
@@ -105,6 +107,7 @@ class Database(
     ) = dbQuery.selectFeedAfterCursor(feedId)
         .executeAsOneOrNull()?.after_cursor
 
+    @OptIn(ExperimentalTime::class)
     private fun getWallpaperFeedQuery(
         feedId: SubredditFeedId,
     ): Query<Wallpaper> =

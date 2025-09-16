@@ -10,7 +10,7 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.Parameters
 import io.ktor.http.URLBuilder
 import io.ktor.http.appendPathSegments
-import io.ktor.utils.io.errors.IOException
+import kotlinx.io.IOException
 
 class RedditService(
     private val client: HttpClient,

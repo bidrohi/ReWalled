@@ -3,17 +3,18 @@ package com.bidyut.tech.rewalled
 import android.app.Application
 import com.bidyut.tech.rewalled.di.AndroidAppGraph
 import com.bidyut.tech.rewalled.di.AppGraph
-import com.google.firebase.analytics.ktx.analytics
-import com.google.firebase.crashlytics.ktx.crashlytics
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.perf.ktx.performance
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
+import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.perf.performance
 
 class ReWalledApplication: Application() {
     override fun onCreate() {
         super.onCreate()
-        Firebase.crashlytics.setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
-        Firebase.analytics.setAnalyticsCollectionEnabled(!BuildConfig.DEBUG)
-        Firebase.performance.setPerformanceCollectionEnabled(!BuildConfig.DEBUG)
+        val shouldCollect = !BuildConfig.DEBUG
+        Firebase.crashlytics.isCrashlyticsCollectionEnabled = shouldCollect
+        Firebase.analytics.setAnalyticsCollectionEnabled(shouldCollect)
+        Firebase.performance.isPerformanceCollectionEnabled = shouldCollect
         AppGraph.assign(
             AndroidAppGraph(
                 applicationContext,
