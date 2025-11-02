@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Response(
-    @SerialName("kind") val kind: String,
+    @SerialName("kind") val kind: String = "",
     @SerialName("data") val data: Listing? = null,
 )

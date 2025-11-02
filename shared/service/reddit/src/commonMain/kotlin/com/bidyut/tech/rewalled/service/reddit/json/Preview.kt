@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Preview(
-    @SerialName("enabled") val enabled: Boolean,
+    @SerialName("enabled") val enabled: Boolean = false,
     @SerialName("images") val images: List<Image> = emptyList(),
 )
