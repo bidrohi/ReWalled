@@ -1,8 +1,8 @@
 import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
@@ -44,7 +44,12 @@ configure(subprojects) {
 subprojects {
     afterEvaluate {
         (extensions.findByName("kotlin") as? KotlinMultiplatformExtension)?.apply {
-            (targets.findByName("androidTarget") as? KotlinAndroidTarget)?.apply {
+            (targets.find {
+                it is KotlinMultiplatformAndroidLibraryTarget
+            } as? KotlinMultiplatformAndroidLibraryTarget)?.apply {
+                compileSdk = 36
+                buildToolsVersion = "36.0.0"
+                minSdk = 23
                 @OptIn(ExperimentalKotlinGradlePluginApi::class)
                 compilerOptions {
                     jvmTarget.set(kotlinJvmTarget)

@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.androidLibrary
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
@@ -7,7 +9,9 @@ plugins {
 }
 
 kotlin {
-    androidTarget()
+    androidLibrary {
+        namespace = "com.bidyut.tech.rewalled.shared"
+    }
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -81,8 +85,4 @@ kotlin {
             implementation(libs.coil.okhttp)
         }
     }
-}
-
-android {
-    namespace = "com.bidyut.tech.rewalled.shared"
 }

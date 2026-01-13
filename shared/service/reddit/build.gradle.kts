@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.androidLibrary
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
@@ -5,7 +7,9 @@ plugins {
 }
 
 kotlin {
-    androidTarget()
+    androidLibrary {
+        namespace = "com.bidyut.tech.rewalled.service.reddit"
+    }
     iosArm64()
     iosSimulatorArm64()
     jvm()
@@ -22,8 +26,4 @@ kotlin {
             implementation(libs.ktor.client.mock)
         }
     }
-}
-
-android {
-    namespace = "com.bidyut.tech.rewalled.service.reddit"
 }
