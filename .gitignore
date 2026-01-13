@@ -1,6 +1,6 @@
 *.iml
-.gradle
-.idea
+.gradle/
+.idea/
 .DS_Store
 .externalNativeBuild
 .cxx
@@ -12,9 +12,9 @@ images/
 Pods/
 *.podspec
 google-services.json
-/app/reddit.db
-/app/reddit.db-journal
-/.kotlin
+*.db
+*.db-journal
+.kotlin/
 GoogleService-Info.plist
-.crush
-/.env
+.crush/
+.env

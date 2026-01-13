@@ -14,7 +14,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "ReWalled"
-include(":app")
+include(":app:android")
+include(":app:desktop")
 include(":shared:core:network")
 include(":shared:library")
 include(":shared:model")

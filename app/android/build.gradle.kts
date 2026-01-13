@@ -1,16 +1,15 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 plugins {
-    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.compose)
-    alias(libs.plugins.android.application)
     alias(libs.plugins.playPublisher)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -39,32 +38,6 @@ object AppVersion {
     val name: String by lazy {
         DateTimeFormatter.ofPattern("yyyy.MM.dd")
             .format(now)
-    }
-}
-
-kotlin {
-    androidTarget()
-
-    jvm("desktop")
-
-    sourceSets {
-        commonMain.dependencies {
-            implementation(project(":shared:library"))
-            implementation(libs.kermit)
-        }
-        androidMain.dependencies {
-            implementation(libs.androidx.activity)
-            implementation(libs.androidx.splashscreen)
-
-            implementation(project.dependencies.platform(libs.firebase.bom))
-            implementation(libs.firebase.analytics)
-            implementation(libs.firebase.crashlytics)
-            implementation(libs.firebase.performance)
-        }
-        val desktopMain by getting
-        desktopMain.dependencies {
-            implementation(compose.desktop.currentOs)
-        }
     }
 }
 
@@ -109,16 +82,18 @@ android {
     }
 }
 
-compose.desktop {
-    application {
-        mainClass = "ReWalledKt"
+dependencies {
+    implementation(project(":shared:library"))
 
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.bidyut.tech.rewalled"
-            packageVersion = "1.0.0"
-        }
-    }
+    implementation(libs.kermit)
+
+    implementation(libs.androidx.activity)
+    implementation(libs.androidx.splashscreen)
+
+    implementation(project.dependencies.platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.performance)
 }
 
 if (hasPlayPublisherKey) {
