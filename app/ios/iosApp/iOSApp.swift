@@ -1,5 +1,5 @@
 import FirebaseCore
-import FirebaseAnalyticsWithoutAdIdSupportTarget
+import FirebaseAnalytics
 import FirebaseCrashlytics
 import FirebasePerformance
 import NSExceptionKtCrashlytics

@@ -9,7 +9,7 @@ import kotlin.experimental.ExperimentalObjCName
 
 @OptIn(ExperimentalObjCName::class)
 class IosAppGraph(
-    @ObjCName("_")
+    @param:ObjCName("_")
     override val coordinator: PlatformCoordinator,
     enableDebug: Boolean = false,
 ) : AppGraph(enableDebug) {

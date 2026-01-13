@@ -57,7 +57,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.window.core.layout.WindowWidthSizeClass
+import androidx.window.core.layout.WindowSizeClass
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
@@ -74,7 +74,7 @@ fun SubRedditScreen(
 ) {
     ReWalledTheme {
         val windowInfo = currentWindowAdaptiveInfo()
-        if (windowInfo.windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED) {
+        if (windowInfo.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)) {
             var selectedFeedId by rememberSaveable {
                 mutableStateOf<SubredditFeedId?>(subRedditViewModel.feedId)
             }
@@ -93,7 +93,7 @@ fun SubRedditScreen(
                     )
                 },
                 detailPane = {
-                    selectedFeedId?.let { feedId ->
+                    selectedFeedId?.let { _ ->
                         SubRedditPane(
                             modifier = modifier,
                             subReddit = subRedditViewModel.subReddit.value,
