@@ -1,6 +1,9 @@
 package com.bidyut.tech.rewalled.ui.screen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
@@ -40,6 +43,7 @@ import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.model.makeSubredditFeedId
+import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.getSystemRatio
 import com.bidyut.tech.rewalled.ui.getSystemWidth
@@ -49,8 +53,9 @@ import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 import kotlin.math.roundToInt
 
 @Composable
-fun CategoriesScreen(
+fun SharedTransitionScope.CategoriesScreen(
     navigator: NavController,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: CategoriesViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -62,6 +67,15 @@ fun CategoriesScreen(
                     onClick = {
                         navigator.navigate(Route.Settings)
                     },
+                    modifier = Modifier.sharedElement(
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = CONTENT_ANIMATION_DURATION)
+                        },
+                        sharedContentState = rememberSharedContentState(
+                            key = "image-logo"
+                        ),
+                    ),
                 ) {
                     Icon(
                         imageVector = ReWalled,
@@ -78,6 +92,7 @@ fun CategoriesScreen(
                 end = paddingValues.calculateEndPadding(layoutDirection),
             )
             CategoriesPane(
+                animatedVisibilityScope = animatedVisibilityScope,
                 viewModel = viewModel,
                 contentPadding = contentPadding,
                 onCategoryClick = { feedId ->
@@ -93,7 +108,8 @@ fun CategoriesScreen(
 }
 
 @Composable
-fun CategoriesPane(
+fun SharedTransitionScope.CategoriesPane(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: CategoriesViewModel,
     contentPadding: PaddingValues,
     onCategoryClick: (SubredditFeedId) -> Unit,
@@ -111,6 +127,7 @@ fun CategoriesPane(
             val feedId = makeSubredditFeedId(subReddit, Filter.Rising)
             val state = viewModel.getUiState(subReddit)
             CategoryRow(
+                animatedVisibilityScope = animatedVisibilityScope,
                 subReddit = subReddit,
                 state = state.value,
                 onWallpaperClick = { wallpaper ->
@@ -125,10 +142,9 @@ fun CategoriesPane(
     }
 }
 
-const val CONTENT_ANIMATION_DURATION = 300
-
 @Composable
-fun CategoryRow(
+private fun SharedTransitionScope.CategoryRow(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     subReddit: String,
     state: UiState,
     onWallpaperClick: (Wallpaper) -> Unit,
@@ -180,9 +196,18 @@ fun CategoryRow(
                             .padding(
                                 horizontal = 16.dp,
                                 vertical = 8.dp,
+                            ).sharedElement(
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+                                    tween(durationMillis = CONTENT_ANIMATION_DURATION)
+                                },
+                                sharedContentState = rememberSharedContentState(
+                                    key = "subreddit-$subReddit-title"
+                                ),
                             ),
                     )
                     PhotoRow(
+                        animatedVisibilityScope = animatedVisibilityScope,
                         wallpapers = targetState.feed.wallpapers,
                         onWallpaperClick = onWallpaperClick,
                         modifier = Modifier.fillMaxWidth()
@@ -197,7 +222,8 @@ fun CategoryRow(
 }
 
 @Composable
-fun PhotoRow(
+fun SharedTransitionScope.PhotoRow(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     wallpapers: List<Wallpaper>,
     onWallpaperClick: (Wallpaper) -> Unit,
     modifier: Modifier = Modifier,
@@ -228,7 +254,15 @@ fun PhotoRow(
                 imageRatio = ratio,
                 cornerRadius = 4.dp,
                 modifier = Modifier.width(wallpaperSize)
-                    .clickable { onWallpaperClick(it) }
+                    .sharedElement(
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+                            tween(durationMillis = CONTENT_ANIMATION_DURATION)
+                        },
+                        sharedContentState = rememberSharedContentState(
+                            key = "wallpaper-${it.id}"
+                        ),
+                    ).clickable { onWallpaperClick(it) },
             )
         }
     }

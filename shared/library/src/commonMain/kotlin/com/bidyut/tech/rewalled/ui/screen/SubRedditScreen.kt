@@ -1,5 +1,8 @@
 package com.bidyut.tech.rewalled.ui.screen
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,13 +64,15 @@ import androidx.window.core.layout.WindowSizeClass
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
+import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
 import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
-fun SubRedditScreen(
+fun SharedTransitionScope.SubRedditScreen(
     navigator: NavController,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     categoriesViewModel: CategoriesViewModel,
     subRedditViewModel: SubRedditViewModel,
     modifier: Modifier = Modifier,
@@ -81,6 +86,7 @@ fun SubRedditScreen(
             ListDetailPaneScaffold(
                 listPane = {
                     CategoriesPane(
+                        animatedVisibilityScope = animatedVisibilityScope,
                         viewModel = categoriesViewModel,
                         contentPadding = PaddingValues(bottom = 96.dp),
                         onCategoryClick = { feedId ->
@@ -95,6 +101,7 @@ fun SubRedditScreen(
                 detailPane = {
                     selectedFeedId?.let { _ ->
                         SubRedditPane(
+                            animatedVisibilityScope = animatedVisibilityScope,
                             modifier = modifier,
                             subReddit = subRedditViewModel.subReddit.value,
                             filter = subRedditViewModel.filter.value,
@@ -137,6 +144,7 @@ fun SubRedditScreen(
             )
         } else {
             SubRedditPane(
+                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = modifier,
                 subReddit = subRedditViewModel.subReddit.value,
                 filter = subRedditViewModel.filter.value,
@@ -164,7 +172,8 @@ fun SubRedditScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubRedditPane(
+fun SharedTransitionScope.SubRedditPane(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     subReddit: String,
     filter: Filter,
     uiState: SubRedditViewModel.UiState,
@@ -197,13 +206,22 @@ fun SubRedditPane(
                             withStyle(
                                 style = SpanStyle(
                                     fontWeight = FontWeight.Light,
-                                    color = MaterialTheme.colorScheme.secondary
+                                    color = MaterialTheme.colorScheme.secondary,
                                 )
                             ) {
                                 append("/r/")
                             }
                             append(subReddit)
-                        }
+                        },
+                        modifier = Modifier.sharedElement(
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = CONTENT_ANIMATION_DURATION)
+                            },
+                            sharedContentState = rememberSharedContentState(
+                                key = "subreddit-$subReddit-title"
+                            ),
+                        ),
                     )
                     var isFilterMenuExpanded by remember {
                         mutableStateOf(false)
@@ -256,6 +274,7 @@ fun SubRedditPane(
             end = paddingValues.calculateEndPadding(direction) + 8.dp,
         )
         SubRedditContents(
+            animatedVisibilityScope = animatedVisibilityScope,
             modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             state = uiState,
             contentPadding = contentPadding,
@@ -266,7 +285,8 @@ fun SubRedditPane(
 }
 
 @Composable
-fun SubRedditContents(
+fun SharedTransitionScope.SubRedditContents(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     state: SubRedditViewModel.UiState,
     contentPadding: PaddingValues,
     onWallpaperClick: (Wallpaper) -> Unit,
@@ -294,6 +314,7 @@ fun SubRedditContents(
 
         is SubRedditViewModel.UiState.ShowContent -> {
             PhotoGrid(
+                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = modifier,
                 wallpapers = state.feed?.wallpapers.orEmpty(),
                 onWallpaperClick = onWallpaperClick,

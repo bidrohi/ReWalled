@@ -1,5 +1,8 @@
 package com.bidyut.tech.rewalled.ui.screen
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,13 +44,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
-fun CategoriesSettingsScreen(
+fun SharedTransitionScope.CategoriesSettingsScreen(
     navigator: NavController,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: CategoriesViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -96,7 +101,18 @@ fun CategoriesSettingsScreen(
                                 contentDescription = "Back",
                             )
                         }
-                        Text("Categories")
+                        Text(
+                            text = "Configure categories",
+                            modifier = Modifier.sharedElement(
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+                                    tween(durationMillis = CONTENT_ANIMATION_DURATION)
+                                },
+                                sharedContentState = rememberSharedContentState(
+                                    key = "categories-config-title"
+                                ),
+                            ),
+                        )
                     }
                 )
             }

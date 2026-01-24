@@ -1,5 +1,6 @@
 package com.bidyut.tech.rewalled.ui
 
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,6 +26,8 @@ import com.bidyut.tech.rewalled.ui.screen.SubRedditViewModel
 import com.bidyut.tech.rewalled.ui.screen.WallpaperScreen
 import okio.Path.Companion.toPath
 
+const val CONTENT_ANIMATION_DURATION = 200
+
 @Composable
 fun App() {
     val cachePath = getCachePath()
@@ -48,55 +51,62 @@ fun App() {
     val subRedditViewModel: SubRedditViewModel =
         viewModel(factory = SubRedditViewModel.factory())
     val navigator: NavHostController = rememberNavController()
-    NavHost(
-        navController = navigator,
-        startDestination = Route.Categories,
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        composable<Route.Categories> {
-            CategoriesScreen(
-                navigator = navigator,
-                viewModel = categoriesViewModel,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-        composable<Route.Settings> {
-            SettingsScreen(
-                navigator = navigator,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-        composable<Route.SettingsCategories> {
-            CategoriesSettingsScreen(
-                navigator = navigator,
-                viewModel = categoriesViewModel,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-        composable<Route.Grid> {
-            val route = it.toRoute<Route.Grid>()
-            val feedId = route.feedId
-            val (subreddit, filter) = feedId.dissolve()
-            subRedditViewModel.subReddit.value = subreddit
-            subRedditViewModel.filter.value = filter
-            SubRedditScreen(
-                navigator = navigator,
-                categoriesViewModel = categoriesViewModel,
-                subRedditViewModel = subRedditViewModel,
-                modifier = Modifier.fillMaxSize(),
-            )
-        }
-        composable<Route.Wallpaper> {
-            val route = it.toRoute<Route.Wallpaper>()
-            val feedId = route.feedId
-            val id = route.id.orEmpty()
-            WallpaperScreen(
-                feedId = feedId,
-                wallpaperId = id,
-                navigator = navigator,
-                viewModel = subRedditViewModel,
-                modifier = Modifier.fillMaxSize(),
-            )
+    SharedTransitionLayout {
+        NavHost(
+            navController = navigator,
+            startDestination = Route.Categories,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            composable<Route.Categories> {
+                CategoriesScreen(
+                    navigator = navigator,
+                    animatedVisibilityScope = this,
+                    viewModel = categoriesViewModel,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+            composable<Route.Settings> {
+                SettingsScreen(
+                    navigator = navigator,
+                    animatedVisibilityScope = this,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+            composable<Route.SettingsCategories> {
+                CategoriesSettingsScreen(
+                    navigator = navigator,
+                    animatedVisibilityScope = this,
+                    viewModel = categoriesViewModel,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+            composable<Route.Grid> {
+                val route = it.toRoute<Route.Grid>()
+                val feedId = route.feedId
+                val (subreddit, filter) = feedId.dissolve()
+                subRedditViewModel.subReddit.value = subreddit
+                subRedditViewModel.filter.value = filter
+                SubRedditScreen(
+                    navigator = navigator,
+                    animatedVisibilityScope = this,
+                    categoriesViewModel = categoriesViewModel,
+                    subRedditViewModel = subRedditViewModel,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+            composable<Route.Wallpaper> {
+                val route = it.toRoute<Route.Wallpaper>()
+                val feedId = route.feedId
+                val id = route.id.orEmpty()
+                WallpaperScreen(
+                    animatedVisibilityScope = this,
+                    feedId = feedId,
+                    wallpaperId = id,
+                    navigator = navigator,
+                    viewModel = subRedditViewModel,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
         }
     }
 }

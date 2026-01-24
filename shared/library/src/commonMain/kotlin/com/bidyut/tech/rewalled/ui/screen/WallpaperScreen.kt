@@ -1,6 +1,9 @@
 package com.bidyut.tech.rewalled.ui.screen
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -45,12 +48,14 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
+import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
 import com.bidyut.tech.rewalled.ui.getCurrentContext
 import com.bidyut.tech.rewalled.ui.getSystemWidth
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 
 @Composable
-fun WallpaperScreen(
+fun SharedTransitionScope.WallpaperScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     feedId: SubredditFeedId,
     wallpaperId: WallpaperId,
     navigator: NavController,
@@ -191,7 +196,15 @@ fun WallpaperScreen(
                         AsyncImage(
                             model = wallpaper.getUriForSize(screenWidthPx),
                             modifier = Modifier.fillMaxSize()
-                                .clickable {
+                                .sharedElement(
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = CONTENT_ANIMATION_DURATION)
+                                    },
+                                    sharedContentState = rememberSharedContentState(
+                                        key = "wallpaper-${wallpaper.id}"
+                                    ),
+                                ).clickable {
                                     isChromeShown = !isChromeShown
                                 }.apply {
                                     if (!isCropped) {

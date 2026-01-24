@@ -1,5 +1,8 @@
 package com.bidyut.tech.rewalled.ui.screen
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,6 +21,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.Wallpaper
+import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
 import com.bidyut.tech.rewalled.ui.getSystemRatio
 import com.bidyut.tech.rewalled.ui.getSystemWidth
 
@@ -42,7 +46,8 @@ fun WallpaperCard(
 }
 
 @Composable
-fun PhotoGrid(
+fun SharedTransitionScope.PhotoGrid(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     wallpapers: List<Wallpaper>,
     onWallpaperClick: (Wallpaper) -> Unit,
     contentPadding: PaddingValues,
@@ -67,7 +72,15 @@ fun PhotoGrid(
                 wallpaper = it,
                 requestWidth = screenWidth,
                 imageRatio = ratio,
-                modifier = Modifier.clickable { onWallpaperClick(it) }
+                modifier = Modifier.sharedElement(
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = CONTENT_ANIMATION_DURATION)
+                    },
+                    sharedContentState = rememberSharedContentState(
+                        key = "wallpaper-${it.id}"
+                    ),
+                ).clickable { onWallpaperClick(it) }
             )
         }
         if (wallpapers.isNotEmpty() && afterCursor?.isNotEmpty() == true) {
