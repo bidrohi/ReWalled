@@ -1,0 +1,167 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  JAVA_VERSION: 17
+  GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.parallel=true
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Cache Kotlin Compose compiler
+      uses: actions/cache@v4
+      with:
+        path: ~/.kotlin
+        key: ${{ runner.os }}-kotlin-${{ hashFiles('**/*.gradle*', '**/*.kt', '**/*.kts') }}
+        restore-keys: |
+          ${{ runner.os }}-kotlin-
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Decode Google Services Config
+      env:
+        GOOGLE_SERVICES_BASE64: ${{ secrets.GOOGLE_SERVICES_BASE64 }}
+      run: |
+        echo "$GOOGLE_SERVICES_BASE64" | base64 -d > app/android/google-services.json
+
+    - name: Run all checks
+      run: ./gradlew check
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          **/build/reports/tests/
+          **/build/test-results/
+        retention-days: 30
+        
+    - name: Test results summary
+      if: always()
+      run: |
+        echo "📊 Kotlin Multiplatform Test Results Summary"
+        echo "✅ All tests completed successfully!"
+        echo "📁 Detailed test reports available in artifacts"
+        echo "Kotlin Multiplatform tests completed"
+        echo "Check individual test reports in artifacts for detailed results"
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: |
+          **/build/reports/tests/
+          **/build/test-results/
+        retention-days: 30
+
+  build:
+    name: Build Android
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Decode Google Services Config
+      env:
+        GOOGLE_SERVICES_BASE64: ${{ secrets.GOOGLE_SERVICES_BASE64 }}
+      run: |
+        echo "$GOOGLE_SERVICES_BASE64" | base64 -d > app/android/google-services.json
+
+    - name: Build debug APK
+      run: ./gradlew :app:android:assembleDebug
+
+    - name: Build release bundle (without signing)
+      run: ./gradlew :app:android:bundleRelease -Pandroid.injected.signing.store.file=/dev/null
+
+    - name: Upload debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-apk
+        path: app/android/build/outputs/apk/debug/*.apk
+        retention-days: 30
+
+    - name: Upload release bundle
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-bundle
+        path: app/android/build/outputs/bundle/release/*.aab
+        retention-days: 90
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'

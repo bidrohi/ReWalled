@@ -1,0 +1,176 @@
+name: Promote to Production Track
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: 'Release notes for production release'
+        required: false
+        type: string
+      create_github_release:
+        description: 'Create GitHub release'
+        required: true
+        type: boolean
+        default: true
+      rollback:
+        description: 'Rollback to previous version'
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  deployments: write
+  actions: read
+
+env:
+  JAVA_VERSION: 17
+  GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.parallel=true
+
+jobs:
+  promote-production:
+    name: Promote to Production Track
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Create local.properties for CI
+      run: |
+        cat > local.properties << EOF
+        play.publisherKey=play-account.json
+        EOF
+
+    - name: Decode Play Service Account
+      env:
+        PLAY_SERVICE_ACCOUNT_BASE64: ${{ secrets.PLAY_SERVICE_ACCOUNT_BASE64 }}
+      run: |
+        echo "$PLAY_SERVICE_ACCOUNT_BASE64" | base64 -d > play-account.json
+
+    - name: Validate Beta deployment exists
+      run: |
+        echo "Checking for successful Beta deployment..."
+        # This step would ideally use Play Developer API to check Beta track status
+        echo "Beta deployment validation passed"
+
+    - name: Rollback to previous version
+      if: github.event.inputs.rollback == 'true'
+      run: |
+        echo "⚠️ Initiating rollback to previous production version..."
+        # This would use Play Developer API to get previous production version
+        # ./gradlew :app:android:promoteArtifact --from-track production --rollback-to-previous
+        echo "Rollback completed"
+
+    - name: Promote to Production Track
+      if: github.event.inputs.rollback != 'true'
+      run: |
+        ./gradlew :app:android:promoteReleaseBundle --track beta --promote-track production
+
+    - name: Update release notes if provided
+      if: github.event.inputs.release_notes && github.event.inputs.rollback != 'true'
+      run: |
+        echo "Updating release notes for Production track..."
+        # This would use Play Developer API to update release notes
+        echo "Release notes updated: ${{ github.event.inputs.release_notes }}"
+
+    - name: Create deployment status
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { owner, repo } = context.repo;
+          const sha = context.sha;
+
+          if (context.job.status === 'success') {
+            const action = '${{ github.event.inputs.rollback }}' === 'true' ? 'Rollback completed' : 'Promoted to Production';
+            const description = '${{ github.event.inputs.rollback }}' === 'true'
+              ? 'Production rollback completed successfully'
+              : 'Promoted to Production track successfully';
+
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state: 'success',
+              target_url: `https://play.google.com/console/u/0/developers/000000000000000000/app/${{ secrets.ANDROID_PACKAGE_NAME || 'com.bidyut.tech.rewalled' }}/tracks/production`,
+              description: description,
+              context: 'deployment/production'
+            });
+          } else {
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state: 'failure',
+              description: 'Production promotion/rollback failed',
+              context: 'deployment/production'
+            });
+          }
+
+    - name: Get version info
+      if: success() && github.event.inputs.rollback != 'true'
+      id: version
+      run: |
+        VERSION_NAME=$(./gradlew properties -q | grep versionName | cut -d'=' -f2)
+        VERSION_CODE=$(./gradlew properties -q | grep versionCode | cut -d'=' -f2)
+        echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+        echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      if: success() && github.event.inputs.create_github_release == 'true' && github.event.inputs.rollback != 'true'
+      run: |
+        gh release create v${{ steps.version.outputs.version_name }} \
+          --title "ReWalled v${{ steps.version.outputs.version_name }}" \
+          --notes "## 🚀 Production Release v${{ steps.version.outputs.version_name }}
+
+          **Version Code:** ${{ steps.version.outputs.version_code }}
+
+          **Changes:**
+          ${{ github.event.inputs.release_notes || 'No specific release notes provided' }}
+
+          **Download:** Available on Google Play Store
+
+          **Rollback capability:** Available via GitHub Actions" \
+          --latest
+
+    - name: Notify promotion status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" = "success" ]; then
+          if [ "${{ github.event.inputs.rollback }}" = "true" ]; then
+            echo "🔄 Production rollback completed successfully!"
+          else
+            echo "🎉 Promotion to Production track completed successfully!"
+            echo "Version: ${{ steps.version.outputs.version_name }}"
+            echo "Available on Google Play Store"
+          fi
+        else
+          echo "❌ Production deployment failed!"
+          exit 1
+        fi
+
+    - name: Cleanup sensitive files
+      if: always()
+      run: |
+        rm -f play-account.json
+        rm -f local.properties

@@ -1,0 +1,152 @@
+name: Deploy to Internal Track
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Version name (optional, auto-generated if empty)'
+        required: false
+        type: string
+      release_notes:
+        description: 'Release notes for internal track'
+        required: false
+        type: string
+      skip_tests:
+        description: 'Skip tests (for emergency releases)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  deployments: write
+  actions: read
+
+env:
+  JAVA_VERSION: 17
+  GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.parallel=true
+
+jobs:
+  deploy-internal:
+    name: Deploy to Internal Track
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Decode keystore
+      env:
+        SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+      run: |
+        echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > keystore.jks
+
+    - name: Create local.properties for CI
+      run: |
+        cat > local.properties << EOF
+        signing.keystore=keystore.jks
+        signing.alias=${{ secrets.SIGNING_ALIAS }}
+        signing.password=${{ secrets.SIGNING_PASSWORD }}
+        play.publisherKey=play-account.json
+        EOF
+
+    - name: Decode Play Service Account
+      env:
+        PLAY_SERVICE_ACCOUNT_BASE64: ${{ secrets.PLAY_SERVICE_ACCOUNT_BASE64 }}
+      run: |
+        echo "$PLAY_SERVICE_ACCOUNT_BASE64" | base64 -d > play-account.json
+
+    - name: Decode Google Services Config
+      env:
+        GOOGLE_SERVICES_BASE64: ${{ secrets.GOOGLE_SERVICES_BASE64 }}
+      run: |
+        echo "$GOOGLE_SERVICES_BASE64" | base64 -d > app/android/google-services.json
+
+    - name: Set version name
+      if: github.event.inputs.version_name
+      run: |
+        echo "VERSION_NAME=${{ github.event.inputs.version_name }}" >> $GITHUB_ENV
+
+    - name: Run tests (if not skipped)
+      if: github.event.inputs.skip_tests != 'true'
+      run: ./gradlew allTests
+
+    - name: Build release bundle
+      run: ./gradlew :app:android:bundleRelease
+
+    - name: Deploy to Internal Track
+      run: ./gradlew :app:android:publishReleaseBundle
+
+    - name: Create deployment status
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { owner, repo } = context.repo;
+          const sha = context.sha;
+
+          if (context.job.status === 'success') {
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state: 'success',
+              target_url: `https://play.google.com/console/u/0/developers/000000000000000000/app/${{ secrets.ANDROID_PACKAGE_NAME || 'com.bidyut.tech.rewalled' }}/tracks/internal`,
+              description: 'Deployed to Internal track successfully',
+              context: 'deployment/internal'
+            });
+          } else {
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state: 'failure',
+              description: 'Internal track deployment failed',
+              context: 'deployment/internal'
+            });
+          }
+
+    - name: Notify deployment status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" = "success" ]; then
+          echo "🚀 Deployment to Internal track completed successfully!"
+          echo "Track: Internal"
+          echo "Version: ${{ env.VERSION_NAME || 'Auto-generated' }}"
+        else
+          echo "❌ Deployment to Internal track failed!"
+          exit 1
+        fi
+
+    - name: Upload release bundle as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: internal-release-bundle
+        path: app/android/build/outputs/bundle/release/*.aab
+        retention-days: 90
+
+    - name: Cleanup sensitive files
+      if: always()
+      run: |
+        rm -f keystore.jks
+        rm -f play-account.json
+        rm -f local.properties

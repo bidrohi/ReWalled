@@ -18,3 +18,4 @@ google-services.json
 GoogleService-Info.plist
 .crush/
 .env
+.serena/

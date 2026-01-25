@@ -23,7 +23,7 @@ ReWalled is a cross-platform wallpaper application that fetches images from Redd
 ### Platform Builds
 - **Android APK**: `./gradlew :app:android:assembleDebug`
 - **Desktop DMG/AppImage**: `./gradlew :app:desktop:packageDistributionForCurrentOS`
-- **Android Release**: `./gradlew :app:android:assembleRelease`
+- **Android Release**: `./gradlew :app:android:bundleRelease`
 
 ### Testing
 - **Run all tests**: `./gradlew allTests`
@@ -33,7 +33,7 @@ ReWalled is a cross-platform wallpaper application that fetches images from Redd
 - **Clean test reports**: `./gradlew cleanAllTests`
 
 ### Code Quality
-- **Lint (Android)**: `./gradlew lint`
+- **Check**: `./gradlew check`
 - **Clean build**: `./gradlew clean`
 
 ## Code Style
