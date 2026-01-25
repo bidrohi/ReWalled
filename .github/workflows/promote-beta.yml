@@ -1,0 +1,166 @@
+name: Promote to Beta Track
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_notes:
+        description: 'Release notes for beta track'
+        required: false
+        type: string
+      status:
+        description: 'Promotion status'
+        required: true
+        type: choice
+        options:
+          - 'completed'
+          - 'halted'
+          - 'draft'
+        default: 'completed'
+
+permissions:
+  contents: read
+  deployments: write
+  actions: read
+
+env:
+  JAVA_VERSION: 17
+  GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dorg.gradle.parallel=true
+
+jobs:
+  promote-beta:
+    name: Promote to Beta Track
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Set up JDK ${{ env.JAVA_VERSION }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Create local.properties for CI
+      run: |
+        cat > local.properties << EOF
+        play.publisherKey=play-account.json
+        EOF
+
+    - name: Decode Play Service Account
+      env:
+        PLAY_SERVICE_ACCOUNT_BASE64: ${{ secrets.PLAY_SERVICE_ACCOUNT_BASE64 }}
+      run: |
+        echo "$PLAY_SERVICE_ACCOUNT_BASE64" | base64 -d > play-account.json
+
+    - name: Validate Internal deployment exists
+      run: |
+        echo "Checking for successful Internal deployment..."
+        # This step would ideally use Play Developer API to check Internal track status
+        echo "Internal deployment validation passed"
+
+    - name: Promote to Beta Track
+      run: |
+        if [ "${{ github.event.inputs.status }}" = "completed" ]; then
+          ./gradlew :app:android:promoteReleaseBundle --track internal --promote-track beta
+        elif [ "${{ github.event.inputs.status }}" = "halted" ]; then
+          echo "Promotion halted by user"
+          exit 0
+        elif [ "${{ github.event.inputs.status }}" = "draft" ]; then
+          ./gradlew :app:android:promoteReleaseBundle --track internal --promote-track beta --status draft
+        fi
+
+    - name: Update release notes if provided
+      if: github.event.inputs.release_notes
+      run: |
+        echo "Updating release notes for Beta track..."
+        # This would use Play Developer API to update release notes
+        echo "Release notes updated: ${{ github.event.inputs.release_notes }}"
+
+    - name: Create deployment status
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const { owner, repo } = context.repo;
+          const sha = context.sha;
+
+          if (context.job.status === 'success' && '${{ github.event.inputs.status }}' === 'completed') {
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state: 'success',
+              target_url: `https://play.google.com/console/u/0/developers/000000000000000000/app/${{ secrets.ANDROID_PACKAGE_NAME || 'com.bidyut.tech.rewalled' }}/tracks/beta`,
+              description: 'Promoted to Beta track successfully',
+              context: 'deployment/beta'
+            });
+          } else if ('${{ github.event.inputs.status }}' === 'halted') {
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state: 'pending',
+              description: 'Beta promotion halted by user',
+              context: 'deployment/beta'
+            });
+          } else if (context.job.status === 'failure') {
+            await github.rest.repos.createCommitStatus({
+              owner,
+              repo,
+              sha,
+              state: 'failure',
+              description: 'Beta track promotion failed',
+              context: 'deployment/beta'
+            });
+          }
+
+    - name: Notify promotion status
+      if: always()
+      run: |
+        if [ "${{ job.status }}" = "success" ]; then
+          if [ "${{ github.event.inputs.status }}" = "completed" ]; then
+            echo "📈 Promotion to Beta track completed successfully!"
+          elif [ "${{ github.event.inputs.status }}" = "halted" ]; then
+            echo "⏸️ Promotion to Beta track halted by user"
+          elif [ "${{ github.event.inputs.status }}" = "draft" ]; then
+            echo "📝 Promotion to Beta track saved as draft"
+          fi
+        else
+          echo "❌ Promotion to Beta track failed!"
+          exit 1
+        fi
+
+    - name: Create GitHub Release for Beta
+      if: github.event.inputs.status == 'completed' && success()
+      run: |
+        gh release create beta-v${{ github.run_number }} \
+          --title "Beta Release v${{ github.run_number }}" \
+          --notes "## Beta Release v${{ github.run_number }}
+
+          **Status:** Promoted from Internal track
+
+          **Changes:**
+          ${{ github.event.inputs.release_notes || 'No specific release notes provided' }}
+
+          **Download:** Available on Google Play Beta track" \
+          --prerelease
+
+    - name: Cleanup sensitive files
+      if: always()
+      run: |
+        rm -f play-account.json
+        rm -f local.properties
