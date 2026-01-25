@@ -58,14 +58,14 @@ jobs:
     - name: Create local.properties for CI
       run: |
         cat > local.properties << EOF
-        play.publisherKey=play-account.json
+        play.publisherKey=app/android/play-account.json
         EOF
 
     - name: Decode Play Service Account
       env:
         PLAY_SERVICE_ACCOUNT_BASE64: ${{ secrets.PLAY_SERVICE_ACCOUNT_BASE64 }}
       run: |
-        echo "$PLAY_SERVICE_ACCOUNT_BASE64" | base64 -d > play-account.json
+        echo "$PLAY_SERVICE_ACCOUNT_BASE64" | base64 -d > app/android/play-account.json
 
     - name: Validate Beta deployment exists
       run: |
@@ -172,5 +172,4 @@ jobs:
     - name: Cleanup sensitive files
       if: always()
       run: |
-        rm -f play-account.json
-        rm -f local.properties
+        rm -f local.properties app/android/play-account.json

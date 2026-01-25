@@ -63,10 +63,10 @@ jobs:
     - name: Create local.properties for CI
       run: |
         cat > local.properties << EOF
-        signing.keystore=keystore.jks
+        signing.keystore=app/android/keystore.jks
         signing.alias=${{ secrets.SIGNING_ALIAS }}
         signing.password=${{ secrets.SIGNING_PASSWORD }}
-        play.publisherKey=play-account.json
+        play.publisherKey=app/android/play-account.json
         EOF
 
     - name: Decode Play Service Account
@@ -147,6 +147,4 @@ jobs:
     - name: Cleanup sensitive files
       if: always()
       run: |
-        rm -f keystore.jks
-        rm -f play-account.json
-        rm -f local.properties
+        rm -f local.properties app/android/keystore.jks app/android/play-account.json
