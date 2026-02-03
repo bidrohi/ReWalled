@@ -65,10 +65,12 @@ kotlin {
             implementation(libs.ktor.client.mock)
         }
         androidMain.dependencies {
-            implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.activity)
             implementation(libs.kotlin.coroutines.android)
 
+            implementation(libs.bitdrift)
+            implementation(libs.okhttp.core)
+            implementation(libs.ktor.client.okhttp)
             implementation(libs.coil.okhttp)
         }
         iosMain.dependencies {

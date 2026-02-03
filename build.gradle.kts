@@ -9,9 +9,6 @@ plugins {
     //trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.android.application).apply(false)
     alias(libs.plugins.android.library).apply(false)
-    alias(libs.plugins.firebase.crashlytics).apply(false)
-    alias(libs.plugins.firebase.performance).apply(false)
-    alias(libs.plugins.google.services).apply(false)
     alias(libs.plugins.jetbrains.compose).apply(false)
     alias(libs.plugins.jetbrains.composeHotReload).apply(false)
     alias(libs.plugins.kotlin.android).apply(false)

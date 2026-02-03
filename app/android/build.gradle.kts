@@ -1,5 +1,4 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import org.jetbrains.kotlin.konan.properties.hasProperty
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -11,12 +10,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.compose)
     alias(libs.plugins.playPublisher)
-    alias(libs.plugins.google.services)
-    alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.firebase.performance)
 }
 
 val localProperties = gradleLocalProperties(rootDir, providers)
+val bitdriftApiKey: String by lazy { localProperties.getProperty("bitdrift.apiKey") }
 val hasKeystore = localProperties.hasProperty("signing.keystore")
 val keystoreFile: String by lazy { localProperties.getProperty("signing.keystore") }
 val keystoreAlias: String by lazy { localProperties.getProperty("signing.alias") }
@@ -48,6 +45,7 @@ android {
         targetSdk = 36
         versionCode = AppVersion.code
         versionName = AppVersion.name
+        buildConfigField("String", "BITDRIFT_API_KEY", "\"$bitdriftApiKey\"")
     }
     buildFeatures {
         buildConfig = true
@@ -74,11 +72,6 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
-        getByName("debug" ) {
-            configure<CrashlyticsExtension> {
-                mappingFileUploadEnabled = false
-            }
-        }
     }
 }
 
@@ -90,10 +83,7 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.splashscreen)
 
-    implementation(project.dependencies.platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.performance)
+    implementation(libs.bitdrift)
 }
 
 if (hasPlayPublisherKey) {

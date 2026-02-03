@@ -12,6 +12,7 @@ import com.bidyut.tech.rewalled.cache.DatabaseDriverFactory
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.ui.PlatformContext
 import com.bidyut.tech.rewalled.ui.PlatformCoordinator
+import io.bitdrift.capture.network.okhttp.CaptureOkHttpEventListenerFactory
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 
@@ -26,6 +27,11 @@ class AndroidAppGraph(
 
     override val httpClient by lazy {
         HttpClient(OkHttp) {
+            engine {
+                config {
+                    eventListenerFactory(CaptureOkHttpEventListenerFactory())
+                }
+            }
             baseConfiguration(enableDebug)
         }
     }
