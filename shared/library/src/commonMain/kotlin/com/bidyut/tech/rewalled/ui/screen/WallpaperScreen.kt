@@ -18,13 +18,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.automirrored.twotone.OpenInNew
 import androidx.compose.material.icons.twotone.FileDownload
 import androidx.compose.material.icons.twotone.Fullscreen
 import androidx.compose.material.icons.twotone.FullscreenExit
 import androidx.compose.material.icons.twotone.IosShare
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -38,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
@@ -49,9 +46,12 @@ import coil3.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
+import com.bidyut.tech.rewalled.ui.components.BottomBar
 import com.bidyut.tech.rewalled.ui.getCurrentContext
 import com.bidyut.tech.rewalled.ui.getSystemWidth
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun SharedTransitionScope.WallpaperScreen(
@@ -87,6 +87,7 @@ fun SharedTransitionScope.WallpaperScreen(
                 initialPage = initialIndex,
                 pageCount = { feed.wallpapers.size }
             )
+            val hazeState = rememberHazeState()
             Scaffold(
                 modifier = modifier,
                 floatingActionButtonPosition = FabPosition.EndOverlay,
@@ -114,75 +115,68 @@ fun SharedTransitionScope.WallpaperScreen(
                         }
                     ) { showBottomBar ->
                         if (showBottomBar) {
-                            BottomAppBar(
-                                modifier = Modifier.alpha(0.8f),
-                                actions = {
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        onClick = {
-                                            navigator.popBackStack()
-                                        },
-                                    ) {
+                            BottomBar(
+                                hazeState = hazeState,
+                                onBackClick = navigator::popBackStack,
+                            ) {
+                                IconButton(
+                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                        .size(48.dp),
+                                    onClick = {
+                                        isFullscreen = !isFullscreen
+                                    },
+                                ) {
+                                    if (isFullscreen) {
                                         Icon(
-                                            Icons.AutoMirrored.TwoTone.ArrowBack,
-                                            contentDescription = "Back",
+                                            Icons.TwoTone.FullscreenExit,
+                                            contentDescription = "Fit",
+                                        )
+                                    } else {
+                                        Icon(
+                                            Icons.TwoTone.Fullscreen,
+                                            contentDescription = "Fill",
                                         )
                                     }
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        onClick = {
-                                            isFullscreen = !isFullscreen
-                                        },
-                                    ) {
-                                        if (isFullscreen) {
-                                            Icon(
-                                                Icons.TwoTone.FullscreenExit,
-                                                contentDescription = "Fit",
-                                            )
-                                        } else {
-                                            Icon(
-                                                Icons.TwoTone.Fullscreen,
-                                                contentDescription = "Fill",
-                                            )
-                                        }
-                                    }
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        onClick = {
-                                            feed.wallpapers.getOrNull(pagerState.currentPage)
-                                                ?.let { w ->
-                                                    viewModel.coordinator.triggerShareIntent(
-                                                        context,
-                                                        w
-                                                    )
-                                                }
-                                        },
-                                    ) {
-                                        Icon(
-                                            Icons.TwoTone.IosShare,
-                                            contentDescription = "Share",
-                                        )
-                                    }
-                                    IconButton(
-                                        modifier = Modifier.size(48.dp),
-                                        onClick = {
-                                            feed.wallpapers.getOrNull(pagerState.currentPage)?.let {
-                                                uriHandler.openUri(it.postUrl)
+                                }
+                                IconButton(
+                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                        .size(48.dp),
+                                    onClick = {
+                                        feed.wallpapers.getOrNull(pagerState.currentPage)
+                                            ?.let { w ->
+                                                viewModel.coordinator.triggerShareIntent(
+                                                    context,
+                                                    w
+                                                )
                                             }
-                                        },
-                                    ) {
-                                        Icon(
-                                            Icons.AutoMirrored.TwoTone.OpenInNew,
-                                            contentDescription = "Open source",
-                                        )
-                                    }
-                                },
-                            )
+                                    },
+                                ) {
+                                    Icon(
+                                        Icons.TwoTone.IosShare,
+                                        contentDescription = "Share",
+                                    )
+                                }
+                                IconButton(
+                                    modifier = Modifier.padding(horizontal = 4.dp)
+                                        .size(48.dp),
+                                    onClick = {
+                                        feed.wallpapers.getOrNull(pagerState.currentPage)?.let {
+                                            uriHandler.openUri(it.postUrl)
+                                        }
+                                    },
+                                ) {
+                                    Icon(
+                                        Icons.AutoMirrored.TwoTone.OpenInNew,
+                                        contentDescription = "Open source",
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             ) { paddingValues ->
                 HorizontalPager(
+                    modifier = Modifier.hazeSource(hazeState),
                     state = pagerState,
                     key = { feed.wallpapers[it].id }
                 ) { index ->

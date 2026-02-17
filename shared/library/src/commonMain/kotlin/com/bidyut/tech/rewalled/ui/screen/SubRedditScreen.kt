@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,17 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material.icons.twotone.ErrorOutline
 import androidx.compose.material.icons.twotone.HourglassEmpty
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,8 +41,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -66,7 +60,10 @@ import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
 import com.bidyut.tech.rewalled.ui.Route
+import com.bidyut.tech.rewalled.ui.components.BottomBar
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
@@ -183,37 +180,75 @@ fun SharedTransitionScope.SubRedditPane(
     modifier: Modifier = Modifier,
     onBackClick: (() -> Unit)? = null,
 ) {
+    val hazeState = rememberHazeState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
         modifier = modifier,
-        bottomBar = {
-            BottomAppBar(
-                modifier = Modifier.alpha(0.8f),
-                actions = {
-                    if (onBackClick != null) {
-                        IconButton(
-                            modifier = Modifier.size(48.dp),
-                            onClick = onBackClick,
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.TwoTone.ArrowBack,
-                                contentDescription = "Back",
+        floatingActionButtonPosition = FabPosition.EndOverlay,
+        floatingActionButton = {
+            var isFilterMenuExpanded by remember {
+                mutableStateOf(false)
+            }
+            FloatingActionButton(
+                onClick = {
+                    isFilterMenuExpanded = true
+                },
+            ) {
+                Text(
+                    text = "$filter",
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+            DropdownMenu(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                expanded = isFilterMenuExpanded,
+                onDismissRequest = { isFilterMenuExpanded = false },
+            ) {
+                for (value in Filter.entries) {
+                    val isSelected = filter == value
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = if (isSelected) {
+                                    value.toString().uppercase()
+                                } else {
+                                    value.toString()
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.End,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                fontWeight = if (isSelected) FontWeight.ExtraBold else null,
+                                color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified,
                             )
-                        }
-                    }
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(
-                                style = SpanStyle(
-                                    fontWeight = FontWeight.Light,
-                                    color = MaterialTheme.colorScheme.secondary,
-                                )
-                            ) {
-                                append("/r/")
-                            }
-                            append(subReddit)
                         },
-                        modifier = Modifier.sharedElement(
+                        onClick = {
+                            onFilterChange(value)
+                            isFilterMenuExpanded = false
+                        },
+                    )
+                }
+            }
+        },
+        bottomBar = {
+            BottomBar(
+                hazeState = hazeState,
+                onBackClick = onBackClick,
+            ) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(
+                            style = SpanStyle(
+                                fontWeight = FontWeight.Light,
+                                color = MaterialTheme.colorScheme.secondary,
+                            )
+                        ) {
+                            append("/r/")
+                        }
+                        append(subReddit)
+                    },
+                    modifier = Modifier.padding(end = 16.dp)
+                        .sharedElement(
                             animatedVisibilityScope = animatedVisibilityScope,
                             boundsTransform = { _, _ ->
                                 tween(durationMillis = CONTENT_ANIMATION_DURATION)
@@ -222,48 +257,8 @@ fun SharedTransitionScope.SubRedditPane(
                                 key = "subreddit-$subReddit-title"
                             ),
                         ),
-                    )
-                    var isFilterMenuExpanded by remember {
-                        mutableStateOf(false)
-                    }
-                    Text(
-                        text = "[ $filter ]",
-                        modifier = Modifier.clip(RoundedCornerShape(8.dp))
-                            .clickable { isFilterMenuExpanded = true }
-                            .padding(8.dp),
-                    )
-                    DropdownMenu(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        expanded = isFilterMenuExpanded,
-                        onDismissRequest = { isFilterMenuExpanded = false },
-                    ) {
-                        for (value in Filter.entries) {
-                            val isSelected = filter == value
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = if (isSelected) {
-                                            value.toString().uppercase()
-                                        } else {
-                                            value.toString()
-                                        },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.End,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        fontWeight = if (isSelected) FontWeight.ExtraBold else null,
-                                        color = if (isSelected) MaterialTheme.colorScheme.primary else Color.Unspecified,
-                                    )
-                                },
-                                onClick = {
-                                    onFilterChange(value)
-                                    isFilterMenuExpanded = false
-                                },
-                            )
-                        }
-                    }
-                },
-            )
+                )
+            }
         }
     ) { paddingValues ->
         val direction = LocalLayoutDirection.current
@@ -275,7 +270,8 @@ fun SharedTransitionScope.SubRedditPane(
         )
         SubRedditContents(
             animatedVisibilityScope = animatedVisibilityScope,
-            modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier = Modifier.hazeSource(hazeState)
+                .nestedScroll(scrollBehavior.nestedScrollConnection),
             state = uiState,
             contentPadding = contentPadding,
             onWallpaperClick = onWallpaperClick,

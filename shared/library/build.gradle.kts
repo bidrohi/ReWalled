@@ -57,6 +57,8 @@ kotlin {
             implementation(libs.jetbrains.material3.adaptive.layout)
 
             implementation(libs.coil.compose)
+            implementation(libs.haze)
+            implementation(libs.haze.materials)
 
             implementation(libs.kermit)
         }

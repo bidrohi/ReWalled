@@ -6,17 +6,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.AddCircle
 import androidx.compose.material.icons.twotone.RemoveCircle
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
@@ -37,7 +34,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
@@ -45,7 +41,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
+import com.bidyut.tech.rewalled.ui.components.BottomBar
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -71,6 +70,7 @@ fun SharedTransitionScope.CategoriesSettingsScreen(
             )
         }
 
+        val hazeState = rememberHazeState()
         Scaffold(
             modifier = modifier,
             floatingActionButtonPosition = FabPosition.EndOverlay,
@@ -87,23 +87,14 @@ fun SharedTransitionScope.CategoriesSettingsScreen(
                 }
             },
             bottomBar = {
-                BottomAppBar(
-                    modifier = Modifier.alpha(0.8f),
-                    actions = {
-                        IconButton(
-                            modifier = Modifier.size(48.dp),
-                            onClick = {
-                                navigator.popBackStack()
-                            },
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.Default.ArrowBack,
-                                contentDescription = "Back",
-                            )
-                        }
-                        Text(
-                            text = "Configure categories",
-                            modifier = Modifier.sharedElement(
+                BottomBar(
+                    hazeState = hazeState,
+                    onBackClick = navigator::popBackStack,
+                ) {
+                    Text(
+                        text = "Configure categories",
+                        modifier = Modifier.padding(end = 32.dp)
+                            .sharedElement(
                                 animatedVisibilityScope = animatedVisibilityScope,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = CONTENT_ANIMATION_DURATION)
@@ -112,13 +103,13 @@ fun SharedTransitionScope.CategoriesSettingsScreen(
                                     key = "categories-config-title"
                                 ),
                             ),
-                        )
-                    }
-                )
+                    )
+                }
             }
         ) { paddingValues ->
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .hazeSource(hazeState),
                 contentPadding = paddingValues,
             ) {
                 items(

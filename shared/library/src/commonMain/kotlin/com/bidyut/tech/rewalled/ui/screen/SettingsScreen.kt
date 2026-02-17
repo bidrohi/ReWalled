@@ -16,24 +16,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NavigateNext
-import androidx.compose.material.icons.automirrored.twotone.ArrowBack
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
 import com.bidyut.tech.rewalled.ui.Route
+import com.bidyut.tech.rewalled.ui.components.BottomBar
 import com.bidyut.tech.rewalled.ui.theme.ReWalled
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun SharedTransitionScope.SettingsScreen(
@@ -42,31 +41,25 @@ fun SharedTransitionScope.SettingsScreen(
     modifier: Modifier = Modifier
 ) {
     ReWalledTheme {
+        val hazeState = rememberHazeState()
         Scaffold(
             modifier = modifier,
             bottomBar = {
-                BottomAppBar(
-                    modifier = Modifier.alpha(0.8f),
-                    actions = {
-                        IconButton(
-                            modifier = Modifier.size(48.dp),
-                            onClick = {
-                                navigator.popBackStack()
-                            },
-                        ) {
-                            Icon(
-                                Icons.AutoMirrored.TwoTone.ArrowBack,
-                                contentDescription = "Back",
-                            )
-                        }
-                        Text("About")
-                    }
-                )
+                BottomBar(
+                    hazeState = hazeState,
+                    onBackClick = navigator::popBackStack,
+                ) {
+                    Text(
+                        text = "About",
+                        modifier = Modifier.padding(end = 32.dp),
+                    )
+                }
             }
         ) { paddingValues ->
             LazyColumn(
                 contentPadding = paddingValues,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .hazeSource(hazeState),
             ) {
                 item("logo") {
                     Box(
