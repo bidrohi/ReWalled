@@ -13,7 +13,7 @@ plugins {
 }
 
 val localProperties = gradleLocalProperties(rootDir, providers)
-val bitdriftApiKey: String by lazy { localProperties.getProperty("bitdrift.apiKey") }
+val bitdriftApiKey: String by lazy { localProperties.getProperty("bitdrift.apiKey").orEmpty() }
 val hasKeystore = localProperties.hasProperty("signing.keystore")
 val keystoreFile: String by lazy { localProperties.getProperty("signing.keystore") }
 val keystoreAlias: String by lazy { localProperties.getProperty("signing.alias") }
