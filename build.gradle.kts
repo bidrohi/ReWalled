@@ -1,4 +1,4 @@
-import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.android.library).apply(false)
     alias(libs.plugins.jetbrains.compose).apply(false)
     alias(libs.plugins.jetbrains.composeHotReload).apply(false)
-    alias(libs.plugins.kotlin.android).apply(false)
     alias(libs.plugins.kotlin.compose).apply(false)
     alias(libs.plugins.kotlin.multiplatform).apply(false)
     alias(libs.plugins.kotlin.serialization).apply(false)
@@ -41,10 +40,8 @@ configure(subprojects) {
 
 subprojects {
     afterEvaluate {
-        (extensions.findByName("kotlin") as? KotlinMultiplatformExtension)?.apply {
-            (targets.find {
-                it is KotlinMultiplatformAndroidLibraryTarget
-            } as? KotlinMultiplatformAndroidLibraryTarget)?.apply {
+        extensions.findByType<KotlinMultiplatformExtension>()?.apply {
+            targets.withType<KotlinMultiplatformAndroidLibraryTarget> {
                 compileSdk = 36
                 buildToolsVersion = "36.0.0"
                 minSdk = 23
@@ -54,7 +51,7 @@ subprojects {
                 }
             }
         }
-        (extensions.findByName("android") as? CommonExtension<*, *, *, *, *, *>)?.apply {
+        extensions.findByType<ApplicationExtension>()?.apply {
             compileSdk = 36
             buildToolsVersion = "36.0.0"
             defaultConfig {
@@ -63,7 +60,6 @@ subprojects {
             compileOptions {
                 sourceCompatibility = jvmVersion
                 targetCompatibility = jvmVersion
-                isCoreLibraryDesugaringEnabled = true
             }
             buildFeatures {
                 buildConfig = true
@@ -72,9 +68,6 @@ subprojects {
                 resources {
                     excludes += "/META-INF/{AL2.0,LGPL2.1}"
                 }
-            }
-            dependencies {
-                "coreLibraryDesugaring"(libs.jdk.desugar)
             }
         }
     }
