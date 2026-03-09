@@ -1,5 +1,5 @@
 [versions]
-androidGradle = "9.0.1"
+androidGradle = "9.1.0"
 androidx-activity = "1.12.4"
 androidx-splashscreen = "1.2.0"
 bhandar = "0.4.0"
