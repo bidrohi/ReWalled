@@ -1,6 +1,5 @@
 package com.bidyut.tech.rewalled.ui.screen
 
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -25,9 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
-import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.components.BottomBar
 import com.bidyut.tech.rewalled.ui.theme.ReWalled
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
@@ -36,9 +34,9 @@ import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun SharedTransitionScope.SettingsScreen(
-    navigator: NavController,
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    modifier: Modifier = Modifier
+    onSettingsCategoryClick: () -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ReWalledTheme {
         val hazeState = rememberHazeState()
@@ -47,7 +45,7 @@ fun SharedTransitionScope.SettingsScreen(
             bottomBar = {
                 BottomBar(
                     hazeState = hazeState,
-                    onBackClick = navigator::popBackStack,
+                    onBackClick = onBackClick,
                 ) {
                     Text(
                         text = "About",
@@ -72,7 +70,7 @@ fun SharedTransitionScope.SettingsScreen(
                                 color = MaterialTheme.colorScheme.primaryContainer,
                                 shape = MaterialTheme.shapes.extraLarge
                             ).sharedElement(
-                                animatedVisibilityScope = animatedVisibilityScope,
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = CONTENT_ANIMATION_DURATION)
                                 },
@@ -115,7 +113,7 @@ fun SharedTransitionScope.SettingsScreen(
                     Row(
                         modifier = Modifier.fillMaxWidth()
                             .clickable {
-                                navigator.navigate(Route.SettingsCategories)
+                                onSettingsCategoryClick()
                             }
                             .padding(16.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -124,7 +122,7 @@ fun SharedTransitionScope.SettingsScreen(
                             text = "Configure categories",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.sharedElement(
-                                animatedVisibilityScope = animatedVisibilityScope,
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = CONTENT_ANIMATION_DURATION)
                                 },

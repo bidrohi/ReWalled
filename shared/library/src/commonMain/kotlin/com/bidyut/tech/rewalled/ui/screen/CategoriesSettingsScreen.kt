@@ -1,6 +1,5 @@
 package com.bidyut.tech.rewalled.ui.screen
 
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,7 +38,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
 import com.bidyut.tech.rewalled.ui.components.BottomBar
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
@@ -50,10 +49,9 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SharedTransitionScope.CategoriesSettingsScreen(
-    navigator: NavController,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: CategoriesViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
 ) {
     ReWalledTheme {
         var showAddSheet by remember { mutableStateOf(false) }
@@ -89,13 +87,13 @@ fun SharedTransitionScope.CategoriesSettingsScreen(
             bottomBar = {
                 BottomBar(
                     hazeState = hazeState,
-                    onBackClick = navigator::popBackStack,
+                    onBackClick = onBackClick,
                 ) {
                     Text(
                         text = "Configure categories",
                         modifier = Modifier.padding(end = 32.dp)
                             .sharedElement(
-                                animatedVisibilityScope = animatedVisibilityScope,
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = CONTENT_ANIMATION_DURATION)
                                 },

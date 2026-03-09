@@ -1,6 +1,5 @@
 package com.bidyut.tech.rewalled.ui.screen
 
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
@@ -19,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
@@ -47,7 +47,6 @@ fun WallpaperCard(
 
 @Composable
 fun SharedTransitionScope.PhotoGrid(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     wallpapers: List<Wallpaper>,
     onWallpaperClick: (Wallpaper) -> Unit,
     contentPadding: PaddingValues,
@@ -73,7 +72,7 @@ fun SharedTransitionScope.PhotoGrid(
                 requestWidth = screenWidth,
                 imageRatio = ratio,
                 modifier = Modifier.sharedElement(
-                    animatedVisibilityScope = animatedVisibilityScope,
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                     boundsTransform = { _, _ ->
                         tween(durationMillis = CONTENT_ANIMATION_DURATION)
                     },

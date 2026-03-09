@@ -1,6 +1,5 @@
 package com.bidyut.tech.rewalled.ui.screen
 
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -53,13 +52,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.window.core.layout.WindowSizeClass
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
+import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
-import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.components.BottomBar
 import com.bidyut.tech.rewalled.ui.theme.ReWalledTheme
 import dev.chrisbanes.haze.hazeSource
@@ -68,10 +67,10 @@ import dev.chrisbanes.haze.rememberHazeState
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SharedTransitionScope.SubRedditScreen(
-    navigator: NavController,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     categoriesViewModel: CategoriesViewModel,
     subRedditViewModel: SubRedditViewModel,
+    onWallpaperClick: (SubredditFeedId, WallpaperId) -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ReWalledTheme {
@@ -83,22 +82,18 @@ fun SharedTransitionScope.SubRedditScreen(
             ListDetailPaneScaffold(
                 listPane = {
                     CategoriesPane(
-                        animatedVisibilityScope = animatedVisibilityScope,
                         viewModel = categoriesViewModel,
                         contentPadding = PaddingValues(bottom = 96.dp),
                         onCategoryClick = { feedId ->
                             selectedFeedId = feedId
                         },
-                        onWallpaperClick = { feedId, wallpaperId ->
-                            navigator.navigate(Route.Wallpaper(feedId, wallpaperId))
-                        },
+                        onWallpaperClick = onWallpaperClick,
                         modifier = Modifier.fillMaxSize(),
                     )
                 },
                 detailPane = {
                     selectedFeedId?.let { _ ->
                         SubRedditPane(
-                            animatedVisibilityScope = animatedVisibilityScope,
                             modifier = modifier,
                             subReddit = subRedditViewModel.subReddit.value,
                             filter = subRedditViewModel.filter.value,
@@ -112,13 +107,9 @@ fun SharedTransitionScope.SubRedditScreen(
                                 subRedditViewModel.loadMoreAfter(afterCursor)
                             },
                             onWallpaperClick = {
-                                navigator.navigate(
-                                    Route.Wallpaper(subRedditViewModel.feedId, it.id)
-                                )
+                                onWallpaperClick(subRedditViewModel.feedId, it.id)
                             },
-                            onBackClick = {
-                                navigator.popBackStack()
-                            },
+                            onBackClick = onBackClick,
                         )
                     } ?: Box(
                         contentAlignment = Alignment.Center,
@@ -141,7 +132,6 @@ fun SharedTransitionScope.SubRedditScreen(
             )
         } else {
             SubRedditPane(
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = modifier,
                 subReddit = subRedditViewModel.subReddit.value,
                 filter = subRedditViewModel.filter.value,
@@ -155,13 +145,9 @@ fun SharedTransitionScope.SubRedditScreen(
                     subRedditViewModel.loadMoreAfter(afterCursor)
                 },
                 onWallpaperClick = {
-                    navigator.navigate(
-                        Route.Wallpaper(subRedditViewModel.feedId, it.id)
-                    )
+                    onWallpaperClick(subRedditViewModel.feedId, it.id)
                 },
-                onBackClick = {
-                    navigator.popBackStack()
-                },
+                onBackClick = onBackClick,
             )
         }
     }
@@ -170,7 +156,6 @@ fun SharedTransitionScope.SubRedditScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SharedTransitionScope.SubRedditPane(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     subReddit: String,
     filter: Filter,
     uiState: SubRedditViewModel.UiState,
@@ -249,7 +234,7 @@ fun SharedTransitionScope.SubRedditPane(
                     },
                     modifier = Modifier.padding(end = 16.dp)
                         .sharedElement(
-                            animatedVisibilityScope = animatedVisibilityScope,
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             boundsTransform = { _, _ ->
                                 tween(durationMillis = CONTENT_ANIMATION_DURATION)
                             },
@@ -269,7 +254,6 @@ fun SharedTransitionScope.SubRedditPane(
             end = paddingValues.calculateEndPadding(direction) + 8.dp,
         )
         SubRedditContents(
-            animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier.hazeSource(hazeState)
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
             state = uiState,
@@ -282,7 +266,6 @@ fun SharedTransitionScope.SubRedditPane(
 
 @Composable
 fun SharedTransitionScope.SubRedditContents(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     state: SubRedditViewModel.UiState,
     contentPadding: PaddingValues,
     onWallpaperClick: (Wallpaper) -> Unit,
@@ -310,7 +293,6 @@ fun SharedTransitionScope.SubRedditContents(
 
         is SubRedditViewModel.UiState.ShowContent -> {
             PhotoGrid(
-                animatedVisibilityScope = animatedVisibilityScope,
                 modifier = modifier,
                 wallpapers = state.feed?.wallpapers.orEmpty(),
                 onWallpaperClick = onWallpaperClick,

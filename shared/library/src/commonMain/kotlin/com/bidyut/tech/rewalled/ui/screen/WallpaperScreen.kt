@@ -1,7 +1,6 @@
 package com.bidyut.tech.rewalled.ui.screen
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -41,7 +40,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import coil3.compose.AsyncImage
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
@@ -55,11 +54,10 @@ import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 fun SharedTransitionScope.WallpaperScreen(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     feedId: SubredditFeedId,
     wallpaperId: WallpaperId,
-    navigator: NavController,
     viewModel: SubRedditViewModel,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ReWalledTheme(
@@ -117,7 +115,7 @@ fun SharedTransitionScope.WallpaperScreen(
                         if (showBottomBar) {
                             BottomBar(
                                 hazeState = hazeState,
-                                onBackClick = navigator::popBackStack,
+                                onBackClick = onBackClick,
                             ) {
                                 IconButton(
                                     modifier = Modifier.padding(horizontal = 4.dp)
@@ -191,7 +189,7 @@ fun SharedTransitionScope.WallpaperScreen(
                             model = wallpaper.getUriForSize(screenWidthPx),
                             modifier = Modifier.fillMaxSize()
                                 .sharedElement(
-                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                                     boundsTransform = { _, _ ->
                                         tween(durationMillis = CONTENT_ANIMATION_DURATION)
                                     },

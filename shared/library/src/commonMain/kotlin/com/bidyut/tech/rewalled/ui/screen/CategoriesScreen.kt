@@ -1,7 +1,6 @@
 package com.bidyut.tech.rewalled.ui.screen
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -40,14 +39,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
 import com.bidyut.tech.rewalled.model.WallpaperId
 import com.bidyut.tech.rewalled.model.makeSubredditFeedId
 import com.bidyut.tech.rewalled.ui.CONTENT_ANIMATION_DURATION
-import com.bidyut.tech.rewalled.ui.Route
 import com.bidyut.tech.rewalled.ui.getSystemRatio
 import com.bidyut.tech.rewalled.ui.getSystemWidth
 import com.bidyut.tech.rewalled.ui.screen.CategoriesViewModel.UiState
@@ -57,9 +55,10 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SharedTransitionScope.CategoriesScreen(
-    navigator: NavController,
-    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: CategoriesViewModel,
+    onCategoryClick: (SubredditFeedId) -> Unit,
+    onWallpaperClick: (SubredditFeedId, WallpaperId) -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ReWalledTheme {
@@ -67,11 +66,9 @@ fun SharedTransitionScope.CategoriesScreen(
             modifier = modifier,
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = {
-                        navigator.navigate(Route.Settings)
-                    },
+                    onClick = onSettingsClick,
                     modifier = Modifier.sharedElement(
-                        animatedVisibilityScope = animatedVisibilityScope,
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         boundsTransform = { _, _ ->
                             tween(durationMillis = CONTENT_ANIMATION_DURATION)
                         },
@@ -95,15 +92,10 @@ fun SharedTransitionScope.CategoriesScreen(
                 end = paddingValues.calculateEndPadding(layoutDirection),
             )
             CategoriesPane(
-                animatedVisibilityScope = animatedVisibilityScope,
                 viewModel = viewModel,
                 contentPadding = contentPadding,
-                onCategoryClick = { feedId ->
-                    navigator.navigate(Route.Grid(feedId))
-                },
-                onWallpaperClick = { feedId, wallpaperId ->
-                    navigator.navigate(Route.Wallpaper(feedId, wallpaperId))
-                },
+                onCategoryClick = onCategoryClick,
+                onWallpaperClick = onWallpaperClick,
                 modifier = Modifier.fillMaxSize(),
             )
         }
@@ -112,7 +104,6 @@ fun SharedTransitionScope.CategoriesScreen(
 
 @Composable
 fun SharedTransitionScope.CategoriesPane(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: CategoriesViewModel,
     contentPadding: PaddingValues,
     onCategoryClick: (SubredditFeedId) -> Unit,
@@ -130,7 +121,6 @@ fun SharedTransitionScope.CategoriesPane(
             val feedId = makeSubredditFeedId(subReddit, Filter.Rising)
             val state = viewModel.getUiState(subReddit)
             CategoryRow(
-                animatedVisibilityScope = animatedVisibilityScope,
                 subReddit = subReddit,
                 state = state.value,
                 onWallpaperClick = { wallpaper ->
@@ -147,7 +137,6 @@ fun SharedTransitionScope.CategoriesPane(
 
 @Composable
 private fun SharedTransitionScope.CategoryRow(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     subReddit: String,
     state: UiState,
     onWallpaperClick: (Wallpaper) -> Unit,
@@ -161,7 +150,6 @@ private fun SharedTransitionScope.CategoryRow(
     ) { targetState ->
         when (targetState) {
             is UiState.Loading -> CategoryRow(
-                animatedVisibilityScope = animatedVisibilityScope,
                 subReddit = subReddit,
                 modifier = modifier,
             ) {
@@ -177,12 +165,10 @@ private fun SharedTransitionScope.CategoryRow(
 
             is UiState.ShowContent -> if (targetState.feed?.wallpapers?.isNotEmpty() == true) {
                 CategoryRow(
-                    animatedVisibilityScope = animatedVisibilityScope,
                     subReddit = subReddit,
                     modifier = modifier,
                 ) {
                     PhotoRow(
-                        animatedVisibilityScope = animatedVisibilityScope,
                         wallpapers = targetState.feed.wallpapers,
                         onWallpaperClick = onWallpaperClick,
                         modifier = Modifier.fillMaxWidth()
@@ -198,7 +184,6 @@ private fun SharedTransitionScope.CategoryRow(
 
 @Composable
 fun SharedTransitionScope.CategoryRow(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     subReddit: String,
     modifier: Modifier = Modifier,
     content: @Composable SharedTransitionScope.() -> Unit,
@@ -212,7 +197,7 @@ fun SharedTransitionScope.CategoryRow(
                     horizontal = 16.dp,
                     vertical = 8.dp,
                 ).sharedElement(
-                    animatedVisibilityScope = animatedVisibilityScope,
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                     boundsTransform = { _, _ ->
                         tween(durationMillis = CONTENT_ANIMATION_DURATION)
                     },
@@ -231,7 +216,6 @@ fun SharedTransitionScope.CategoryRow(
 
 @Composable
 fun SharedTransitionScope.PhotoRow(
-    animatedVisibilityScope: AnimatedVisibilityScope,
     wallpapers: List<Wallpaper>,
     onWallpaperClick: (Wallpaper) -> Unit,
     modifier: Modifier = Modifier,
@@ -266,7 +250,7 @@ fun SharedTransitionScope.PhotoRow(
                 cornerRadius = 4.dp,
                 modifier = Modifier.width(wallpaperSize)
                     .sharedElement(
-                        animatedVisibilityScope = animatedVisibilityScope,
+                        animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         boundsTransform = { _, _ ->
                             tween(durationMillis = CONTENT_ANIMATION_DURATION)
                         },
