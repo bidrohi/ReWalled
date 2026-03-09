@@ -4,13 +4,16 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,9 +36,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -150,62 +153,34 @@ private fun SharedTransitionScope.CategoryRow(
     onWallpaperClick: (Wallpaper) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colorScheme = MaterialTheme.colorScheme
-    val gradientBrush by derivedStateOf {
-        Brush.linearGradient(
-            colors = listOf(
-                colorScheme.primary,
-                colorScheme.secondary,
-                colorScheme.tertiary,
-            ),
-        )
-    }
     AnimatedContent(
         targetState = state,
         transitionSpec = {
-            slideInVertically { it } togetherWith slideOutVertically { -it }
+            fadeIn() togetherWith slideOutVertically { -it }
         }
     ) { targetState ->
         when (targetState) {
-            UiState.Loading -> CategoryLabel(
+            is UiState.Loading -> CategoryRow(
+                animatedVisibilityScope = animatedVisibilityScope,
                 subReddit = subReddit,
-                modifier = modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 48.dp,
-                ),
-                textAlign = TextAlign.Center,
-                textStyle = MaterialTheme.typography.titleLarge.plus(
-                    SpanStyle(
-                        brush = gradientBrush,
-                    )
-                ),
-            )
-
-            UiState.Error -> {}
-
-            is UiState.ShowContent -> Column(
                 modifier = modifier,
             ) {
-                if (targetState.feed?.wallpapers?.isNotEmpty() == true) {
-                    Text(
-                        text = subReddit,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(
-                                horizontal = 16.dp,
-                                vertical = 8.dp,
-                            ).sharedElement(
-                                animatedVisibilityScope = animatedVisibilityScope,
-                                boundsTransform = { _, _ ->
-                                    tween(durationMillis = CONTENT_ANIMATION_DURATION)
-                                },
-                                sharedContentState = rememberSharedContentState(
-                                    key = "subreddit-$subReddit-title"
-                                ),
-                            ),
-                    )
+                PhotoLoadingRow(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(
+                            vertical = 8.dp,
+                        ),
+                )
+            }
+
+            is UiState.Error -> Unit
+
+            is UiState.ShowContent -> if (targetState.feed?.wallpapers?.isNotEmpty() == true) {
+                CategoryRow(
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    subReddit = subReddit,
+                    modifier = modifier,
+                ) {
                     PhotoRow(
                         animatedVisibilityScope = animatedVisibilityScope,
                         wallpapers = targetState.feed.wallpapers,
@@ -218,6 +193,39 @@ private fun SharedTransitionScope.CategoryRow(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SharedTransitionScope.CategoryRow(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    subReddit: String,
+    modifier: Modifier = Modifier,
+    content: @Composable SharedTransitionScope.() -> Unit,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth()
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 8.dp,
+                ).sharedElement(
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = CONTENT_ANIMATION_DURATION)
+                    },
+                    sharedContentState = rememberSharedContentState(
+                        key = "subreddit-$subReddit-title"
+                    ),
+                ),
+            text = subReddit,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onBackground,
+            textAlign = TextAlign.Center,
+        )
+        content()
     }
 }
 
@@ -236,6 +244,9 @@ fun SharedTransitionScope.PhotoRow(
     var maxImages by remember {
         mutableStateOf(((screenWidth) / (wallpaperSize + inBetweenPadding)).roundToInt())
     }
+    val visibleWallpapers by remember {
+        derivedStateOf { wallpapers.take(maxImages) }
+    }
     LazyRow(
 //        modifier = modifier.onSizeChanged {
 //            maxImages = (it.width / wallpaperSize.value).toInt()
@@ -245,7 +256,7 @@ fun SharedTransitionScope.PhotoRow(
         horizontalArrangement = Arrangement.spacedBy(inBetweenPadding),
     ) {
         items(
-            items = wallpapers.take(maxImages),
+            items = visibleWallpapers,
             key = { it.id },
         ) {
             WallpaperCard(
@@ -263,6 +274,43 @@ fun SharedTransitionScope.PhotoRow(
                             key = "wallpaper-${it.id}"
                         ),
                     ).clickable { onWallpaperClick(it) },
+            )
+        }
+    }
+}
+
+@Composable
+fun PhotoLoadingRow(
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+) {
+    val ratio = getSystemRatio()
+    val screenWidth = getSystemWidth()
+    val wallpaperSize = 128.dp
+    val inBetweenPadding = (-24).dp
+    var maxImages by remember {
+        mutableStateOf(((screenWidth) / (wallpaperSize + inBetweenPadding)).roundToInt())
+    }
+    LazyRow(
+//        modifier = modifier.onSizeChanged {
+//            maxImages = (it.width / wallpaperSize.value).toInt()
+//        },
+        modifier = modifier,
+        contentPadding = contentPadding,
+        horizontalArrangement = Arrangement.spacedBy(inBetweenPadding),
+    ) {
+        items(maxImages) { index ->
+            Box(
+                modifier = Modifier.width(wallpaperSize)
+                    .aspectRatio(ratio)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(
+                        if (index % 2 == 0) {
+                            MaterialTheme.colorScheme.surfaceContainerHighest
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainerHigh
+                        }
+                    ),
             )
         }
     }
