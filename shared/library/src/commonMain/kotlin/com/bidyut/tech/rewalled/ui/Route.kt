@@ -1,5 +1,6 @@
 package com.bidyut.tech.rewalled.ui
 
+import androidx.navigation3.runtime.NavKey
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.WallpaperId
@@ -7,7 +8,7 @@ import com.bidyut.tech.rewalled.model.makeSubredditFeedId
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed interface Route {
+sealed interface Route: NavKey {
     @Serializable
     data object Categories : Route
 

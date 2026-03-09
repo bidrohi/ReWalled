@@ -110,6 +110,9 @@ fun SharedTransitionScope.CategoriesPane(
     onWallpaperClick: (SubredditFeedId, WallpaperId) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var selectedCategory by remember {
+        mutableStateOf<SubredditFeedId?>(null)
+    }
     LazyColumn(
         modifier = modifier,
         contentPadding = contentPadding,
@@ -123,11 +126,13 @@ fun SharedTransitionScope.CategoriesPane(
             CategoryRow(
                 subReddit = subReddit,
                 state = state.value,
+                isSelected = feedId == selectedCategory,
                 onWallpaperClick = { wallpaper ->
                     onWallpaperClick(feedId, wallpaper.id)
                 },
                 modifier = Modifier.fillMaxWidth()
                     .clickable {
+                        selectedCategory = feedId
                         onCategoryClick(feedId)
                     },
             )
@@ -140,9 +145,17 @@ private fun SharedTransitionScope.CategoryRow(
     subReddit: String,
     state: UiState,
     onWallpaperClick: (Wallpaper) -> Unit,
+    isSelected: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     AnimatedContent(
+        modifier = Modifier.run {
+            if (isSelected) {
+                background(MaterialTheme.colorScheme.surfaceVariant)
+            } else {
+                this
+            }
+        },
         targetState = state,
         transitionSpec = {
             fadeIn() togetherWith slideOutVertically { -it }

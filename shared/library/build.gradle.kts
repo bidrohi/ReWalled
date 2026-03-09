@@ -50,9 +50,10 @@ kotlin {
             implementation(compose.materialIconsExtended)
 
             implementation(libs.jetbrains.lifecycle)
-            implementation(libs.jetbrains.navigation3)
             implementation(libs.jetbrains.material3.adaptive.core)
             implementation(libs.jetbrains.material3.adaptive.layout)
+            implementation(libs.jetbrains.material3.adaptive.navigation3)
+            implementation(libs.jetbrains.navigation3)
 
             implementation(libs.coil.compose)
             implementation(libs.haze)

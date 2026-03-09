@@ -4,12 +4,10 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,17 +24,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
-import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
-import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
-import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
-import androidx.compose.material3.adaptive.layout.ThreePaneScaffoldValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +45,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
-import androidx.window.core.layout.WindowSizeClass
 import com.bidyut.tech.rewalled.model.Filter
 import com.bidyut.tech.rewalled.model.SubredditFeedId
 import com.bidyut.tech.rewalled.model.Wallpaper
@@ -67,89 +58,30 @@ import dev.chrisbanes.haze.rememberHazeState
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
 fun SharedTransitionScope.SubRedditScreen(
-    categoriesViewModel: CategoriesViewModel,
     subRedditViewModel: SubRedditViewModel,
     onWallpaperClick: (SubredditFeedId, WallpaperId) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     ReWalledTheme {
-        val windowInfo = currentWindowAdaptiveInfo()
-        if (windowInfo.windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)) {
-            var selectedFeedId by rememberSaveable {
-                mutableStateOf<SubredditFeedId?>(subRedditViewModel.feedId)
-            }
-            ListDetailPaneScaffold(
-                listPane = {
-                    CategoriesPane(
-                        viewModel = categoriesViewModel,
-                        contentPadding = PaddingValues(bottom = 96.dp),
-                        onCategoryClick = { feedId ->
-                            selectedFeedId = feedId
-                        },
-                        onWallpaperClick = onWallpaperClick,
-                        modifier = Modifier.fillMaxSize(),
-                    )
-                },
-                detailPane = {
-                    selectedFeedId?.let { _ ->
-                        SubRedditPane(
-                            modifier = modifier,
-                            subReddit = subRedditViewModel.subReddit.value,
-                            filter = subRedditViewModel.filter.value,
-                            uiState = subRedditViewModel.getUiState()
-                                .collectAsState(SubRedditViewModel.UiState.Loading)
-                                .value,
-                            onFilterChange = {
-                                subRedditViewModel.filter.value = it
-                            },
-                            onLoadMore = { afterCursor ->
-                                subRedditViewModel.loadMoreAfter(afterCursor)
-                            },
-                            onWallpaperClick = {
-                                onWallpaperClick(subRedditViewModel.feedId, it.id)
-                            },
-                            onBackClick = onBackClick,
-                        )
-                    } ?: Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = modifier.fillMaxSize(),
-                    ) {
-                        Text("No feed selected")
-                    }
-                },
-                directive = PaneScaffoldDirective.Default,
-                value = ThreePaneScaffoldValue(
-                    primary = if (selectedFeedId != null) {
-                        PaneAdaptedValue.Expanded
-                    } else {
-                        PaneAdaptedValue.Hidden
-                    },
-                    secondary = PaneAdaptedValue.Expanded,
-                    tertiary = PaneAdaptedValue.Hidden,
-                ),
-                modifier = modifier,
-            )
-        } else {
-            SubRedditPane(
-                modifier = modifier,
-                subReddit = subRedditViewModel.subReddit.value,
-                filter = subRedditViewModel.filter.value,
-                uiState = subRedditViewModel.getUiState()
-                    .collectAsState(SubRedditViewModel.UiState.Loading)
-                    .value,
-                onFilterChange = {
-                    subRedditViewModel.filter.value = it
-                },
-                onLoadMore = { afterCursor ->
-                    subRedditViewModel.loadMoreAfter(afterCursor)
-                },
-                onWallpaperClick = {
-                    onWallpaperClick(subRedditViewModel.feedId, it.id)
-                },
-                onBackClick = onBackClick,
-            )
-        }
+        SubRedditPane(
+            modifier = modifier,
+            subReddit = subRedditViewModel.subReddit.value,
+            filter = subRedditViewModel.filter.value,
+            uiState = subRedditViewModel.getUiState()
+                .collectAsState(SubRedditViewModel.UiState.Loading)
+                .value,
+            onFilterChange = {
+                subRedditViewModel.filter.value = it
+            },
+            onLoadMore = { afterCursor ->
+                subRedditViewModel.loadMoreAfter(afterCursor)
+            },
+            onWallpaperClick = {
+                onWallpaperClick(subRedditViewModel.feedId, it.id)
+            },
+            onBackClick = onBackClick,
+        )
     }
 }
 
