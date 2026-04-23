@@ -3,18 +3,21 @@ package com.bidyut.tech.rewalled.ui
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
 import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
 import coil3.ImageLoader
 import coil3.compose.setSingletonImageLoaderFactory
 import coil3.disk.DiskCache
@@ -30,6 +33,8 @@ import com.bidyut.tech.rewalled.ui.screen.SettingsScreen
 import com.bidyut.tech.rewalled.ui.screen.SubRedditScreen
 import com.bidyut.tech.rewalled.ui.screen.SubRedditViewModel
 import com.bidyut.tech.rewalled.ui.screen.WallpaperScreen
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import okio.Path.Companion.toPath
 
 const val CONTENT_ANIMATION_DURATION = 200
@@ -57,19 +62,36 @@ fun App() {
         viewModel(factory = CategoriesViewModel.factory())
     val subRedditViewModel: SubRedditViewModel =
         viewModel(factory = SubRedditViewModel.factory())
-    val backStack = remember { mutableStateListOf<Route>(Route.Categories) }
-    val windowAdaptiveInfo = currentWindowAdaptiveInfo()
+
+    val config = retain {
+        SavedStateConfiguration {
+            serializersModule = SerializersModule {
+                polymorphic(NavKey::class) {
+                    subclass(Route::class, Route.serializer())
+                    subclass(Route.Categories::class, Route.Categories.serializer())
+                    subclass(Route.Settings::class, Route.Settings.serializer())
+                    subclass(Route.SettingsCategories::class, Route.SettingsCategories.serializer())
+                    subclass(Route.Grid::class, Route.Grid.serializer())
+                    subclass(Route.Wallpaper::class, Route.Wallpaper.serializer())
+                }
+            }
+        }
+    }
+    val backStack = rememberNavBackStack(config, Route.Categories)
+
+    val windowAdaptiveInfo = currentWindowAdaptiveInfoV2()
     val directive = remember(windowAdaptiveInfo) {
         calculatePaneScaffoldDirective(windowAdaptiveInfo)
             .copy(horizontalPartitionSpacerSize = 0.dp)
     }
-    val listDetailStrategy = rememberListDetailSceneStrategy<Route>(
+    val listDetailStrategy = rememberListDetailSceneStrategy<NavKey>(
         directive = directive,
     )
+
     SharedTransitionLayout {
         NavDisplay(
             backStack = backStack,
-            sceneStrategy = listDetailStrategy,
+            sceneStrategies = listOf(listDetailStrategy),
             onBack = backStack::removeLastOrNull,
             entryProvider = entryProvider {
                 entry<Route.Categories>(

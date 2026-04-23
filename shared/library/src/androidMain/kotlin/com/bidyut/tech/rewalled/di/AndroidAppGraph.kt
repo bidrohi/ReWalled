@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Environment
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.bidyut.tech.rewalled.cache.Database
 import com.bidyut.tech.rewalled.cache.DatabaseDriverFactory
@@ -47,8 +46,7 @@ class AndroidAppGraph(
                     putExtra(Intent.EXTRA_TEXT, "${w.summary} by ${w.author} at ${w.url}")
                     type = "text/plain"
                 }
-                ContextCompat.startActivity(
-                    context.context,
+                context.context.startActivity(
                     Intent.createChooser(sendIntent, "Share wallpaper with"),
                     null,
                 )
@@ -65,9 +63,9 @@ class AndroidAppGraph(
                 request.setDescription("${w.id} by ${w.author}")
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    request.setDestinationInExternalFilesDir(context.context, Environment.DIRECTORY_DOWNLOADS, uri.lastPathSegment)
+                    request.setDestinationInExternalFilesDir(context.context, Environment.DIRECTORY_PICTURES, uri.lastPathSegment)
                 } else {
-                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, uri.lastPathSegment)
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_PICTURES, uri.lastPathSegment)
                 }
                 downloadManager.enqueue(request)
             }

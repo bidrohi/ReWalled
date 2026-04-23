@@ -4,7 +4,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.bidyut.tech.rewalled.core.network"
     }
     iosArm64()

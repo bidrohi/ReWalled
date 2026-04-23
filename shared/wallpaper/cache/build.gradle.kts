@@ -5,7 +5,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.bidyut.tech.rewalled.cache"
     }
     iosArm64()

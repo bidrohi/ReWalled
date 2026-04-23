@@ -14,7 +14,7 @@ internal actual fun handleDynamicColorScheme(
 }
 
 @Composable
-internal actual fun configureWindow(
+internal actual fun ConfigureWindow(
     isInDarkTheme: Boolean,
 ) {
 }

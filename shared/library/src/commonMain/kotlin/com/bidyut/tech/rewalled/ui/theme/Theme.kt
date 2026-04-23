@@ -48,7 +48,7 @@ fun ReWalledTheme(
         isInDarkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    configureWindow(isInDarkTheme)
+    ConfigureWindow(isInDarkTheme)
 
     MaterialTheme(
         colorScheme = colorScheme,
@@ -65,6 +65,6 @@ internal expect fun handleDynamicColorScheme(
 ): ColorScheme
 
 @Composable
-internal expect fun configureWindow(
+internal expect fun ConfigureWindow(
     isInDarkTheme: Boolean,
 )

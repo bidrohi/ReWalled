@@ -7,7 +7,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary {
+    android {
         namespace = "com.bidyut.tech.rewalled.shared"
     }
     listOf(
