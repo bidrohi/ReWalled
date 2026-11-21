@@ -25,9 +25,9 @@ allprojects {
 
 object Versions {
     object Android {
-        val min = 23
-        val target = 37
-        val buildTools = "37.0.0"
+        const val min = 24
+        const val target = 37
+        const val buildTools = "37.0.0"
     }
     val jvmVersion = JavaVersion.VERSION_11
     val kotlinJvmTarget = JvmTarget.JVM_11

@@ -17,12 +17,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
-import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
+import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.blur.materials.HazeMaterials
 
-@OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun BottomBar(
     hazeState: HazeState,
@@ -35,8 +34,8 @@ fun BottomBar(
             .safeDrawingPadding()
             .padding(16.dp)
             .clip(RoundedCornerShape(32.dp))
-            .hazeEffect(
-                state = hazeState,
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
                 style = HazeMaterials.ultraThin(MaterialTheme.colorScheme.surfaceVariant),
             )
             .padding(4.dp),

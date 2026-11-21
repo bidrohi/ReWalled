@@ -1,5 +1,5 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
-import org.jetbrains.kotlin.konan.properties.hasProperty
+import org.jetbrains.kotlin.io.resolvablePropertyString
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -13,11 +13,11 @@ plugins {
 
 val localProperties = gradleLocalProperties(rootDir, providers)
 val bitdriftApiKey: String by lazy { localProperties.getProperty("bitdrift.apiKey").orEmpty() }
-val hasKeystore = localProperties.hasProperty("signing.keystore")
+val hasKeystore = localProperties.resolvablePropertyString("signing.keystore") != null
 val keystoreFile: String by lazy { localProperties.getProperty("signing.keystore") }
 val keystoreAlias: String by lazy { localProperties.getProperty("signing.alias") }
 val keystorePassword: String by lazy { localProperties.getProperty("signing.password") }
-val hasPlayPublisherKey = localProperties.hasProperty("play.publisherKey")
+val hasPlayPublisherKey = localProperties.resolvablePropertyString("play.publisherKey") != null
 val playPublisherKeyFile: String by lazy { localProperties.getProperty("play.publisherKey") }
 
 object AppVersion {
